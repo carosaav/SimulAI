@@ -1,5 +1,3 @@
-
-
 import win32com.client as win32
 import matplotlib.pyplot as plt
 import os
@@ -28,12 +26,36 @@ r_salidas = np.arange(ep_maximo, dtype=float)
 r_total = np.arange(ep_maximo, dtype=float)
 
 # inicializar acciones
-acciones = np.array([[0, 0, 0], [10, 0, 0], [-10, 0, 0], [10, 10, 0],
-    [10, -10, 0], [-10, 10, 0], [-10, -10, 0], [10, 10, 1], [10, 10, -1],
-    [10, -10, 1], [10, -10, -1], [-10, 10, 1], [-10, 10, -1], [-10, -10, 1],
-    [-10, -10, -1], [0, 10, 0], [0, -10, 0], [0, 10, 1], [0, 10, -1],
-    [0, -10, 1], [0, -10, -1], [0, 0, 1], [0, 0, -1], [10, 0, 1], [10, 0, -1],
-    [-10, 0, 1], [-10, 1, -1]]
+acciones = np.array(
+    [
+        [0, 0, 0],
+        [10, 0, 0],
+        [-10, 0, 0],
+        [10, 10, 0],
+        [10, -10, 0],
+        [-10, 10, 0],
+        [-10, -10, 0],
+        [10, 10, 1],
+        [10, 10, -1],
+        [10, -10, 1],
+        [10, -10, -1],
+        [-10, 10, 1],
+        [-10, 10, -1],
+        [-10, -10, 1],
+        [-10, -10, -1],
+        [0, 10, 0],
+        [0, -10, 0],
+        [0, 10, 1],
+        [0, 10, -1],
+        [0, -10, 1],
+        [0, -10, -1],
+        [0, 0, 1],
+        [0, 0, -1],
+        [10, 0, 1],
+        [10, 0, -1],
+        [-10, 0, 1],
+        [-10, 1, -1],
+    ]
 )
 
 # inicializar tabla Q
@@ -54,11 +76,11 @@ S = np.column_stack((e8, e7))  # 625 estados
 # funcion elegir accion
 def elegir_accion(fila):
     p = np.random.random()
-    if p < (1-epsilon):
+    if p < (1 - epsilon):
         i = np.argmax(Q[fila, :])
     else:
         i = np.random.choice(6)
-    return (i)
+    return i
 
 
 # Funcion que retorna la ruta del archivo completa
@@ -66,7 +88,7 @@ def elegir_accion(fila):
 # Retorno: ruta del archivo
 def get_path(madel_name):
     path = os.getcwd() + "\\" + madel_name
-    print(os.getcwd())
+    print((os.getcwd()))
     return path
 
 
@@ -77,7 +99,7 @@ def open_model(madel_name):
     com_obj = win32.Dispatch("Tecnomatix.PlantSimulation.RemoteControl.15.0")
     com_obj.setVisible(True)
     com_obj.loadModel(get_path(madel_name))
-    print("Path model: " + get_path(madel_name))
+    print(("Path model: " + get_path(madel_name)))
     return com_obj
 
 
@@ -92,17 +114,17 @@ def buscar_res(plant_sim, estado):
     b = np.zeros(20)
     c = np.zeros(20)
     for g in range(1, 10):
-        a[g-1] = plant_sim.getValue(".Models.Modelo.transportes[2,%s]" % (g))
+        a[g - 1] = plant_sim.getValue(".Models.Modelo.transportes[2,%s]" % (g))
     for h in range(1, 21):
-        b[h-1] = plant_sim.getValue(".Models.Modelo.buffers[3,%s]" % (h))
-        c[h-1] = plant_sim.getValue(".Models.Modelo.salidas[2,%s]" % (h))
+        b[h - 1] = plant_sim.getValue(".Models.Modelo.buffers[3,%s]" % (h))
+        c[h - 1] = plant_sim.getValue(".Models.Modelo.salidas[2,%s]" % (h))
     d = np.sum(a)
     e = np.sum(b)
     f = np.sum(c)
     r = d * 0.2 + e * 0.3 + f * 0.5
 
     plant_sim.resetSimulation(".Models.Modelo")
-    return(r, d, e, f)
+    return (r, d, e, f)
 
 
 # funcion rl- actualizar estados y matriz Q
@@ -164,10 +186,10 @@ def rl(plant_sim):
             r_b = r_t + v5
             r_s = r_t + v6
             r_tot = r_tot + res1
-        r_transportes[n] = r_t/t_maximo
-        r_buffers[n] = r_b/t_maximo
-        r_salidas[n] = r_s/t_maximo
-        r_total[n] = r_tot/t_maximo
+        r_transportes[n] = r_t / t_maximo
+        r_buffers[n] = r_b / t_maximo
+        r_salidas[n] = r_s / t_maximo
+        r_total[n] = r_tot / t_maximo
         r_episodio[n] = r_acum
 
 
@@ -186,11 +208,11 @@ def plant_simulation():
 
     fig, (ax1, ax2, ax3) = plt.subplots(3, 1, constrained_layout=True)
     ax1.plot(r_transportes, "r-")
-    ax1.set(title='Resultados a minimizar', ylabel='Transportes', ylim=(0, 2))
+    ax1.set(title="Resultados a minimizar", ylabel="Transportes", ylim=(0, 2))
     ax2.plot(r_buffers, "b-")
-    ax2.set(ylabel='Buffers', ylim=(0, 2))
+    ax2.set(ylabel="Buffers", ylim=(0, 2))
     ax3.plot(r_salidas, "g-")
-    ax3.set(xlabel="Numero de episodios", ylabel='Salidas', ylim=(0, 2))
+    ax3.set(xlabel="Numero de episodios", ylabel="Salidas", ylim=(0, 2))
     plt.show()
 
     plt.plot(r_total, "b-")
@@ -201,5 +223,5 @@ def plant_simulation():
     plt.show()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     plant_simulation()
