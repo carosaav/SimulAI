@@ -8,7 +8,7 @@ _Initially the work will focus on the integration of Tecnomatix Plant Simulation
 
 _In the future, it is expected to achieve a library of greater accessibility, allowing the application in various simulation software, as required by the user._
 
-## Autores ✒️
+## Authors ✒️
 
 * **Perez Colo Ivo** - [@ivoperezcolo](https://github.com/IvoPerezColo)
 * **Pirozzo Bernardo** - [@bermpirozzo](https://github.com/BerMPirozzo)
