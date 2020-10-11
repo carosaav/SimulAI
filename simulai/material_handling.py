@@ -1,6 +1,6 @@
 
 
-from .Plant import Plant
+from . import Plant
 import numpy as np
 
 

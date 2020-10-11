@@ -5,29 +5,28 @@ import os
 
 
 class Communication_Interface(object):
-
+    """Integration between the simulation software and library
+    for the application of Artificial Intelligence All functions
+    related to the control of the user's model."""
     def __init__(self, model_name):
         self.model_name = model_name
         self.is_connected = False
         self.plant_simulation = ""
 
-    # Funcion que retorna la ruta del archivo completa
-    # Parametro de entrada: nombre del archivo
-    # Retorno: ruta del archivo
     def get_path_file_model(self):
+        """File path return function. The input parameter is the model name"""
         path = os.getcwd() + "\\" + self.model_name
         return path
 
-    # Funcion que retorna el objeto de conexion
-    # Parametro de entrada: nombre del archivo
-    # Retorno: objeto de conexion
     def connection(self):
+        """Return function of the connection object. Verifies connection
+        between software API and user model."""
         path_file = self.get_path_file_model()
         try:
             self.plant_simulation = win32.Dispatch(
                 "Tecnomatix.PlantSimulation.RemoteControl.15.0")
             self.plant_simulation.loadModel(path_file)
-            print("the connection was successful")
+            print("The connection was successful")
             self.is_connected = True
             return True
         except:
@@ -35,18 +34,21 @@ class Communication_Interface(object):
             return False
 
     def setVisible(self, value):
+        """User-visible simulation"""
         if self.is_connected is True:
             self.plant_simulation.setVisible(value)
         else:
             print("Not connected")
 
     def setValue(self, ref, value):
+        """Data Input"""
         if self.is_connected is True:
             self.plant_simulation.setValue(ref, value)
         else:
             print("Not connected")
 
     def getValue(self, ref):
+        """Data Output"""
         if self.is_connected is True:
             return self.plant_simulation.getValue(ref)
         else:
