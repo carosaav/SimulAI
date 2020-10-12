@@ -80,7 +80,7 @@ def do_setup():
             "Intended Audience :: Education",
             "Intended Audience :: Science/Research",
             "License :: OSI Approved :: MIT License",
-            "Operating System :: Windows",
+            "Operating System :: OS Windows",
             "Programming Language :: Python",
             "Programming Language :: Python :: 3.8",
             "Topic :: Scientific/Engineering"],
