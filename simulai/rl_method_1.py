@@ -1,7 +1,8 @@
 
 
-from .Autonomous_Decision_System import Autonomous_Decision_System
+from autonomous_decision_system import Autonomous_Decision_System
 import numpy as np
+import matplotlib.pyplot as plt
 
 
 class RL_Method_1(Autonomous_Decision_System):
@@ -44,11 +45,11 @@ class RL_Method_1(Autonomous_Decision_System):
     # funcion rl- actualizar estados y matriz Q
     def process(self):
         for n in range(self.ep_maximo):
-            S0 = self.S[12]
+            S0 = self.S[0]
             t = 0
             r_acum = 0
+            res0 = self.subscriber.update(S0)
             while t < self.t_maximo:
-                res0 = self.subscriber.update(S0)
                 # buscar indice k del estado actual
                 for k in range(25):
                     if self.S[k] == S0:
@@ -75,11 +76,19 @@ class RL_Method_1(Autonomous_Decision_System):
                         break
                 # actualizar matriz Q
                 self.Q[k, j] = self.Q[k, j]
-                + self.alfa
-                * (r + self.gamma * np.max(self.Q[z, :]) - self.Q[k, j])
+                + self.alfa * (r + self.gamma * np.max(self.Q[z, :]) - self.Q[k, j])
                 # actualizar parametros
                 t += 1
                 S0 = Snew
+                res0 = res1
                 r_acum = r_acum + r
-                r_medio = r_acum/t
-                self.r_episodio[n] = r_medio
+                self.r_episodio[n] = r_acum
+        return self.r_episodio
+
+    def plot(self):
+        plt.plot(self.r_episodio, "b-")
+        plt.axis([0, self.ep_maximo, 0, self.t_maximo])
+        plt.title("Recompensa acumulada por episodio")
+        plt.xlabel("Numero de episodios")
+        plt.ylabel("R acumulada")
+        plt.show()

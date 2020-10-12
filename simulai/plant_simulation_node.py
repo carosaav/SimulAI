@@ -1,13 +1,13 @@
 
 
-from . import Material_Handling as M_A
-from . import RL_Method_1 as RL
+from material_handling import Material_Handling as M_A
+from rl_method_1 import RL_Method_1 as RL
 
 
 def plant_simulation_node():
 
-    method = RL.RL_Method_1()
-    plant = M_A.Material_Handling(method)
+    method = RL()
+    plant = M_A(method)
     plant.process_simulation()
 
 
