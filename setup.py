@@ -80,15 +80,13 @@ def do_setup():
             "Intended Audience :: Education",
             "Intended Audience :: Science/Research",
             "License :: OSI Approved :: MIT License",
-            "Operating System :: OS Independent",
+            "Operating System :: Windows",
             "Programming Language :: Python",
             "Programming Language :: Python :: 3.8",
-            "Programming Language :: Python :: Implementation :: CPython",
             "Topic :: Scientific/Engineering"],
 
         packages=["simulai"],
-        py_modules=["ez_setup"],
-
+      
         install_requires=REQUIREMENTS)
 
 
