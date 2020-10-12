@@ -1,7 +1,7 @@
 
 
 from abc import ABCMeta, abstractmethod
-from . import Communication_Interface as C_I
+from communication_interface import Communication_Interface as C_I
 
 
 class Plant(metaclass=ABCMeta):
@@ -11,7 +11,7 @@ class Plant(metaclass=ABCMeta):
 
     def connection(self):
         file_name = self.get_file_name_plant()
-        self.connect = C_I.Communication_Interface(file_name)
+        self.connect = C_I(file_name)
         return self.connect.connection()
 
     @abstractmethod

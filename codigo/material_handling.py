@@ -1,6 +1,6 @@
 
 
-from .Plant import Plant
+from plant import Plant
 import numpy as np
 
 
@@ -34,3 +34,4 @@ class Material_Handling(Plant):
         if (self.connection()):
             self.connect.setVisible(True)
             self.method.process()
+            self.method.plot()
