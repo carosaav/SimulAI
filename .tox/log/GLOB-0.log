@@ -1,0 +1,7 @@
+action: GLOB, msg: packaging
+cwd: C:\Users\ivope\Desktop\2020\Doctorado\Curso Diseño de Software\SimulAI\TrabajoFinal
+cmd: 'c:\users\ivope\appdata\local\programs\python\python37-32\python.exe' setup.py sdist --formats=zip --dist-dir 'C:\Users\ivope\Desktop\2020\Doctorado\Curso Diseño de Software\SimulAI\TrabajoFinal\.tox\dist'
+  File "setup.py", line 73
+    url="https://github.com/carosaav/SimulAI",
+      ^
+SyntaxError: invalid syntax

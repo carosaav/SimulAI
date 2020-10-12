@@ -102,9 +102,6 @@ def open_model(madel_name):
     print(("Path model: " + get_path(madel_name)))
     return com_obj
 
-
-
-
 def data_table_names(plant_sim):
     var_list = []
     for vl in range(1,10):
@@ -117,29 +114,28 @@ def data_table_names(plant_sim):
 
 
 
-
 # funcion buscar resultado de la simulacion
 def buscar_res(plant_sim, estado):
     data_table_names(plant_sim)
-    plant_sim.setValue("Models.Model.espera", estado[0])
-    plant_sim.setValue(".Models.Model.stock", estado[1])
-    plant_sim.setValue(".Models.Model.numviajes", estado[2])
-    plant_sim.startSimulation(".Models.Model")
+    plant_sim.setValue(".Models.Modelo.espera", estado[0])
+    plant_sim.setValue(".Models.Modelo.stock", estado[1])
+    plant_sim.setValue(".Models.Modelo.numviajes", estado[2])
+    plant_sim.startSimulation(".Models.Modelo")
 
     a = np.zeros(9)
     b = np.zeros(20)
     c = np.zeros(20)
     for g in range(1, 10):
-        a[g - 1] = plant_sim.getValue(".Models.Model.transportes[2,%s]" % (g))
+        a[g - 1] = plant_sim.getValue(".Models.Modelo.transportes[2,%s]" % (g))
     for h in range(1, 21):
-        b[h - 1] = plant_sim.getValue(".Models.Model.buffers[3,%s]" % (h))
-        c[h - 1] = plant_sim.getValue(".Models.Model.salidas[2,%s]" % (h))
+        b[h - 1] = plant_sim.getValue(".Models.Modelo.buffers[3,%s]" % (h))
+        c[h - 1] = plant_sim.getValue(".Models.Modelo.salidas[2,%s]" % (h))
     d = np.sum(a)
     e = np.sum(b)
     f = np.sum(c)
     r = d * 0.2 + e * 0.3 + f * 0.5
 
-    plant_sim.resetSimulation(".Models.Model")
+    plant_sim.resetSimulation(".Models.Modelo")
     return (r, d, e, f)
 
 
