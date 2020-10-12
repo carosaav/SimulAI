@@ -1,7 +1,7 @@
 
 
 from abc import ABCMeta, abstractmethod
-from . import Communication_Interface as C_I
+from communication_interface import Communication_Interface as C_I
 
 
 class Plant(metaclass=ABCMeta):
