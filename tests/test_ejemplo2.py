@@ -105,18 +105,17 @@ def open_model(madel_name):
 def data_table_names(plant_sim):
     var_list = []
     for vl in range(1,10):
-        if plant_sim.Models.Model.Class == "InformationFlow:DataTable":
-            var_list.append(plant_sim.Models.Model.Name)
+        if plant_sim.Models.Modelo.Class == "InformationFlow:DataTable":
+            var_list.append(plant_sim.Models.Modelo.Name)
         else:
             break
     print(var_list)
-#Models = ".Models.Model.InformationFlow.DataTable"
+#Models = ".Models.Modelo.InformationFlow.DataTable"
 
 
 
 # funcion buscar resultado de la simulacion
 def buscar_res(plant_sim, estado):
-    data_table_names(plant_sim)
     plant_sim.setValue(".Models.Modelo.espera", estado[0])
     plant_sim.setValue(".Models.Modelo.stock", estado[1])
     plant_sim.setValue(".Models.Modelo.numviajes", estado[2])
