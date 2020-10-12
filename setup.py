@@ -23,8 +23,8 @@
 import os
 import pathlib
 
-from ez_setup import use_setuptools
-use_setuptools()
+#from ez_setup import use_setuptools
+#use_setuptools()
 
 from setuptools import setup
 
@@ -33,7 +33,7 @@ from setuptools import setup
 # CONSTANTS
 # =============================================================================
 
-REQUIREMENTS = ["numpy", "win32", "matplotlib"]
+REQUIREMENTS = ["numpy", "pywin32", "matplotlib"]
 
 PATH = pathlib.Path(os.path.abspath(os.path.dirname(__file__)))
 
@@ -56,7 +56,7 @@ DESCRIPTION = "SimulAI - Simulation + Artificial Intelligence"
 
 def do_setup():
     setup(
-        name="simlai",
+        name="simulai",
         version=VERSION,
         description=DESCRIPTION,
         long_description=LONG_DESCRIPTION,
@@ -69,7 +69,7 @@ def do_setup():
         author_email=[
         	"ivoperezcolo@gmail.com",
         	"ber_pirozzo@hotmail.com.ar",
-        	"carosaavedrasueldo@gmail.com"]
+        	"carosaavedrasueldo@gmail.com"],
         url="https://github.com/carosaav/SimulAI",
         license="MIT",
 
@@ -80,7 +80,7 @@ def do_setup():
             "Intended Audience :: Education",
             "Intended Audience :: Science/Research",
             "License :: OSI Approved :: MIT License",
-            "Operating System :: Windows",
+            "Operating System :: OS Windows",
             "Programming Language :: Python",
             "Programming Language :: Python :: 3.8",
             "Topic :: Scientific/Engineering"],

@@ -105,7 +105,7 @@ def open_model(madel_name):
 
 # funcion buscar resultado de la simulacion
 def buscar_res(plant_sim, estado):
-    plant_sim.setValue(".Models.Modelo.espera", estado[0])
+    plant_sim.setValue("Models.Modelo.espera", estado[0])
     plant_sim.setValue(".Models.Modelo.stock", estado[1])
     plant_sim.setValue(".Models.Modelo.numviajes", estado[2])
     plant_sim.startSimulation(".Models.Modelo")
