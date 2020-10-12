@@ -105,13 +105,12 @@ def open_model(madel_name):
 def data_table_names(plant_sim):
     var_list = []
     for vl in range(1,10):
-        if plant_sim.Models.Modelo.Class == "InformationFlow:DataTable":
+        if plant_sim.Models.Modelo.Class.Value == "InformationFlow.DataTable":
             var_list.append(plant_sim.Models.Modelo.Name)
         else:
-            break
+        	break
     print(var_list)
-#Models = ".Models.Modelo.InformationFlow.DataTable"
-
+#Models = ".Models.Model.InformationFlow.DataTable"
 
 
 # funcion buscar resultado de la simulacion
@@ -207,6 +206,7 @@ def rl(plant_sim):
 def plant_simulation():
     model = "MaterialHandling.spp"
     plant_sim = open_model(model)
+    data_table_names(plant_sim)
     rl(plant_sim)
 
     # resultados
