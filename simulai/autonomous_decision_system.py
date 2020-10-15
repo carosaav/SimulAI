@@ -1,6 +1,8 @@
 
 
 from abc import ABCMeta, abstractmethod
+import numpy as np
+import matplotlib.pyplot as plt
 
 
 class Autonomous_Decision_System(metaclass=ABCMeta):
@@ -13,3 +15,91 @@ class Autonomous_Decision_System(metaclass=ABCMeta):
     @abstractmethod
     def process(self):
         pass
+
+class Q_learning(Autonomous_Decision_System):
+
+    def __init__(self):
+        Autonomous_Decision_System.__init__(self)
+
+        # reinforcement learning parameters
+        self.alfa = 0.10
+        self.gamma = 0.90
+        self.epsilon = 0.10
+
+        # number of episodes
+        self.episodes_max = 5
+
+        # number of steps
+        self.steps_max = 10
+
+        # initialize reward per episode
+        self.r_episode = np.arange(self.episodes_max, dtype=float)
+
+        # initialize actions
+        self.actions = np.array([10, -10])
+
+        # initialize Q table
+        self.Q = np.zeros((25, 2))
+
+        # initialize states
+        self.S = np.arange(60, 310, 10)
+
+    # choose action
+    def choose_action(self, row):
+        p = np.random.random()
+        if p < (1-self.epsilon):
+            i = np.argmax(self.Q[row, :])
+        else:
+            i = np.random.choice(2)
+        return (i)
+
+    # reinforcement learning process
+    def process(self):
+        for n in range(self.episodes_max):
+            S0 = self.S[0]
+            t = 0
+            r_acum = 0
+            res0 = self.subscriber.update(S0)
+            while t < self.steps_max:
+                # find k index of current state
+                for k in range(25):
+                    if self.S[k] == S0:
+                        break
+                # choose action from row k
+                j = self.choose_action(k)
+                # update state
+                Snew = S0 + self.actions[j]
+                # limites
+                if Snew > 300:
+                    Snew -= 10
+                elif Snew < 60:
+                    Snew += 10
+                # update simulation result
+                res1 = self.subscriber.update(Snew)
+                # reward
+                if res1 < res0:
+                    r = 1
+                else:
+                    r = 0
+                # find index of new state
+                for z in range(25):
+                    if self.S[z] == Snew:
+                        break
+                # update Q table
+                self.Q[k, j] = self.Q[k, j]
+                + self.alfa * (r + self.gamma * np.max(self.Q[z, :]) - self.Q[k, j])
+                # update parameters
+                t += 1
+                S0 = Snew
+                res0 = res1
+                r_acum = r_acum + r
+                self.r_episode[n] = r_acum
+        return self.r_episode
+
+    def plot(self):
+        plt.plot(self.r_episode, "b-")
+        plt.axis([0, self.episodes_max, 0, self.steps_max])
+        plt.title("Accumulated reward per episode")
+        plt.xlabel("Number of episodes")
+        plt.ylabel("Accumulated reward")
+        plt.show()

@@ -11,23 +11,23 @@ class Communication_Interface(object):
         self.is_connected = False
         self.plant_simulation = ""
 
-    # Funcion que retorna la ruta del archivo completa
-    # Parametro de entrada: nombre del archivo
-    # Retorno: ruta del archivo
+    # Function that returns the complete file path
+    # Input parameter: file name
+    # Return: file path
     def get_path_file_model(self):
         path = os.getcwd() + "\\" + self.model_name
         return path
 
-    # Funcion que retorna el objeto de conexion
-    # Parametro de entrada: nombre del archivo
-    # Retorno: objeto de conexion
+    # Function that returns the connection object
+    # Input parameter: file name
+    # Return: connection object
     def connection(self):
         path_file = self.get_path_file_model()
         try:
             self.plant_simulation = win32.Dispatch(
                 "Tecnomatix.PlantSimulation.RemoteControl.15.0")
             self.plant_simulation.loadModel(path_file)
-            print("the connection was successful")
+            print("The connection was successful")
             self.is_connected = True
             return True
         except:

@@ -1,13 +1,13 @@
 
 
-from material_handling import Material_Handling as M_A
-from rl_method_1 import RL_Method_1 as RL
+import plant as pl
+import autonomous_decision_system as ads
 
 
 def plant_simulation_node():
 
-    method = RL()
-    plant = M_A(method)
+    method = ads.Q_learning()
+    plant = pl.Plant_1(method)
     plant.process_simulation()
 
 
