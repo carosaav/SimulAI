@@ -27,13 +27,16 @@ class Plant(metaclass=ABCMeta):
     def update(self, data):
         pass
 
+
 class Plant_1(Plant):
 
-    def __init__(self, method):
+    def __init__(self, method, filename):
         Plant.__init__(self, method)
 
+        self.filename = filename
+
     def get_file_name_plant(self):
-        return "MaterialHandling.spp"
+        return self.filename
 
     def update(self, data):
         self.connect.setValue(".Models.Modelo.espera", data)

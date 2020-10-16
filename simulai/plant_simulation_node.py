@@ -4,10 +4,13 @@ import plant as pl
 import autonomous_decision_system as ads
 
 
-def plant_simulation_node():
+METHODS = {"Q_learning": ads.Q_learning()}
 
-    method = ads.Q_learning()
-    plant = pl.Plant_1(method)
+
+def plant_simulation_node(m="Q_learning", filename="MaterialHandling.spp"):
+
+    method = METHODS[m]
+    plant = pl.Plant_1(method, filename)
     plant.process_simulation()
 
 

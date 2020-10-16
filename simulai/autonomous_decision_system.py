@@ -16,21 +16,35 @@ class Autonomous_Decision_System(metaclass=ABCMeta):
     def process(self):
         pass
 
-class Q_learning(Autonomous_Decision_System):
 
-    def __init__(self):
+class Q_learning(Autonomous_Decision_System):
+    """This class implements reinforcement learning using the well-known
+    tabular Q-learning algorithm with a epsilon-greedy exploration strategy.
+    The alpha, gamma and epsilon parameters are given by default, as well as
+    the number of episodes and steps of the algorithm, what the user can adapt
+    to his situation.
+    The Q table has a maximum of 625 rows, that is, up to 625 states are
+    supported. These states are made up of 1 to 5 variables of the Tecnomatix
+    Plant Simulation.
+    Actions also depend on the chosen variables and their steps.
+    The reward function depends on the results defined in the respective plant
+    class.
+    """
+
+    def __init__(self, alfa=0.10, gamma=0.90, epsilon=0.10, episodes_max=100,
+                steps_max=100):
         Autonomous_Decision_System.__init__(self)
 
         # reinforcement learning parameters
-        self.alfa = 0.10
-        self.gamma = 0.90
-        self.epsilon = 0.10
+        self.alfa = alfa
+        self.gamma = gamma
+        self.epsilon = epsilon
 
         # number of episodes
-        self.episodes_max = 5
+        self.episodes_max = episodes_max
 
         # number of steps
-        self.steps_max = 10
+        self.steps_max = steps_max
 
         # initialize reward per episode
         self.r_episode = np.arange(self.episodes_max, dtype=float)
@@ -38,11 +52,11 @@ class Q_learning(Autonomous_Decision_System):
         # initialize actions
         self.actions = np.array([10, -10])
 
-        # initialize Q table
-        self.Q = np.zeros((25, 2))
-
         # initialize states
         self.S = np.arange(60, 310, 10)
+
+        # initialize Q table
+        self.Q = np.zeros((self.S.shape[0], self.actions.shape[0]))
 
     # choose action
     def choose_action(self, row):
