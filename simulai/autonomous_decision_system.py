@@ -24,7 +24,7 @@ class Q_learning(Autonomous_Decision_System):
     the number of episodes and steps of the algorithm, what the user can adapt
     to his situation.
     The Q table has a maximum of 625 rows, that is, up to 625 states are
-    supported. These states are made up of 1 to 5 variables of the Tecnomatix
+    supported. These states are made up of 1 to 4 variables of the Tecnomatix
     Plant Simulation.
     Actions also depend on the chosen variables and their steps.
     The reward function depends on the results defined in the respective plant
@@ -32,7 +32,7 @@ class Q_learning(Autonomous_Decision_System):
     """
 
     def __init__(self, alfa=0.10, gamma=0.90, epsilon=0.10, episodes_max=100,
-                steps_max=100):
+                steps_max=100, actions, S):
         Autonomous_Decision_System.__init__(self)
 
         # reinforcement learning parameters
@@ -50,10 +50,10 @@ class Q_learning(Autonomous_Decision_System):
         self.r_episode = np.arange(self.episodes_max, dtype=float)
 
         # initialize actions
-        self.actions = np.array([10, -10])
+        self.actions = actions
 
         # initialize states
-        self.S = np.arange(60, 310, 10)
+        self.S = S
 
         # initialize Q table
         self.Q = np.zeros((self.S.shape[0], self.actions.shape[0]))
