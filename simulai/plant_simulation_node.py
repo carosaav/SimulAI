@@ -76,30 +76,32 @@ class Plant(metaclass=ABCMeta):
 
 class Plant_1(Plant):
 
-    def __init__(self, method, filename):
+    def __init__(self, method, filename, v_i, v_o):
         Plant.__init__(self, method)
 
         self.filename = filename
+        self.v_i = v_i
+        self.v_o = v_o
 
     def get_file_name_plant(self):
         return self.filename
 
     def update(self, data):
-        self.connect.setValue(".Models.Modelo.espera", data)
-        self.connect.startSimulation(".Models.Modelo")
+        for x in range(len(self.v_i)):
+            self.connect.setValue(self.v_i[x].path, data[x])
 
-        a = np.zeros(20)
-        b = np.zeros(20)
-        for h in range(1, 21):
-            a[h-1] = self.connect.getValue(
-                ".Models.Modelo.buffers[3,%s]" % (h))
-            b[h-1] = self.connect.getValue(
-                ".Models.Modelo.salidas[2,%s]" % (h))
-        c = np.sum(a)
-        d = np.sum(b)
-        r = c*0.5+d*0.5
+        self.connect.startSimulation(".Models.Modelo")  # VER pasar path
 
-        self.connect.resetSimulation(".Models.Modelo")
+        r = 0
+        for k in range(len(self.v_o)):
+            a_k = np.zeros(self.v_o[k].num_rows)
+            for g in range(1, self.v_o[k].num_rows + 1):
+                a_k[g - 1] = self.connect.getValue(
+                    self.v_o[k].path[self.v_o[k].column, g])
+            b_k = np.sum(a_k)
+            r += b_k * (1 / len(self.v_o))
+
+        self.connect.resetSimulation(".Models.Modelo")  # VER
         return r
 
     def process_simulation(self):
@@ -140,9 +142,11 @@ class Q_learning(Autonomous_Decision_System):
     class.
     """
 
-    def __init__(self, alfa=0.10, gamma=0.90, epsilon=0.10, episodes_max=100,
-                steps_max=100, *args):
+    def __init__(self, v_i, alfa=0.10, gamma=0.90, epsilon=0.10,
+                 episodes_max=100, steps_max=100):
         Autonomous_Decision_System.__init__(self)
+
+        self.v_i = v_i
 
         # reinforcement learning parameters
         self.alfa = alfa
@@ -158,51 +162,39 @@ class Q_learning(Autonomous_Decision_System):
         # initialize reward per episode
         self.r_episode = np.arange(self.episodes_max, dtype=float)
 
-        # save variables
-        self.var = args
-
-    # # initialize states REVISAR
-    # def ini_states(self):
-    #     for i, v in enumerate(self.var):
-    #         s_i = np.arange({v}.lower_limit, {v}.upperlimit + {v}.step, {v}.step)
-    #     if len(self.var) == 1:
-    #         self.S = np.array([s_0])
-    #     if len(self.var) == 2:
-    #         a = np.repeat(s_0, s_1.shape[0])
-    #         b = np.tile(s_1, s_0.shape[0])
-    #         self.S = np.column_stack((a, b))
-    #     if len(self.var) == 3:
-    #         a = np.repeat(s_0, s_1.shape[0] * s_2.shape[0])
-    #         b = np.tile(s_1, s_0.shape[0] * s_2.shape[0])
-    #         c = np.repeat(s_3, s_2.shape[0])
-    #         d = np.tile(c, s_0.shape[0])
-    #         e = np.column_stack((a, b))
-    #         self.S = np.column_stack((e, d))
-    #     if len(self.var) == 4:
-    #         self.S = 
-
-    # # initialize actions and Q table REVISAR
-    # def ini_actions_and_Q(self):
-    #     for i, v in enumerate(self.var):
-    #         a_i = np.array([-{v}.step, 0, {v}.step])
-    #     if len(self.var) == 1:
-    #         self.actions = np.array([a_0])
-    #     if len(self.var) == 2:
-    #         a = np.repeat(a_0, a_1.shape[0])
-    #         b = np.tile(a_1, a_0.shape[0])
-    #         self.actions = np.column_stack((a, b))
-    #     if len(self.var) == 3:
-    #         a = np.repeat(a_0, a_1.shape[0] * a_2.shape[0])
-    #         b = np.tile(a_1, a_0.shape[0] * a_2.shape[0])
-    #         c = np.repeat(a_3, a_2.shape[0])
-    #         d = np.tile(c, a_0.shape[0])
-    #         e = np.column_stack((a, b))
-    #         self.actions = np.column_stack((e, d))
-    #     if len(self.var) == 4:
-    #         self.S = 
-
-    #     # initialize Q table
-    #     self.Q = np.zeros((self.S.shape[0], self.actions.shape[0]))
+    # initialize states, actions and Q table
+    def ini_saq(self):
+        for x in range(len(self.v_i)):
+            self.s_x = np.arange(self.v_i[x].lower_limit,
+                                 self.v_i[x].upperlimit + self.v_i[x].step,
+                                 self.v_i[x].step)
+            self.a_x = np.array([-self.v_i[x].step, 0, self.v_i[x].step])
+            if len(self.v_i) == 1:
+                self.S = np.array([self.s_0])
+                self.actions = np.array([self.a_0])
+            if len(self.v_i) == 2:
+                a = np.repeat(self.s_0, self.s_1.shape[0])
+                b = np.tile(self.s_1, self.s_0.shape[0])
+                self.S = np.column_stack((a, b))
+                c = np.repeat(self.a_0, self.a_1.shape[0])
+                d = np.tile(self.a_1, self.a_0.shape[0])
+                self.actions = np.column_stack((c, d))
+            if len(self.v_i) == 3:
+                a = np.repeat(self.s_0, self.s_1.shape[0] * self.s_2.shape[0])
+                b = np.tile(self.s_1, self.s_0.shape[0] * self.s_2.shape[0])
+                c = np.repeat(self.s_2, self.s_1.shape[0])
+                d = np.tile(c, self.s_0.shape[0])
+                e = np.column_stack((a, b))
+                self.S = np.column_stack((e, d))
+                f = np.repeat(self.a_0, self.a_1.shape[0] * self.a_2.shape[0])
+                g = np.tile(self.a_1, self.a_0.shape[0] * self.a_2.shape[0])
+                h = np.repeat(self.a_2, self.a_1.shape[0])
+                i = np.tile(h, self.a_0.shape[0])
+                j = np.column_stack((f, g))
+                self.actions = np.column_stack((j, i))
+            # if len(self.v_i) == 4:
+            #     self.S =
+        self.Q = np.zeros((self.S.shape[0], self.actions.shape[0]))
 
     # choose action
     def choose_action(self, row):
@@ -270,16 +262,15 @@ class Q_learning(Autonomous_Decision_System):
 # ============================================================================
 
 
-PLANTS = {"Plant_1": Plant_1()}
-METHODS = {"Q_learning": Q_learning()}
+# PLANTS = {"Plant_1": Plant_1()}
+# METHODS = {"Q_learning": Q_learning()}
 
 
-def plant_simulation_node(m, p, filename, *args):
+def plant_simulation_node(pl):
 
-    method = METHODS[m](args)
-    plant = PLANTS[p](method, filename)
+    plant = pl
     plant.process_simulation()
 
 
-if __name__ == '__main__':
-    plant_simulation_node()
+# if __name__ == '__main__':
+#     plant_simulation_node()
