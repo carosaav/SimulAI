@@ -11,7 +11,7 @@ class Plant(metaclass=ABCMeta):
 
     def connection(self):
         file_name = self.get_file_name_plant()
-        self.connect = C_I.Communication_Interface(file_name)
+        self.connect = C_I(file_name)
         return self.connect.connection()
 
     @abstractmethod

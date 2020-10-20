@@ -5,19 +5,19 @@ import numpy as np
 
 class RL_Method_1(Autonomous_Decision_System):
 
-    def __init__(self):
+    def __init__(self, alfa, gamma, epsilon,ep,t):
         Autonomous_Decision_System.__init__(self)
 
         # Parámetros de reinforcement learning
-        self.alfa = 0.10
-        self.gamma = 0.90
-        self.epsilon = 0.10
+        self.alfa = alfa
+        self.gamma = gamma
+        self.epsilon = epsilon
 
         # Iumero de episodios
-        self.ep_maximo = 5
+        self.ep_maximo = ep
 
         # numero de pasos
-        self.t_maximo = 10
+        self.t_maximo = t
 
         # Inicializar recompensa por episodio
         self.r_episodio = np.arange(self.ep_maximo, dtype=float)
@@ -82,23 +82,31 @@ class RL_Method_1(Autonomous_Decision_System):
                 r_acum = r_acum + r
                 r_medio = r_acum / t
                 self.r_episodio[n] = r_medio
+    def plot(self):
+        plt.plot(self.r_episodio, "b-")
+        plt.plot(x, "b-")
+        plt.axis([0, self.ep_maximo, 0, self.t_maximo])
+        plt.title("Recompensa acumulada por episodio")
+        plt.xlabel("Numero de episodios")
+        plt.ylabel("R acumulada")
+        plt.show()
 
 # Algoritmo Sarsa
-class RL_Method_2(Autonomous_Decision_System):
+class RL_Method_2(Autonomous_Decision_System, alfa, gamma, epsilon,ep,t):
 
     def __init__(self):
         Autonomous_Decision_System.__init__(self)
 
         # Parámetros de Reinforcement Learning
-        self.alfa = 0.10
-        self.gamma = 0.90
-        self.epsilon = 0.10
+        self.alfa = alfa
+        self.gamma = gamma
+        self.epsilon = epsilon
 
         # Número de episodios
-        self.ep_maximo = 5
+        self.ep_maximo = ep
 
         # Número de pasos
-        self.t_maximo = 10
+        self.t_maximo = t
 
         # Inicializa la recompensa por episodio
         self.r_episodio = np.arange(self.ep_maximo, dtype=float)
@@ -123,6 +131,7 @@ class RL_Method_2(Autonomous_Decision_System):
 
     # Actualizar estados y matriz Q
     def process(self):
+        k_anterior = 0
         for n in range(self.ep_maximo):
             S0 = self.S[12]
             t = 0
@@ -134,7 +143,7 @@ class RL_Method_2(Autonomous_Decision_System):
                     if self.S[k] == S0:
                         break
                 # Elegir accion de la fila k
-                j_anterior = j
+                j_anterior = self.elegir_accion(k_anterior)
                 j = self.elegir_accion(k)
                 # Actualizar estado
                 Snew = S0 + self.acciones[j]
@@ -164,3 +173,11 @@ class RL_Method_2(Autonomous_Decision_System):
                 r_acum = r_acum + r
                 r_medio = r_acum / t
                 self.r_episodio[n] = r_medio
+
+    def plot(self):
+        plt.plot(self.r_episodio, "b-")
+        plt.axis([0, self.ep_maximo, 0, self.t_maximo])
+        plt.title("Recompensa acumulada por episodio")
+        plt.xlabel("Numero de episodios")
+        plt.ylabel("R acumulada")
+        plt.show()
