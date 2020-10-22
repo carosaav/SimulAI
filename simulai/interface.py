@@ -14,7 +14,7 @@ import os
 # ============================================================================
 
 
-class Communication_Interface(object):
+class Com(object):
 
     def __init__(self, model_name):
         self.model_name = model_name

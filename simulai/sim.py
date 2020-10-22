@@ -6,9 +6,8 @@
 
 
 from abc import ABCMeta, abstractmethod
-from communication_interface import Communication_Interface as C_I
+from .interface import Com
 import numpy as np
-import matplotlib.pyplot as plt
 
 
 # ============================================================================
@@ -58,7 +57,7 @@ class Plant(metaclass=ABCMeta):
 
     def connection(self):
         file_name = self.get_file_name_plant()
-        self.connect = C_I(file_name)
+        self.connect = Com(file_name)
         return self.connect.connection()
 
     @abstractmethod
@@ -74,41 +73,41 @@ class Plant(metaclass=ABCMeta):
         pass
 
 
-class Plant_1(Plant):
+class Plant1(Plant):
 
-    def __init__(self, method, filename, v_i, v_o):
+    def __init__(self, method, v_i, v_o, filename, modelname="Model"):
         Plant.__init__(self, method)
 
-        self.filename = filename
         self.v_i = v_i
         self.v_o = v_o
+        self.filename = filename
+        self.modelname = modelname
 
     def get_file_name_plant(self):
         return self.filename
 
     def update(self, data):
-        for x in range(len(self.v_i)):
-            self.connect.setValue(self.v_i[x].path, data[x])
+        for idx, x in enumerate(self.v_i):
+            self.connect.setValue(x.path, data[idx])
 
-        self.connect.startSimulation(".Models.Modelo")  # VER pasar path
+        self.connect.startSimulation(".Models.{}".format(self.modelname))
 
         r = 0
-        for k in range(len(self.v_o)):
-            a_k = np.zeros(self.v_o[k].num_rows)
-            for g in range(1, self.v_o[k].num_rows + 1):
-                a_k[g - 1] = self.connect.getValue(
-                    self.v_o[k].path[self.v_o[k].column, g])
-            b_k = np.sum(a_k)
-            r += b_k * (1 / len(self.v_o))
+        for idx, x in enumerate(self.v_o):
+            a_idx = np.zeros(x.num_rows)
+            for h in range(1, x.num_rows + 1):
+                a_idx[h - 1] = self.connect.getValue(
+                    x.path + str([x.column, h]))
+            b_idx = np.sum(a_idx)
+            r += b_idx / len(self.v_o)
 
-        self.connect.resetSimulation(".Models.Modelo")  # VER
+        self.connect.resetSimulation(".Models.{}".format(self.modelname))
         return r
 
     def process_simulation(self):
         if (self.connection()):
             self.connect.setVisible(True)
             self.method.process()
-            self.method.plot()
 
 
 # ============================================================================
@@ -116,7 +115,7 @@ class Plant_1(Plant):
 # ============================================================================
 
 
-class Autonomous_Decision_System(metaclass=ABCMeta):
+class AutonomousDecisionSystem(metaclass=ABCMeta):
     def __init__(self):
         self.method = ""
 
@@ -128,7 +127,7 @@ class Autonomous_Decision_System(metaclass=ABCMeta):
         pass
 
 
-class Q_learning(Autonomous_Decision_System):
+class Qlearning(AutonomousDecisionSystem):
     """This class implements reinforcement learning using the well-known
     tabular Q-learning algorithm with a epsilon-greedy exploration strategy.
     The alpha, gamma and epsilon parameters are given by default, as well as
@@ -144,7 +143,7 @@ class Q_learning(Autonomous_Decision_System):
 
     def __init__(self, v_i, alfa=0.10, gamma=0.90, epsilon=0.10,
                  episodes_max=100, steps_max=100):
-        Autonomous_Decision_System.__init__(self)
+        AutonomousDecisionSystem.__init__(self)
 
         self.v_i = v_i
 
@@ -162,39 +161,46 @@ class Q_learning(Autonomous_Decision_System):
         # initialize reward per episode
         self.r_episode = np.arange(self.episodes_max, dtype=float)
 
+    # arrays for states and actions
+    def arrays(self):
+        self.s = []
+        self.a = []
+        for idx, x in enumerate(self.v_i):
+            self.s_idx = np.arange(x.lower_limit,
+                                   x.upper_limit + x.step,
+                                   x.step)
+            self.a_idx = np.array([-x.step, 0, x.step])
+            self.s.append(self.s_idx)
+            self.a.append(self.a_idx)
+        return self.s, self.a
+
     # initialize states, actions and Q table
     def ini_saq(self):
-        for x in range(len(self.v_i)):
-            self.s_x = np.arange(self.v_i[x].lower_limit,
-                                 self.v_i[x].upperlimit + self.v_i[x].step,
-                                 self.v_i[x].step)
-            self.a_x = np.array([-self.v_i[x].step, 0, self.v_i[x].step])
-            if len(self.v_i) == 1:
-                self.S = np.array([self.s_0])
-                self.actions = np.array([self.a_0])
-            if len(self.v_i) == 2:
-                a = np.repeat(self.s_0, self.s_1.shape[0])
-                b = np.tile(self.s_1, self.s_0.shape[0])
-                self.S = np.column_stack((a, b))
-                c = np.repeat(self.a_0, self.a_1.shape[0])
-                d = np.tile(self.a_1, self.a_0.shape[0])
-                self.actions = np.column_stack((c, d))
-            if len(self.v_i) == 3:
-                a = np.repeat(self.s_0, self.s_1.shape[0] * self.s_2.shape[0])
-                b = np.tile(self.s_1, self.s_0.shape[0] * self.s_2.shape[0])
-                c = np.repeat(self.s_2, self.s_1.shape[0])
-                d = np.tile(c, self.s_0.shape[0])
-                e = np.column_stack((a, b))
-                self.S = np.column_stack((e, d))
-                f = np.repeat(self.a_0, self.a_1.shape[0] * self.a_2.shape[0])
-                g = np.tile(self.a_1, self.a_0.shape[0] * self.a_2.shape[0])
-                h = np.repeat(self.a_2, self.a_1.shape[0])
-                i = np.tile(h, self.a_0.shape[0])
-                j = np.column_stack((f, g))
-                self.actions = np.column_stack((j, i))
-            # if len(self.v_i) == 4:
-            #     self.S =
+        self.arrays()
+        if len(self.v_i) == 1:
+            self.S = self.s[0]
+            self.actions = self.a[0]
+        if len(self.v_i) == 2:
+            self.S = np.column_stack((
+                np.repeat(self.s[0], self.s[1].shape[0]),
+                np.tile(self.s[1], self.s[0].shape[0])))
+            self.actions = np.column_stack((
+                np.repeat(self.a[0], self.a[1].shape[0]),
+                np.tile(self.a[1], self.a[0].shape[0])))
+        if len(self.v_i) == 3:
+            b = np.repeat(self.s[0], self.s[1].shape[0] * self.s[2].shape[0])
+            c = np.tile(self.s[1], self.s[0].shape[0] * self.s[2].shape[0])
+            d = np.repeat(self.s[2], self.s[1].shape[0])
+            self.S = np.column_stack((np.column_stack((b, c)),
+                                      np.tile(d, self.s[0].shape[0])))
+            f = np.repeat(self.a[0], self.a[1].shape[0] * self.a[2].shape[0])
+            g = np.tile(self.a[1], self.a[0].shape[0] * self.a[2].shape[0])
+            h = np.repeat(self.a[2], self.a[1].shape[0])
+            self.actions = np.column_stack((np.column_stack((f, g)),
+                                            np.tile(h, self.a[0].shape[0])))
+        # if len(self.v_i) == 4:
         self.Q = np.zeros((self.S.shape[0], self.actions.shape[0]))
+        return self.S, self.actions, self.Q
 
     # choose action
     def choose_action(self, row):
@@ -202,11 +208,12 @@ class Q_learning(Autonomous_Decision_System):
         if p < (1-self.epsilon):
             i = np.argmax(self.Q[row, :])
         else:
-            i = np.random.choice(2)
+            i = np.random.choice(self.actions.shape[0])
         return (i)
 
     # reinforcement learning process
     def process(self):
+        self.ini_saq()
         for n in range(self.episodes_max):
             S0 = self.S[0]
             t = 0
@@ -214,18 +221,20 @@ class Q_learning(Autonomous_Decision_System):
             res0 = self.subscriber.update(S0)
             while t < self.steps_max:
                 # find k index of current state
-                for k in range(25):
-                    if self.S[k] == S0:
-                        break
+                for k in range(self.S.shape[0]):
+                    for i in range(len(self.v_i)):
+                        if self.S[k][i] == S0[i]:
+                            break
                 # choose action from row k
                 j = self.choose_action(k)
                 # update state
                 Snew = S0 + self.actions[j]
                 # limites
-                if Snew > 300:
-                    Snew -= 10
-                elif Snew < 60:
-                    Snew += 10
+                for idx, x in enumerate(self.v_i):
+                    if Snew[idx] > x.upper_limit:
+                        Snew[idx] -= x.step
+                    elif Snew[idx] < x.lower_limit:
+                        Snew[idx] += x.step
                 # update simulation result
                 res1 = self.subscriber.update(Snew)
                 # reward
@@ -234,12 +243,14 @@ class Q_learning(Autonomous_Decision_System):
                 else:
                     r = 0
                 # find index of new state
-                for z in range(25):
-                    if self.S[z] == Snew:
-                        break
+                for z in range(self.S.shape[0]):
+                    for i in range(len(self.v_i)):
+                        if self.S[z][i] == Snew[i]:
+                            break
                 # update Q table
                 self.Q[k, j] = self.Q[k, j]
-                + self.alfa * (r + self.gamma * np.max(self.Q[z, :]) - self.Q[k, j])
+                + self.alfa * (r + self.gamma * np.max(self.Q[z, :])
+                               - self.Q[k, j])
                 # update parameters
                 t += 1
                 S0 = Snew
@@ -248,29 +259,13 @@ class Q_learning(Autonomous_Decision_System):
                 self.r_episode[n] = r_acum
         return self.r_episode
 
-    def plot(self):
-        plt.plot(self.r_episode, "b-")
-        plt.axis([0, self.episodes_max, 0, self.steps_max])
-        plt.title("Accumulated reward per episode")
-        plt.xlabel("Number of episodes")
-        plt.ylabel("Accumulated reward")
-        plt.show()
-
 
 # ============================================================================
 # MAIN
 # ============================================================================
 
 
-# PLANTS = {"Plant_1": Plant_1()}
-# METHODS = {"Q_learning": Q_learning()}
-
-
-def plant_simulation_node(pl):
+def simulation_node(pl):
 
     plant = pl
     plant.process_simulation()
-
-
-# if __name__ == '__main__':
-#     plant_simulation_node()
