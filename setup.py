@@ -33,7 +33,7 @@ from setuptools import setup
 # CONSTANTS
 # =============================================================================
 
-REQUIREMENTS = ["numpy", "pywin32", "matplotlib"]
+REQUIREMENTS = ["numpy", "pywin32"]
 
 PATH = pathlib.Path(os.path.abspath(os.path.dirname(__file__)))
 
