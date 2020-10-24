@@ -37,10 +37,10 @@ REQUIREMENTS = ["numpy", "pywin32", "matplotlib"]
 
 PATH = pathlib.Path(os.path.abspath(os.path.dirname(__file__)))
 
-with open(PATH / "README.md") as fp:
+with open(PATH / "README.md", encoding="utf-8") as fp:
     LONG_DESCRIPTION = fp.read()
 
-with open(PATH / "simulai" / "__init__.py") as fp:
+with open(PATH / "simulai" / "__init__.py", encoding="utf-8") as fp:
     for line in fp.readlines():
         if line.startswith("__version__ = "):
             VERSION = line.split("=", 1)[-1].replace('"', '').strip()
