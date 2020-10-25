@@ -31,6 +31,7 @@ class Com(object):
     # Function that returns the connection object
     # Input parameter: file name
     # Return: connection object
+    
     def connection(self):
         path_file = self.get_path_file_model()
         try:
@@ -168,4 +169,16 @@ class Com(object):
         if self.is_connected is True:
             self.plant_simulation.TransferModel(value)
         else:
-            print("Not connected")
+            raise ConnectError("Not connected")
+
+class connecterror(object):
+
+    def __init__(self, f):
+    	self.f = f
+    	self.name = f.__name__
+
+    def __call__(self, *args, **kwargs):
+	    if self.is_connected is True:
+	    	self.f(*args, **kwargs)
+	    else:
+	    	raise ConnectionError("Not connected:", self.name)
