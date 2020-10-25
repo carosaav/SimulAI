@@ -1,5 +1,3 @@
-
-
 # ============================================================================
 # IMPORTS
 # ============================================================================
@@ -38,6 +36,7 @@ class OutcomeVariable:
     The chosen column from which to extract the results and the number of
     rows it has must be indicated.
     """
+
     def __init__(self, name, path, column, num_rows):
         self.name = name
         self.path = path
@@ -74,7 +73,6 @@ class Plant(metaclass=ABCMeta):
 
 
 class Plant1(Plant):
-
     def __init__(self, method, v_i, v_o, filename, modelname="Model"):
         Plant.__init__(self, method)
 
@@ -97,7 +95,7 @@ class Plant1(Plant):
             a_idx = np.zeros(x.num_rows)
             for h in range(1, x.num_rows + 1):
                 a_idx[h - 1] = self.connect.getValue(
-                    x.path + str([x.column, h]))
+                        x.path + str([x.column, h]))
             b_idx = np.sum(a_idx)
             r += b_idx / len(self.v_o)
 
@@ -105,7 +103,7 @@ class Plant1(Plant):
         return r
 
     def process_simulation(self):
-        if (self.connection()):
+        if self.connection():
             self.connect.setVisible(True)
             self.method.process()
 
@@ -141,8 +139,10 @@ class Qlearning(AutonomousDecisionSystem):
     class.
     """
 
-    def __init__(self, v_i, alfa=0.10, gamma=0.90, epsilon=0.10,
-                 episodes_max=100, steps_max=100):
+    def __init__(
+        self, v_i, alfa=0.10, gamma=0.90, epsilon=0.10,
+        episodes_max=100, steps_max=100
+    ):
         AutonomousDecisionSystem.__init__(self)
 
         self.v_i = v_i
@@ -166,9 +166,8 @@ class Qlearning(AutonomousDecisionSystem):
         self.s = []
         self.a = []
         for idx, x in enumerate(self.v_i):
-            self.s_idx = np.arange(x.lower_limit,
-                                   x.upper_limit + x.step,
-                                   x.step)
+            self.s_idx = np.arange(
+                x.lower_limit, x.upper_limit + x.step, x.step)
             self.a_idx = np.array([-x.step, 0, x.step])
             self.s.append(self.s_idx)
             self.a.append(self.a_idx)
@@ -181,23 +180,31 @@ class Qlearning(AutonomousDecisionSystem):
             self.S = self.s[0]
             self.actions = self.a[0]
         if len(self.v_i) == 2:
-            self.S = np.column_stack((
-                np.repeat(self.s[0], self.s[1].shape[0]),
-                np.tile(self.s[1], self.s[0].shape[0])))
-            self.actions = np.column_stack((
-                np.repeat(self.a[0], self.a[1].shape[0]),
-                np.tile(self.a[1], self.a[0].shape[0])))
+            self.S = np.column_stack(
+                (
+                    np.repeat(self.s[0], self.s[1].shape[0]),
+                    np.tile(self.s[1], self.s[0].shape[0]),
+                )
+            )
+            self.actions = np.column_stack(
+                (
+                    np.repeat(self.a[0], self.a[1].shape[0]),
+                    np.tile(self.a[1], self.a[0].shape[0]),
+                )
+            )
         if len(self.v_i) == 3:
             b = np.repeat(self.s[0], self.s[1].shape[0] * self.s[2].shape[0])
             c = np.tile(self.s[1], self.s[0].shape[0] * self.s[2].shape[0])
             d = np.repeat(self.s[2], self.s[1].shape[0])
-            self.S = np.column_stack((np.column_stack((b, c)),
-                                      np.tile(d, self.s[0].shape[0])))
+            self.S = np.column_stack(
+                (np.column_stack((b, c)), np.tile(d, self.s[0].shape[0]))
+            )
             f = np.repeat(self.a[0], self.a[1].shape[0] * self.a[2].shape[0])
             g = np.tile(self.a[1], self.a[0].shape[0] * self.a[2].shape[0])
             h = np.repeat(self.a[2], self.a[1].shape[0])
-            self.actions = np.column_stack((np.column_stack((f, g)),
-                                            np.tile(h, self.a[0].shape[0])))
+            self.actions = np.column_stack(
+                (np.column_stack((f, g)), np.tile(h, self.a[0].shape[0]))
+            )
         # if len(self.v_i) == 4:
         self.Q = np.zeros((self.S.shape[0], self.actions.shape[0]))
         return self.S, self.actions, self.Q
@@ -205,11 +212,11 @@ class Qlearning(AutonomousDecisionSystem):
     # choose action
     def choose_action(self, row):
         p = np.random.random()
-        if p < (1-self.epsilon):
+        if p < (1 - self.epsilon):
             i = np.argmax(self.Q[row, :])
         else:
             i = np.random.choice(self.actions.shape[0])
-        return (i)
+        return i
 
     # reinforcement learning process
     def process(self):
@@ -249,8 +256,8 @@ class Qlearning(AutonomousDecisionSystem):
                             break
                 # update Q table
                 self.Q[k, j] = self.Q[k, j]
-                + self.alfa * (r + self.gamma * np.max(self.Q[z, :])
-                               - self.Q[k, j])
+                +self.alfa * (r + self.gamma * np.max(
+                            self.Q[z, :]) - self.Q[k, j])
                 # update parameters
                 t += 1
                 S0 = Snew

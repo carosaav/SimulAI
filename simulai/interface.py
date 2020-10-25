@@ -1,5 +1,3 @@
-
-
 # ============================================================================
 # IMPORTS
 # ============================================================================
@@ -15,7 +13,6 @@ import os
 
 
 class Com(object):
-
     def __init__(self, model_name):
         self.model_name = model_name
         self.is_connected = False
@@ -31,17 +28,18 @@ class Com(object):
     # Function that returns the connection object
     # Input parameter: file name
     # Return: connection object
-    
+
     def connection(self):
         path_file = self.get_path_file_model()
         try:
             self.plant_simulation = win32.Dispatch(
-                "Tecnomatix.PlantSimulation.RemoteControl.15.0")
+                "Tecnomatix.PlantSimulation.RemoteControl.15.0"
+            )
             self.plant_simulation.loadModel(path_file)
             print("The connection was successful")
             self.is_connected = True
             return True
-        except:
+        except Exception:
             print(("Connection error. path file: " + path_file))
             return False
 
@@ -169,16 +167,16 @@ class Com(object):
         if self.is_connected is True:
             self.plant_simulation.TransferModel(value)
         else:
-            raise ConnectError("Not connected")
+            print("Not connected")
+
 
 class connecterror(object):
-
     def __init__(self, f):
-    	self.f = f
-    	self.name = f.__name__
+        self.f = f
+        self.name = f.__name__
 
     def __call__(self, *args, **kwargs):
-	    if self.is_connected is True:
-	    	self.f(*args, **kwargs)
-	    else:
-	    	raise ConnectionError("Not connected:", self.name)
+        if self.is_connected is True:
+            self.f(*args, **kwargs)
+        else:
+            raise ConnectionError("Not connected:", self.name)

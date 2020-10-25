@@ -3,7 +3,8 @@
 
 # This file is part of the
 #   SimulAI Project (https://github.com/carosaav/SimulAI).
-# Copyright (c) 2020, Perez Colo Ivo, Pirozzo Manuel Bernardo, Saavedra Sueldo Carolina
+# Copyright (c) 2020,
+# Perez Colo Ivo, Pirozzo Manuel Bernardo, Saavedra Sueldo Carolina
 # License: MIT
 #   Full Text: https://github.com/carosaav
 
@@ -23,8 +24,8 @@
 import os
 import pathlib
 
-#from ez_setup import use_setuptools
-#use_setuptools()
+# from ez_setup import use_setuptools
+# use_setuptools()
 
 from setuptools import setup
 
@@ -43,7 +44,7 @@ with open(PATH / "README.md", encoding="utf-8") as fp:
 with open(PATH / "simulai" / "__init__.py", encoding="utf-8") as fp:
     for line in fp.readlines():
         if line.startswith("__version__ = "):
-            VERSION = line.split("=", 1)[-1].replace('"', '').strip()
+            VERSION = line.split("=", 1)[-1].replace('"', "").strip()
             break
 
 
@@ -54,27 +55,33 @@ DESCRIPTION = "SimulAI - Simulation + Artificial Intelligence"
 # FUNCTIONS
 # =============================================================================
 
+
 def do_setup():
     setup(
         name="simulai",
         version=VERSION,
         description=DESCRIPTION,
         long_description=LONG_DESCRIPTION,
-        long_description_content_type='text/markdown',
-
+        long_description_content_type="text/markdown",
         author=[
             "Perez Colo Ivo",
             "Pirozzo Manuel Bernardo",
-            "Saavedra Sueldo Carolina"],
+            "Saavedra Sueldo Carolina",
+        ],
         author_email=[
-        	"ivoperezcolo@gmail.com",
-        	"ber_pirozzo@hotmail.com.ar",
-        	"carosaavedrasueldo@gmail.com"],
+            "ivoperezcolo@gmail.com",
+            "ber_pirozzo@hotmail.com.ar",
+            "carosaavedrasueldo@gmail.com",
+        ],
         url="https://github.com/carosaav/SimulAI",
         license="MIT",
-
-        keywords=["simulai", "simulation", "artificial intelligence", "decision sciences", "optimization"],
-
+        keywords=[
+            "simulai",
+            "simulation",
+            "artificial intelligence",
+            "decision sciences",
+            "optimization",
+        ],
         classifiers=[
             "Development Status :: 4 - Beta",
             "Intended Audience :: Education",
@@ -83,11 +90,11 @@ def do_setup():
             "Operating System :: OS Windows",
             "Programming Language :: Python",
             "Programming Language :: Python :: 3.8",
-            "Topic :: Scientific/Engineering"],
-
+            "Topic :: Scientific/Engineering",
+        ],
         packages=["simulai"],
-      
-        install_requires=REQUIREMENTS)
+        install_requires=REQUIREMENTS,
+    )
 
 
 if __name__ == "__main__":
