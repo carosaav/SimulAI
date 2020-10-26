@@ -146,6 +146,8 @@ class Qlearning(AutonomousDecisionSystem):
         AutonomousDecisionSystem.__init__(self)
 
         self.v_i = v_i
+        self.s = []
+        self.a = []
 
         # reinforcement learning parameters
         self.alfa = alfa
@@ -163,8 +165,6 @@ class Qlearning(AutonomousDecisionSystem):
 
     # arrays for states and actions
     def arrays(self):
-        self.s = []
-        self.a = []
         for idx, x in enumerate(self.v_i):
             self.s_idx = np.arange(
                 x.lower_limit, x.upper_limit + x.step, x.step)
@@ -176,36 +176,46 @@ class Qlearning(AutonomousDecisionSystem):
     # initialize states, actions and Q table
     def ini_saq(self):
         self.arrays()
+        n = []
+        m = []
+        for idx, x in enumerate(self.s):
+            n.append(x.shape[0])
+        for idx, x in enumerate(self.a):
+            m.append(x.shape[0])
+
         if len(self.v_i) == 1:
             self.S = self.s[0]
             self.actions = self.a[0]
         if len(self.v_i) == 2:
-            self.S = np.column_stack(
-                (
-                    np.repeat(self.s[0], self.s[1].shape[0]),
-                    np.tile(self.s[1], self.s[0].shape[0]),
-                )
-            )
-            self.actions = np.column_stack(
-                (
-                    np.repeat(self.a[0], self.a[1].shape[0]),
-                    np.tile(self.a[1], self.a[0].shape[0]),
-                )
-            )
+            self.S = np.column_stack((
+                np.repeat(self.s[0], n[1]),
+                np.tile(self.s[1], n[0])))
+            self.actions = np.column_stack((
+                np.repeat(self.a[0], m[1]),
+                np.tile(self.a[1], m[0])))
         if len(self.v_i) == 3:
-            b = np.repeat(self.s[0], self.s[1].shape[0] * self.s[2].shape[0])
-            c = np.tile(self.s[1], self.s[0].shape[0] * self.s[2].shape[0])
-            d = np.repeat(self.s[2], self.s[1].shape[0])
-            self.S = np.column_stack(
-                (np.column_stack((b, c)), np.tile(d, self.s[0].shape[0]))
-            )
-            f = np.repeat(self.a[0], self.a[1].shape[0] * self.a[2].shape[0])
-            g = np.tile(self.a[1], self.a[0].shape[0] * self.a[2].shape[0])
-            h = np.repeat(self.a[2], self.a[1].shape[0])
-            self.actions = np.column_stack(
-                (np.column_stack((f, g)), np.tile(h, self.a[0].shape[0]))
-            )
-        # if len(self.v_i) == 4:
+            self.S = np.column_stack((
+                np.repeat(self.s[0], n[1] * n[2]),
+                np.tile(np.repeat(self.s[1], n[2]), n[0]),
+                np.tile(self.s[2], n[0] * n[1])))
+            self.actions = np.column_stack((
+                np.repeat(self.a[0], m[1] * m[2]),
+                np.tile(np.repeat(self.a[1], m[2]), m[0]),
+                np.tile(self.a[2], m[0] * m[1])))
+        if len(self.v_i) == 4:
+            self.S = np.column_stack((
+                np.repeat(self.s[0], n[1] * n[2] * n[3]),
+                np.tile(np.repeat(self.s[1], n[2] * n[3]), n[0]),
+                np.tile(np.repeat(self.s[2], n[3]), n[1] * n[0]),
+                np.tile(self.s[3], n[0] * n[1] * n[2])))
+            self.actions = np.column_stack((
+                np.repeat(self.a[0], m[1] * m[2] * m[3]),
+                np.tile(np.repeat(self.a[1], m[2] * m[3]), m[0]),
+                np.tile(np.repeat(self.a[2], m[3]), m[1] * m[0]),
+                np.tile(self.a[3], m[0] * m[1] * m[2])))
+        else:
+            raise Exception("The method admits 4 variables or less")
+
         self.Q = np.zeros((self.S.shape[0], self.actions.shape[0]))
         return self.S, self.actions, self.Q
 
