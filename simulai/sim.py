@@ -186,14 +186,14 @@ class Qlearning(AutonomousDecisionSystem):
         if len(self.v_i) == 1:
             self.S = self.s[0]
             self.actions = self.a[0]
-        if len(self.v_i) == 2:
+        elif len(self.v_i) == 2:
             self.S = np.column_stack((
                 np.repeat(self.s[0], n[1]),
                 np.tile(self.s[1], n[0])))
             self.actions = np.column_stack((
                 np.repeat(self.a[0], m[1]),
                 np.tile(self.a[1], m[0])))
-        if len(self.v_i) == 3:
+        elif len(self.v_i) == 3:
             self.S = np.column_stack((
                 np.repeat(self.s[0], n[1] * n[2]),
                 np.tile(np.repeat(self.s[1], n[2]), n[0]),
@@ -202,7 +202,7 @@ class Qlearning(AutonomousDecisionSystem):
                 np.repeat(self.a[0], m[1] * m[2]),
                 np.tile(np.repeat(self.a[1], m[2]), m[0]),
                 np.tile(self.a[2], m[0] * m[1])))
-        if len(self.v_i) == 4:
+        elif len(self.v_i) == 4:
             self.S = np.column_stack((
                 np.repeat(self.s[0], n[1] * n[2] * n[3]),
                 np.tile(np.repeat(self.s[1], n[2] * n[3]), n[0]),
