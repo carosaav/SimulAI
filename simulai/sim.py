@@ -72,7 +72,7 @@ class Plant(metaclass=ABCMeta):
         pass
 
 
-class Plant1(Plant):
+class BasePlant(Plant):
     def __init__(self, method, v_i, v_o, filename, modelname="Model"):
         Plant.__init__(self, method)
 
@@ -125,12 +125,9 @@ class AutonomousDecisionSystem(metaclass=ABCMeta):
         pass
 
 
-class Qlearning(AutonomousDecisionSystem):
-    """This class implements reinforcement learning using the well-known
-    tabular Q-learning algorithm with a epsilon-greedy exploration strategy.
-    The alpha, gamma and epsilon parameters are given by default, as well as
-    the number of episodes and steps of the algorithm, what the user can adapt
-    to his situation.
+class BaseMethod(AutonomousDecisionSystem):
+    """Initialize the states, actions and Q table required to implement
+    reinforcement learning algorithms, like Q-learning and SARSA.
     The Q table has a maximum of 625 rows, that is, up to 625 states are
     supported. These states are made up of 1 to 4 variables of the Tecnomatix
     Plant Simulation.
@@ -139,10 +136,7 @@ class Qlearning(AutonomousDecisionSystem):
     class.
     """
 
-    def __init__(
-        self, v_i, alfa=0.10, gamma=0.90, epsilon=0.10,
-        episodes_max=100, steps_max=100
-    ):
+    def __init__(self, v_i, alfa, gamma, epsilon, episodes_max, steps_max):
         AutonomousDecisionSystem.__init__(self)
 
         self.v_i = v_i
@@ -171,7 +165,6 @@ class Qlearning(AutonomousDecisionSystem):
             self.a_idx = np.array([-x.step, 0, x.step])
             self.s.append(self.s_idx)
             self.a.append(self.a_idx)
-        return self.s, self.a
 
     # initialize states, actions and Q table
     def ini_saq(self):
@@ -216,8 +209,16 @@ class Qlearning(AutonomousDecisionSystem):
         else:
             raise Exception("The method admits 4 variables or less")
 
+        if self.S.shape[0] > 625:
+            raise Exception("The method supports up to 625 states")
+
         self.Q = np.zeros((self.S.shape[0], self.actions.shape[0]))
-        return self.S, self.actions, self.Q
+
+
+class Qlearning(BaseMethod):
+    def __init__(self, v_i, alfa=0.10, gamma=0.90, epsilon=0.10,
+                 episodes_max=100, steps_max=100):
+        super().__init__(v_i, alfa, gamma, epsilon, episodes_max, steps_max)
 
     # choose action
     def choose_action(self, row):
@@ -266,7 +267,7 @@ class Qlearning(AutonomousDecisionSystem):
                             break
                 # update Q table
                 self.Q[k, j] = self.Q[k, j]
-                +self.alfa * (r + self.gamma * np.max(
+                + self.alfa * (r + self.gamma * np.max(
                             self.Q[z, :]) - self.Q[k, j])
                 # update parameters
                 t += 1
@@ -277,12 +278,66 @@ class Qlearning(AutonomousDecisionSystem):
         return self.r_episode
 
 
-# ============================================================================
-# MAIN
-# ============================================================================
+class Sarsa(BaseMethod):
+    def __init__(self, v_i, alfa=0.10, gamma=0.90, epsilon=0.10,
+                 episodes_max=100, steps_max=100):
+        super().__init__(v_i, alfa, gamma, epsilon, episodes_max, steps_max)
 
+    # choose action
+    def choose_action(self, row):
+        p = np.random.random()
+        if p < (1 - self.epsilon):
+            i = np.argmax(self.Q[row, :])
+        else:
+            i = np.random.choice(self.actions.shape[0])
+        return i
 
-def simulation_node(pl):
-
-    plant = pl
-    plant.process_simulation()
+    # reinforcement learning process
+    def process(self):
+        self.ini_saq()
+        for n in range(self.episodes_max):
+            S0 = self.S[0]
+            A0 = self.choose_action(0)
+            t = 0
+            r_acum = 0
+            res0 = self.subscriber.update(S0)
+            while t < self.steps_max:
+                # find k index of current state
+                for k in range(self.S.shape[0]):
+                    for i in range(len(self.v_i)):
+                        if self.S[k][i] == S0[i]:
+                            break
+                # update state
+                Snew = S0 + self.actions[A0]
+                # limites
+                for idx, x in enumerate(self.v_i):
+                    if Snew[idx] > x.upper_limit:
+                        Snew[idx] -= x.step
+                    elif Snew[idx] < x.lower_limit:
+                        Snew[idx] += x.step
+                # update simulation result
+                res1 = self.subscriber.update(Snew)
+                # reward
+                if res1 < res0:
+                    r = 1
+                else:
+                    r = 0
+                # find index of new state
+                for z in range(self.S.shape[0]):
+                    for i in range(len(self.v_i)):
+                        if self.S[z][i] == Snew[i]:
+                            break
+                # choose new action
+                Anew = self.choose_action(z)
+                # update Q table
+                self.Q[k, A0] = self.Q[k, A0]
+                + self.alfa * (r +
+                               self.gamma * self.Q[z, Anew] - self.Q[k, A0])
+                # update parameters
+                t += 1
+                S0 = Snew
+                A0 = Anew
+                res0 = res1
+                r_acum = r_acum + r
+                self.r_episode[n] = r_acum
+        return self.r_episode
