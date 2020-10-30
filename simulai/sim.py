@@ -1,3 +1,11 @@
+
+# This file is part of the
+#   SimulAI Project (https://github.com/carosaav/SimulAI).
+# Copyright (c) 2020, Perez Colo Ivo, Pirozzo Manuel Bernardo,
+# Carolina Saavedra Sueldo
+# License: MIT
+#   Full Text: https://github.com/carosaav/SimulAI/blob/master/LICENSE
+
 # ============================================================================
 # IMPORTS
 # ============================================================================
@@ -14,11 +22,25 @@ import numpy as np
 
 
 class DiscreteVariable:
-    """This class allows you to enter the chosen Tecnomatix Plant Simulation
-    variables as input to the artificial intelligence method.
-    Up to 4 discrete variables are allowed that must conform up to 625
-    possible states. For example, if 4 variables are chosen, each of them
-    can take 5 possible values and States= (Var1, Var2, Var3, Var4)
+    """Initialize the Tecnomatix Plant Simulation Variables that will be used
+    in the AI ​​method.
+    Up to 4 discrete variables are allowed in the problem which can form up to
+    625 possible states in the algorithm.
+    For example, if 4 variables are chosen, each of them can take 5 possible
+    values and states formed will be S = (Var1, Var2, Var3, Var4).
+
+        Parameters
+    ----------
+    name: str
+        Name of the Variable.
+    lower_limit: positive int
+        Lower limit of the Variable. Should be a positive integer.
+    upper_limit: positive int
+        Upper limit of the Variable. Should be a positive integer.
+    step: positive int
+        Step of the Variable. Should be a positive integer.
+    path: str
+        Path of the Variable in Tecnomatix Plant Simulation.
     """
 
     def __init__(self, name, lower_limit, upper_limit, step, path):
@@ -28,13 +50,36 @@ class DiscreteVariable:
         self.step = step
         self.path = path
 
+        if not isinstance(self.name, str):
+            raise TypeError("Name: Argument must be a string.")
+        if not isinstance(self.lower_limit, int):
+            raise TypeError("Lower Limit: Argument must be an integer.")
+        if not isinstance(self.upper_limit, int):
+            raise TypeError("Upper Limit: Argument must be an integer.")
+        if not isinstance(self.step, int):
+            raise TypeError("Step: Argument must be an integer.")
+        if not isinstance(self.path, str):
+            raise TypeError("Path: Argument must be a string.")
+
 
 class OutcomeVariable:
-    """This class allows you to enter the chosen Tecnomatix Plant Simulation
-    variables as output to the artificial intelligence method.
-    These variables must be of type Data Table.
+    """Initialize the Tecnomatix Plant Simulation Variables that will be used
+    as the output to optimize in the AI ​​method.
+    These variables must be stored in a Data Table.
     The chosen column from which to extract the results and the number of
     rows it has must be indicated.
+
+        Parameters
+    ----------
+    name: str
+        Name of the Variable.
+    path: str
+        Path of the Variable in Tecnomatix Plant Simulation.
+    column: positive int
+        Column of the table where the result is stored.
+        Should be a positive integer.
+    num_rows: positive int
+        Number of rows in the results table. Should be a positive integer.
     """
 
     def __init__(self, name, path, column, num_rows):
@@ -42,6 +87,15 @@ class OutcomeVariable:
         self.path = path
         self.column = column
         self.num_rows = num_rows
+
+        if not isinstance(self.name, str):
+            raise TypeError("Name: Argument must be a string.")
+        if not isinstance(self.path, str):
+            raise TypeError("Path: Argument must be a string.")
+        if not isinstance(self.column, int):
+            raise TypeError("Column: Argument must be an integer.")
+        if not isinstance(self.num_rows, int):
+            raise TypeError("Num_rows: Argument must be an integer.")
 
 
 # ============================================================================

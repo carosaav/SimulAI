@@ -1,3 +1,11 @@
+
+# This file is part of the
+#   SimulAI Project (https://github.com/carosaav/SimulAI).
+# Copyright (c) 2020, Perez Colo Ivo, Pirozzo Manuel Bernardo,
+# Carolina Saavedra Sueldo
+# License: MIT
+#   Full Text: https://github.com/carosaav/SimulAI/blob/master/LICENSE
+
 # ============================================================================
 # IMPORTS
 # ============================================================================
@@ -18,18 +26,15 @@ class Com(object):
         self.is_connected = False
         self.plant_simulation = ""
 
-    # Function that returns the complete file path
-    # Input parameter: file name
-    # Return: file path
     def get_path_file_model(self):
+        """Function that returns the complete file path.
+        """
         path = os.getcwd() + "\\" + self.model_name
         return path
 
-    # Function that returns the connection object
-    # Input parameter: file name
-    # Return: connection object
-
     def connection(self):
+        """Function that returns the connection object.
+        """
         path_file = self.get_path_file_model()
         try:
             self.plant_simulation = win32.Dispatch(
