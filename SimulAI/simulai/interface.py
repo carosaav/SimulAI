@@ -15,23 +15,31 @@ import os
 
 
 class Com(object):
+    """
+    Definition of the function of communication
+    """
 
     def __init__(self, model_name):
         self.model_name = model_name
         self.is_connected = False
-        self.plant_simulation = ""
 
-    # Function that returns the complete file path
-    # Input parameter: file name
-    # Return: file path
+
     def get_path_file_model(self):
+        """
+        Function that returns the complete file path
+        Input parameter: file name
+        Return: file path
+        """
         path = os.getcwd() + "\\" + self.model_name
         return path
 
-    # Function that returns the connection object
-    # Input parameter: file name
-    # Return: connection object
+    
     def connection(self):
+        """
+        Function that returns the connection object
+        Input parameter: file name
+        Return: connection object
+        """
         path_file = self.get_path_file_model()
         try:
             self.plant_simulation = win32.Dispatch(
@@ -44,135 +52,99 @@ class Com(object):
             print(("Connection error. path file: " + path_file))
             return False
 
-    #Decorator to verify connection
-    def check_connetion(setVisible):
-        def check(self,value):
-            if self.is_connected is True:
-                self.plant_simulation.setVisible(value)
-            else:
+    # Decorator to verify connection
+    def check_connection(method):
+        """
+        This function checks the connection status, returning an error
+        menssaje if it fails
+        """
+        def wrapper(self, *args, **kwargs):
+            if not self.is_connected:
                 raise ConnectionError("Not connected")
-        return(check)
+            output = method(self, *args, **kwargs)
+            return output
+        return wrapper
 
-    @check_connetion
+    @check_connection
     def setVisible(self, value):
         self.plant_simulation.setVisible(value)
 
+    @check_connection
     def setValue(self, ref, value):
-        if self.is_connected is True:
-            self.plant_simulation.setValue(ref, value)
-        else:
-            raise ConnectionError("Not connected")
+        self.plant_simulation.setValue(ref, value)
 
+    @check_connection
     def getValue(self, ref):
-        if self.is_connected is True:
-            return self.plant_simulation.getValue(ref)
-        else:
-            raise ConnectionError("Not connected")
+        return self.plant_simulation.getValue(ref)
 
+    @check_connection
     def startSimulation(self, ref):
-        if self.is_connected is True:
-            self.plant_simulation.startSimulation(ref)
-        else:
-            raise ConnectionError("Not connected")
-
+        self.plant_simulation.startSimulation(ref)
+        
+    @check_connection
     def resetSimulation(self, ref):
-        if self.is_connected is True:
-            self.plant_simulation.resetSimulation(ref)
-        else:
-            raise ConnectionError("Not connected")
+        self.plant_simulation.resetSimulation(ref)
 
+    @check_connection
     def stopSimulation(self, ref):
-        if self.is_connected is True:
-            self.plant_simulation.stopSimulation(ref)
-        else:
-            raise ConnectionError("Not connected")
-
+        self.plant_simulation.stopSimulation(ref)
+    
+    @check_connection
     def closeModel(self):
-        if self.is_connected is True:
-            self.plant_simulation.CloseModel()
-        else:
-            raise ConnectionError("Not connected")
-
+        self.plant_simulation.CloseModel()
+        
+    @check_connection
     def executeSimTalk(self, ref, value):
-        if self.is_connected is True:
-            self.plant_simulation.ExecuteSimTalk(ref, value)
-        else:
-            raise ConnectionError("Not connected")
-
+        self.plant_simulation.ExecuteSimTalk(ref, value)
+    
+    @check_connection
     def isSimulationRunning(self):
-        if self.is_connected is True:
-            return self.plant_simulation.IsSimulationRunning()
-        else:
-            raise ConnectionError("Not connected")
+        return(self.plant_simulation.IsSimulationRunning())        
 
+    @check_connection    
     def loadModel(self, ref, value):
-        if self.is_connected is True:
-            self.plant_simulation.LoadModel(ref, value)
-        else:
-            raise ConnectionError("Not connected")
+        self.plant_simulation.LoadModel(ref, value)
 
+    @check_connection    
     def newModel(self):
-        if self.is_connected is True:
-            self.plant_simulation.NewModel()
-        else:
-            raise ConnectionError("Not connected")
-
+        self.plant_simulation.NewModel()
+    
+    @check_connection    
     def openConsoleLogFile(self, ref):
-        if self.is_connected is True:
-            self.plant_simulation.OpenConsoleLogFile(ref)
-        else:
-            raise ConnectionError("Not connected")
+        self.plant_simulation.OpenConsoleLogFile(ref)
 
+    @check_connection   
     def quit(self):
-        if self.is_connected is True:
-            self.plant_simulation.Quit()
-        else:
-            raise ConnectionError("Not connected")
+        self.plant_simulation.Quit()
 
+    @check_connection    
     def quitAfterTime(self, value):
-        if self.is_connected is True:
-            self.plant_simulation.QuitAfterTime(value)
-        else:
-            raise ConnectionError("Not connected")
+        self.plant_simulation.QuitAfterTime(value)
 
+    @check_connection    
     def saveModel(self, ref):
-        if self.is_connected is True:
-            self.plant_simulation.SaveModel(ref)
-        else:
-            raise ConnectionError("Not connected")
+        self.plant_simulation.SaveModel(ref)
 
+    @check_connection    
     def setLicenseType(self, ref):
-        if self.is_connected is True:
-            self.plant_simulation.SetLicenseType(ref)
-        else:
-            raise ConnectionError("Not connected")
+        self.plant_simulation.SetLicenseType(ref)
 
+    @check_connection    
     def setNoMessageBox(self, value):
-        if self.is_connected is True:
-            self.plant_simulation.SetNoMessageBox(value)
-        else:
-            raise ConnectionError("Not connected")
+        self.plant_simulation.SetNoMessageBox(value)
 
+    @check_connection    
     def setPathContext(self, ref):
-        if self.is_connected is True:
             self.plant_simulation.SetPathContext(ref)
-        else:
-            raise ConnectionError("Not connected")
 
+    @check_connection        
     def setSuppressStartOf3D(self, value):
-        if self.is_connected is True:
-            self.plant_simulation.SetSuppressStartOf3D(value)
-        else:
-            raise ConnectionError("Not connected")
+        self.plant_simulation.SetSuppressStartOf3D(value)
 
+    @check_connection    
     def setTrustModels(self, value):
-        if self.is_connected is True:
-            self.plant_simulation.SetTrustModels(value)
-        else:
-            raise ConnectionError("Not connected")
+        self.plant_simulation.SetTrustModels(value)
 
+    @check_connection    
     def transferModel(self, value):
-        if self.is_connected is True:
-            self.plant_simulation.TransferModel(value)
-        else:
-            raise ConnectionError("Not connected")
+        self.plant_simulation.TransferModel(value)
