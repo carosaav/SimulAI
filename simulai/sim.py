@@ -190,7 +190,7 @@ class BaseMethod(AutonomousDecisionSystem):
     class.
     """
 
-    def __init__(self, v_i, alfa, gamma, epsilon, episodes_max, steps_max):
+    def __init__(self, v_i, alfa, gamma, epsilon, episodes_max, steps_max, seed):
         AutonomousDecisionSystem.__init__(self)
 
         self.v_i = v_i
@@ -210,6 +210,9 @@ class BaseMethod(AutonomousDecisionSystem):
 
         # initialize reward per episode
         self.r_episode = np.arange(self.episodes_max, dtype=float)
+
+        if seed is not None:
+            np.random.seed(seed)
 
     # arrays for states and actions
     def arrays(self):
@@ -268,11 +271,13 @@ class BaseMethod(AutonomousDecisionSystem):
 
         self.Q = np.zeros((self.S.shape[0], self.actions.shape[0]))
 
+        return self.Q, self.S, self.actions
+
 
 class Qlearning(BaseMethod):
     def __init__(self, v_i, alfa=0.10, gamma=0.90, epsilon=0.10,
-                 episodes_max=100, steps_max=100):
-        super().__init__(v_i, alfa, gamma, epsilon, episodes_max, steps_max)
+                 episodes_max=100, steps_max=100, seed=None):
+        super().__init__(v_i, alfa, gamma, epsilon, episodes_max, steps_max, seed)
 
     # choose action
     def choose_action(self, row):
@@ -334,7 +339,7 @@ class Qlearning(BaseMethod):
 
 class Sarsa(BaseMethod):
     def __init__(self, v_i, alfa=0.10, gamma=0.90, epsilon=0.10,
-                 episodes_max=100, steps_max=100):
+                 episodes_max=100, steps_max=100, seed=None):
         super().__init__(v_i, alfa, gamma, epsilon, episodes_max, steps_max)
 
     # choose action
