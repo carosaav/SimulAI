@@ -52,3 +52,5 @@ def test_process(var_input):
 	r = my_method.process()
 
 	assert my_method.process == 0
+
+
