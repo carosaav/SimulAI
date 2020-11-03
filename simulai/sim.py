@@ -1,7 +1,7 @@
 
 # This file is part of the
 #   SimulAI Project (https://github.com/carosaav/SimulAI).
-# Copyright (c) 2020, Perez Colo Ivo, Pirozzo Manuel Bernardo,
+# Copyright (c) 2020, Perez Colo Ivo, Pirozzo Bernardo Manuel,
 # Carolina Saavedra Sueldo
 # License: MIT
 #   Full Text: https://github.com/carosaav/SimulAI/blob/master/LICENSE
@@ -190,7 +190,8 @@ class BaseMethod(AutonomousDecisionSystem):
     class.
     """
 
-    def __init__(self, v_i, alfa, gamma, epsilon, episodes_max, steps_max, seed):
+    def __init__(self, v_i, alfa, gamma, epsilon, episodes_max, steps_max,
+                 seed):
         AutonomousDecisionSystem.__init__(self)
 
         self.v_i = v_i
@@ -277,7 +278,8 @@ class BaseMethod(AutonomousDecisionSystem):
 class Qlearning(BaseMethod):
     def __init__(self, v_i, alfa=0.10, gamma=0.90, epsilon=0.10,
                  episodes_max=100, steps_max=100, seed=None):
-        super().__init__(v_i, alfa, gamma, epsilon, episodes_max, steps_max, seed)
+        super().__init__(v_i, alfa, gamma, epsilon, episodes_max, steps_max,
+                         seed)
 
     # choose action
     def choose_action(self, row):
