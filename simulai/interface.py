@@ -1,5 +1,5 @@
 
-# This file is part of the SimulAI Project 
+# This file is part of the SimulAI Project
 # (https://github.com/carosaav/SimulAI).
 # Copyright (c) 2020, Perez Colo Ivo, Pirozzo Bernardo Manuel,
 # Carolina Saavedra Sueldo
@@ -114,7 +114,7 @@ class Com(object):
         Input parameter: model_name and ref
         """
         self.plant_simulation.startSimulation(ref)
-        
+
     @check_connection
     def resetSimulation(self, ref):
         """
@@ -130,7 +130,7 @@ class Com(object):
         Input parameter: model_name and ref
         """
         self.plant_simulation.stopSimulation(ref)
-    
+
     @check_connection
     def closeModel(self):
         """
@@ -138,7 +138,7 @@ class Com(object):
         Input parameter: model_name
         """
         self.plant_simulation.CloseModel()
-        
+
     @check_connection
     def executeSimTalk(self, ref, value):
         """
@@ -146,16 +146,16 @@ class Com(object):
         Input parameter: name_model, ref and value
         """
         self.plant_simulation.ExecuteSimTalk(ref, value)
-    
+
     @check_connection
     def isSimulationRunning(self):
         """
         This function check if the simulation is running
         Input parameter: model_name
         """
-        return(self.plant_simulation.IsSimulationRunning())        
+        return(self.plant_simulation.IsSimulationRunning())
 
-    @check_connection    
+    @check_connection
     def loadModel(self, ref, value):
         """
         This function performs the load of the model
@@ -163,7 +163,7 @@ class Com(object):
         """
         self.plant_simulation.LoadModel(ref, value)
 
-    @check_connection    
+    @check_connection
     def newModel(self):
         """
         This function create a new model
@@ -171,7 +171,7 @@ class Com(object):
         """
         self.plant_simulation.NewModel()
 
-    @check_connection    
+    @check_connection
     def openConsoleLogFile(self, ref):
         """
         This function open the simulation result in the console
@@ -179,7 +179,7 @@ class Com(object):
         """
         self.plant_simulation.OpenConsoleLogFile(ref)
 
-    @check_connection   
+    @check_connection
     def quit(self):
         """
         This function clear all result
@@ -187,7 +187,7 @@ class Com(object):
         """
         self.plant_simulation.Quit()
 
-    @check_connection    
+    @check_connection
     def quitAfterTime(self, value):
         """
         This function clear all result after a time
@@ -195,7 +195,7 @@ class Com(object):
         """
         self.plant_simulation.QuitAfterTime(value)
 
-    @check_connection    
+    @check_connection
     def saveModel(self, ref):
         """
         This function saves the model result
@@ -203,7 +203,7 @@ class Com(object):
         """
         self.plant_simulation.SaveModel(ref)
 
-    @check_connection    
+    @check_connection
     def setLicenseType(self, ref):
         """
         This function sets the type of license
@@ -211,7 +211,7 @@ class Com(object):
         """
         self.plant_simulation.SetLicenseType(ref)
 
-    @check_connection    
+    @check_connection
     def setNoMessageBox(self, value):
         """
         This function deletes the messages on the screen
@@ -219,7 +219,7 @@ class Com(object):
         """
         self.plant_simulation.SetNoMessageBox(value)
 
-    @check_connection    
+    @check_connection
     def setPathContext(self, ref):
         """
         This function set the context
@@ -227,7 +227,7 @@ class Com(object):
         """
         self.plant_simulation.SetPathContext(ref)
 
-    @check_connection        
+    @check_connection
     def setSuppressStartOf3D(self, value):
         """
         This function eliminate the start of 3D model
@@ -235,7 +235,7 @@ class Com(object):
         """
         self.plant_simulation.SetSuppressStartOf3D(value)
 
-    @check_connection    
+    @check_connection
     def setTrustModels(self, value):
         """
         This function set the real model
@@ -243,7 +243,7 @@ class Com(object):
         """
         self.plant_simulation.SetTrustModels(value)
 
-    @check_connection    
+    @check_connection
     def transferModel(self, value):
         """
         This function transfer the model

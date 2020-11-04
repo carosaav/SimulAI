@@ -34,7 +34,7 @@ from setuptools import setup
 # CONSTANTS
 # =============================================================================
 
-REQUIREMENTS = ["numpy", "pywin32"]
+REQUIREMENTS = ["numpy", "pywin32", "attrs"]
 
 PATH = pathlib.Path(os.path.abspath(os.path.dirname(__file__)))
 

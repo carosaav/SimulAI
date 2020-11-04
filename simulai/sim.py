@@ -14,6 +14,7 @@
 from abc import ABCMeta, abstractmethod
 from .interface import Com
 import numpy as np
+import attr
 
 
 # ============================================================================
@@ -21,6 +22,7 @@ import numpy as np
 # ============================================================================
 
 
+@attr.s
 class DiscreteVariable:
     """Initialize the Tecnomatix Plant Simulation Variables that will be used
     in the AI ​​method.
@@ -43,25 +45,39 @@ class DiscreteVariable:
         Path of the Variable in Tecnomatix Plant Simulation.
     """
 
-    def __init__(self, name, lower_limit, upper_limit, step, path):
-        self.name = name
-        self.lower_limit = lower_limit
-        self.upper_limit = upper_limit
-        self.step = step
-        self.path = path
+    name = attr.ib()
+    lower_limit = attr.ib()
+    upper_limit = attr.ib()
+    step = attr.ib()
+    path = attr.ib()
 
-        if not isinstance(self.name, str):
+    @name.validator
+    def _validate_name(self, attribute, value):
+        if not isinstance(value, str):
             raise TypeError("Name: Argument must be a string.")
-        if not isinstance(self.lower_limit, int):
+
+    @lower_limit.validator
+    def _validate_lower_limit(self, attribute, value):
+        if not isinstance(value, int):
             raise TypeError("Lower Limit: Argument must be an integer.")
-        if not isinstance(self.upper_limit, int):
+
+    @upper_limit.validator
+    def _validate_upper_limit(self, attribute, value):
+        if not isinstance(value, int):
             raise TypeError("Upper Limit: Argument must be an integer.")
-        if not isinstance(self.step, int):
+
+    @step.validator
+    def _validate_step(self, attribute, value):
+        if not isinstance(value, int):
             raise TypeError("Step: Argument must be an integer.")
-        if not isinstance(self.path, str):
+
+    @path.validator
+    def _validate_path(self, attribute, value):
+        if not isinstance(value, str):
             raise TypeError("Path: Argument must be a string.")
 
 
+@attr.s
 class OutcomeVariable:
     """Initialize the Tecnomatix Plant Simulation Variables that will be used
     as the output to optimize in the AI ​​method.
@@ -82,19 +98,29 @@ class OutcomeVariable:
         Number of rows in the results table. Should be a positive integer.
     """
 
-    def __init__(self, name, path, column, num_rows):
-        self.name = name
-        self.path = path
-        self.column = column
-        self.num_rows = num_rows
+    name = attr.ib()
+    path = attr.ib()
+    column = attr.ib()
+    num_rows = attr.ib()
 
-        if not isinstance(self.name, str):
+    @name.validator
+    def _validate_name(self, attribute, value):
+        if not isinstance(value, str):
             raise TypeError("Name: Argument must be a string.")
-        if not isinstance(self.path, str):
+
+    @path.validator
+    def _validate_path(self, attribute, value):
+        if not isinstance(value, str):
             raise TypeError("Path: Argument must be a string.")
-        if not isinstance(self.column, int):
+
+    @column.validator
+    def _validate_column(self, attribute, value):
+        if not isinstance(value, int):
             raise TypeError("Column: Argument must be an integer.")
-        if not isinstance(self.num_rows, int):
+
+    @num_rows.validator
+    def _validate_num_rows(self, attribute, value):
+        if not isinstance(value, int):
             raise TypeError("Num_rows: Argument must be an integer.")
 
 
@@ -127,6 +153,21 @@ class Plant(metaclass=ABCMeta):
 
 
 class BasePlant(Plant):
+    """
+
+        Parameters
+    ----------
+    method: str
+        Name of the chosen AI method.
+    v_i: list
+        List of chosen input variables.
+    v_o: list
+        List of chosen output variables.
+    filename: str
+        Tecnomatix Plant Simulation complete file name (.spp)
+    modelname: str
+        Model frame name of the file, Default value="Model".
+    """
     def __init__(self, method, v_i, v_o, filename, modelname="Model"):
         Plant.__init__(self, method)
 
@@ -188,6 +229,27 @@ class BaseMethod(AutonomousDecisionSystem):
     Actions also depend on the chosen variables and their steps.
     The reward function depends on the results defined in the respective plant
     class.
+
+        Parameters
+    ----------
+    v_i: list
+        List of chosen input variables.
+    alfa: float
+        Reinforcement learning hyperparameter,
+        learning rate, varies from 0 to 1.
+    gamma: float
+        Reinforcement learning hyperparameter,
+        discount factor, varies from 0 to 1.
+    epsilon: float
+        Reinforcement learning hyperparameter,
+        probability for the epsilon-greedy action selection,
+        varies from 0 to 1.
+    episodes_max: int
+        Total number of episodes to run.
+    steps_max: int
+        Total number of steps in each episode.
+    seed: int
+        Seed value for the seed() method.
     """
 
     def __init__(self, v_i, alfa, gamma, epsilon, episodes_max, steps_max,
