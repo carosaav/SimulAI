@@ -29,10 +29,8 @@ def check_connection(method):
 
     """
     def wrapper(self, *args, **kwargs):
-        if self.is_connected is True:
-            self(*args, **kwargs)
-        else:
-            raise ConnectionError("Not connected:", self.name)
+        if not self.is_connected:
+            raise ConnectionError("Not connected", self.name)
         output = method(self, *args, **kwargs)
         return output
     return wrapper
