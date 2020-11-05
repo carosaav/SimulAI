@@ -113,6 +113,8 @@ def test_process_simulation(base):
 def test_default_Q(var_input, var_out):
     parm = sim.Qlearning(v_i=var_input)
 
+    assert isinstance(parm.s, list)
+    assert isinstance(parm.a, list)
     assert isinstance(parm.v_i, list)
     assert isinstance(parm.alfa, float)
     assert isinstance(parm.gamma, float)
@@ -120,20 +122,19 @@ def test_default_Q(var_input, var_out):
     assert isinstance(parm.episodes_max, int)
     assert isinstance(parm.steps_max, int)
     assert isinstance(parm.r_episode, np.ndarray)
+    assert_equal(parm.s, [])
+    assert_equal(parm.a, [])
     assert_equal(parm.alfa, 0.10)
     assert_equal(parm.gamma, 0.90)
     assert_equal(parm.epsilon, 0.10)
     assert_equal(parm.episodes_max, 100)
     assert_equal(parm.steps_max, 100)
 
-
-"""
 def test_arrays():
-	arr = sim.Qlearning(v_i=var_input)
+    my_method = sim.Qlearning(v_i=var_input, episodes_max=1, steps_max=10)
+    arr = my_method.arrays()
 
-	assert (isinstance(arr.s, np.ndarray))
-"""
-
+    assert (isinstance(arr.s, np.ndarray))
 
 def test_ini_saq(var_input):
     """Test that the output Q matrix has the necessary characteristics.
@@ -142,20 +143,17 @@ def test_ini_saq(var_input):
     Then it is verified that the matrix is composed by 0 (zeros).
     """
     my_method = sim.Qlearning(v_i=var_input, episodes_max=1, steps_max=10)
-    Q, S, A = my_method.ini_saq()
+    initial = my_method.process()
 
-    assert Q.shape == (625, 27)
-
-    assert np.all((Q == 0)) == True
-
-    assert S.shape == (625, 3)
-
-    assert np.all((S == 0)) == False
-
-    assert A.shape == (27, 3)
-
-    assert np.all((A == 0)) == False
-
+    assert (isinstance(initial.Q, np.ndarray))
+    assert (isinstance(initial.S, np.ndarray))
+    assert (isinstance(initial.A, np.ndarray))
+    assert initial.Q.shape == (625, 27)
+    assert initial.np.all((Q == 0)) == True
+    assert initial.S.shape == (625, 3)
+    assert initial.np.all((S == 0)) == False
+    assert initial.A.shape == (27, 3)
+    assert initial.np.all((A == 0)) == False
 
 def test_choose_action(var_input):
     my_method = sim.Qlearning(
