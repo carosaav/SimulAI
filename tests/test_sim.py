@@ -5,8 +5,6 @@ from numpy.testing import assert_equal
 
 from simulai import sim
 
-from abc import ABCMeta, abstractmethod
-
 
 @pytest.fixture
 def var_input():
@@ -52,14 +50,21 @@ def base(var_input, var_out):
 
     return plant
 
+
 @pytest.fixture
 def my_method(var_input):
     method = sim.Qlearning(v_i=var_input, episodes_max=1, steps_max=10)
 
     return method
 
+
 def test_DiscreteVariable():
-    parm = sim.DiscreteVariable("Susan", 0, 10, 1, "path")
+    """Test that the arguments that define a discrete variable
+
+
+    are of the right type.
+    """
+    parm = sim.DiscreteVariable("Time", 0, 10, 1, "path")
 
     assert isinstance(parm.name, str)
     assert isinstance(parm.lower_limit, int)
@@ -69,7 +74,8 @@ def test_DiscreteVariable():
 
 
 def test_OutcomeVariable():
-    parm = sim.OutcomeVariable("Susan", "path", 5, 1)
+    """Test that the output variable has the correct types of arguments."""
+    parm = sim.OutcomeVariable("Time", "path", 5, 1)
 
     assert isinstance(parm.name, str)
     assert isinstance(parm.path, str)
@@ -77,8 +83,8 @@ def test_OutcomeVariable():
     assert isinstance(parm.num_rows, int)
 
 
-def test_arg_BasePlant(base):
-
+def test_BasePlant(base):
+    """Test data type of argument"""
     assert isinstance(base.v_i, list)
     assert isinstance(base.v_o, list)
     assert isinstance(base.filename, str)
@@ -86,32 +92,42 @@ def test_arg_BasePlant(base):
 
 
 def test_get_file_name_plant(base):
-
+    """Test data type and value of file name"""
     filename = base.get_file_name_plant()
 
     assert filename == "MaterialHandling.spp"
+    assert isinstance(filename, str)
 
 
-def test_update(base, var_input):
-    assert isinstance(base.r_episode, int)
+def test_update(base):
+    """Test type data of the returned value for the variable "r" """
+
+    updt = base
+    assert isinstance(updt.r, int)
 
 
 def test_process_simulation(base):
+
+    """Test that the connection() function returns a boolean type value.
+
+    Use the mock of the simulation software.
+    """
     connect = base.connection()
 
     assert isinstance(connect, bool)
 
+
 def test_ini_saq(my_method):
     """Test that the output Q matrix has the necessary characteristics.
 
-    Initially the dimensions are checked.
-    Then it is verified that the matrix is composed by 0 (zeros).
+    Initially the data type is checked.
+    Then dimensions and composition are checked.
     """
     Q, S, A = my_method.ini_saq()
 
-    assert (isinstance(Q, np.ndarray))
-    assert (isinstance(S, np.ndarray))
-    assert (isinstance(A, np.ndarray))
+    assert isinstance(Q, np.ndarray)
+    assert isinstance(S, np.ndarray)
+    assert isinstance(A, np.ndarray)
     assert Q.shape == (625, 27)
     assert np.all((Q == 0)) == True
     assert S.shape == (625, 3)
@@ -121,6 +137,10 @@ def test_ini_saq(my_method):
 
 
 def test_default_Q(var_input, var_out):
+    """Test the data type of the Qlearning function arguments and
+
+    check the default values.
+    """
     parm = sim.Qlearning(v_i=var_input)
 
     assert isinstance(parm.s, list)
@@ -140,25 +160,38 @@ def test_default_Q(var_input, var_out):
     assert_equal(parm.episodes_max, 100)
     assert_equal(parm.steps_max, 100)
 
+
 def test_arrays(my_method):
+    """Test the data type of the arrays generated with the limit and
+
+    step information of the input variables.
+    """
     arr = my_method.arrays()
 
-    assert (isinstance(arr.s, np.ndarray))
+    assert isinstance(arr.s, np.ndarray)
+    assert isinstance(arr.s_idx, np.ndarray)
+    assert isinstance(arr.a, np.ndarray)
+    assert isinstance(arr.a_idx, np.ndarray)
 
-def test_choose_action(var_input):
-    method = sim.Qlearning(
-        v_i=var_input, episodes_max=1, steps_max=10, seed=24)
+
+def test_choose_action(my_method):
+    """Test that the function choose_action takes the row "0" of the
+
+    Q array when p < 1 - epsilon or takes a random row otherwise.
+    """
+    method = my_method
     QSA = method.ini_saq()
     i = method.choose_action(np.random.randint(624))
 
+    # assert (isinstance(i, int))
     assert_equal(i, 0)
 
+
 def test_process(my_method):
+    """Test that the process function returns an array.
+
+    Use the mock of the simulation software (subscriber).
+    """
     r = my_method.process()
 
-    assert (isinstance(r, np.ndarray))
-
-
-
-
-
+    assert isinstance(r, np.ndarray)
