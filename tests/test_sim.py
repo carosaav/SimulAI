@@ -1,9 +1,26 @@
+# This file is part of the SimulAI Project
+# (https://github.com/carosaav/SimulAI).
+# Copyright (c) 2020, Perez Colo Ivo, Pirozzo Bernardo Manuel,
+# Carolina Saavedra Sueldo
+# License: MIT
+# Full Text: https://github.com/carosaav/SimulAI/blob/master/LICENSE
+
+# ============================================================================
+# IMPORTS
+# ============================================================================
+
+
 import pytest
 import numpy as np
 
 from numpy.testing import assert_equal
 
 from simulai import sim
+
+
+# ============================================================================
+# TESTS
+# ============================================================================
 
 
 @pytest.fixture
