@@ -52,19 +52,11 @@ def base(var_input, var_out):
 
     return plant
 
-
 @pytest.fixture
-def AutonomousDecisionSystem(metaclass=ABCMeta):
-    def __init__(self):
-        self.method = ""
+def my_method(var_input):
+    method = sim.Qlearning(v_i=var_input, episodes_max=1, steps_max=10)
 
-    def register(self, who):
-        self.subscriber = who
-
-    @abstractmethod
-    def process(self):
-        pass
-
+    return method
 
 def test_DiscreteVariable():
     parm = sim.DiscreteVariable("Susan", 0, 10, 1, "path")
@@ -109,6 +101,24 @@ def test_process_simulation(base):
 
     assert isinstance(connect, bool)
 
+def test_ini_saq(my_method):
+    """Test that the output Q matrix has the necessary characteristics.
+
+    Initially the dimensions are checked.
+    Then it is verified that the matrix is composed by 0 (zeros).
+    """
+    Q, S, A = my_method.ini_saq()
+
+    assert (isinstance(Q, np.ndarray))
+    assert (isinstance(S, np.ndarray))
+    assert (isinstance(A, np.ndarray))
+    assert Q.shape == (625, 27)
+    assert np.all((Q == 0)) == True
+    assert S.shape == (625, 3)
+    assert np.all((S == 0)) == False
+    assert A.shape == (27, 3)
+    assert np.all((A == 0)) == False
+
 
 def test_default_Q(var_input, var_out):
     parm = sim.Qlearning(v_i=var_input)
@@ -130,34 +140,25 @@ def test_default_Q(var_input, var_out):
     assert_equal(parm.episodes_max, 100)
     assert_equal(parm.steps_max, 100)
 
-def test_arrays():
-    my_method = sim.Qlearning(v_i=var_input, episodes_max=1, steps_max=10)
+def test_arrays(my_method):
     arr = my_method.arrays()
 
     assert (isinstance(arr.s, np.ndarray))
 
-def test_ini_saq(var_input):
-    """Test that the output Q matrix has the necessary characteristics.
-
-    Initially the dimensions are checked.
-    Then it is verified that the matrix is composed by 0 (zeros).
-    """
-    my_method = sim.Qlearning(v_i=var_input, episodes_max=1, steps_max=10)
-    initial = my_method.process()
-
-    assert (isinstance(initial.Q, np.ndarray))
-    assert (isinstance(initial.S, np.ndarray))
-    assert (isinstance(initial.A, np.ndarray))
-    assert initial.Q.shape == (625, 27)
-    assert initial.np.all((Q == 0)) == True
-    assert initial.S.shape == (625, 3)
-    assert initial.np.all((S == 0)) == False
-    assert initial.A.shape == (27, 3)
-    assert initial.np.all((A == 0)) == False
-
 def test_choose_action(var_input):
-    my_method = sim.Qlearning(
+    method = sim.Qlearning(
         v_i=var_input, episodes_max=1, steps_max=10, seed=24)
-    _ = my_method.ini_saq()
+    QSA = method.ini_saq()
+    i = method.choose_action(np.random.randint(624))
 
-    assert my_method.choose_action(np.random.randint(624)) == 0
+    assert_equal(i, 0)
+
+def test_process(my_method):
+    r = my_method.process()
+
+    assert (isinstance(r, np.ndarray))
+
+
+
+
+
