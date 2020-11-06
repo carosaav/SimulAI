@@ -11,8 +11,8 @@
 # ============================================================================
 
 
-from abc import ABCMeta, abstractmethod
 from .interface import Com
+from abc import ABCMeta, abstractmethod
 import numpy as np
 import attr
 
@@ -129,10 +129,13 @@ class OutcomeVariable:
 # ============================================================================
 
 
+@attr.s
 class Plant(metaclass=ABCMeta):
-    def __init__(self, method):
-        self.method = method
-        method.register(self)
+
+    method = attr.ib()
+
+    def __attrs_post_init__(self):
+        self.method.register(self)
 
     def connection(self):
         file_name = self.get_file_name_plant()
@@ -152,6 +155,7 @@ class Plant(metaclass=ABCMeta):
         pass
 
 
+@attr.s
 class BasePlant(Plant):
     """
 
@@ -168,13 +172,31 @@ class BasePlant(Plant):
     modelname: str
         Model frame name of the file, Default value="Model".
     """
-    def __init__(self, method, v_i, v_o, filename, modelname="Model"):
-        Plant.__init__(self, method)
 
-        self.v_i = v_i
-        self.v_o = v_o
-        self.filename = filename
-        self.modelname = modelname
+    v_i = attr.ib()
+    v_o = attr.ib()
+    filename = attr.ib()
+    modelname = attr.ib(default="Model")
+
+    @v_i.validator
+    def _validate_v_i(self, attribute, value):
+        if not isinstance(value, list):
+            raise TypeError("v_i: Argument must be a list.")
+
+    @v_o.validator
+    def _validate_v_o(self, attribute, value):
+        if not isinstance(value, list):
+            raise TypeError("v_o: Argument must be a list.")
+
+    @filename.validator
+    def _validate_filename(self, attribute, value):
+        if not isinstance(value, str):
+            raise TypeError("File Name: Argument must be a string.")
+
+    @modelname.validator
+    def _validate_modelname(self, attribute, value):
+        if not isinstance(value, str):
+            raise TypeError("Model Name: Argument must be a string.")
 
     def get_file_name_plant(self):
         return self.filename
@@ -208,8 +230,12 @@ class BasePlant(Plant):
 # ============================================================================
 
 
+@attr.s
 class AutonomousDecisionSystem(metaclass=ABCMeta):
-    def __init__(self):
+
+    method = attr.ib(init=False)
+
+    def __attrs_post_init__(self):
         self.method = ""
 
     def register(self, who):
@@ -220,6 +246,7 @@ class AutonomousDecisionSystem(metaclass=ABCMeta):
         pass
 
 
+@attr.s
 class BaseMethod(AutonomousDecisionSystem):
     """Initialize the states, actions and Q table required to implement
     reinforcement learning algorithms, like Q-learning and SARSA.
@@ -234,48 +261,97 @@ class BaseMethod(AutonomousDecisionSystem):
     ----------
     v_i: list
         List of chosen input variables.
-    alfa: float
-        Reinforcement learning hyperparameter,
-        learning rate, varies from 0 to 1.
-    gamma: float
-        Reinforcement learning hyperparameter,
-        discount factor, varies from 0 to 1.
-    epsilon: float
-        Reinforcement learning hyperparameter,
-        probability for the epsilon-greedy action selection,
-        varies from 0 to 1.
     episodes_max: int
         Total number of episodes to run.
     steps_max: int
         Total number of steps in each episode.
+    alfa: float
+        Reinforcement learning hyperparameter,
+        learning rate, varies from 0 to 1. Default value= 0.10
+    gamma: float
+        Reinforcement learning hyperparameter,
+        discount factor, varies from 0 to 1. Default value= 0.90
+    epsilon: float
+        Reinforcement learning hyperparameter,
+        probability for the epsilon-greedy action selection,
+        varies from 0 to 1. Default value= 0.10
     seed: int
         Seed value for the seed() method.
     """
 
-    def __init__(self, v_i, alfa, gamma, epsilon, episodes_max, steps_max,
-                 seed):
-        AutonomousDecisionSystem.__init__(self)
+    v_i = attr.ib()
 
-        self.v_i = v_i
-        self.s = []
-        self.a = []
+    # number of episodes
+    episodes_max = attr.ib()
 
-        # reinforcement learning parameters
-        self.alfa = alfa
-        self.gamma = gamma
-        self.epsilon = epsilon
+    # number of steps
+    steps_max = attr.ib()
 
-        # number of episodes
-        self.episodes_max = episodes_max
+    # initialize reward per episode
+    r_episode = attr.ib(init=False)
 
-        # number of steps
-        self.steps_max = steps_max
+    # reinforcement learning parameters
+    alfa = attr.ib(default=0.10)
+    gamma = attr.ib(default=0.90)
+    epsilon = attr.ib(default=0.10)
 
-        # initialize reward per episode
+    s = attr.ib(factory=list)
+    a = attr.ib(factory=list)
+    seed = attr.ib(default=None)
+
+    def __attrs_post_init__(self):
         self.r_episode = np.arange(self.episodes_max, dtype=float)
 
-        if seed is not None:
-            np.random.seed(seed)
+        if self.seed is not None:
+            np.random.seed(self.seed)
+
+    @v_i.validator
+    def _validate_v_i(self, attribute, value):
+        if not isinstance(value, list):
+            raise TypeError("v_i: Argument must be a list.")
+
+    @episodes_max.validator
+    def _validate_episodes_max(self, attribute, value):
+        if not isinstance(value, int):
+            raise TypeError("Episodes_max: Argument must be an integer.")
+
+    @steps_max.validator
+    def _validate_steps_max(self, attribute, value):
+        if not isinstance(value, int):
+            raise TypeError("Steps_max: Argument must be an integer.")
+
+    @alfa.validator
+    def _validate_alfa(self, attribute, value):
+        if not isinstance(value, float):
+            raise TypeError("alfa: Argument must be a float.")
+        if value < 0:
+            raise ValueError(
+                "alfa: Argument must be higher than 0.")
+        if value > 1:
+            raise ValueError(
+                "alfa: Argument must be lower than 1.")
+
+    @gamma.validator
+    def _validate_gamma(self, attribute, value):
+        if not isinstance(value, float):
+            raise TypeError("gamma: Argument must be a float.")
+        if value < 0:
+            raise ValueError(
+                "gamma: Argument must be higher than 0.")
+        if value > 1:
+            raise ValueError(
+                "gamma: Argument must be lower than 1.")
+
+    @epsilon.validator
+    def _validate_epsilon(self, attribute, value):
+        if not isinstance(value, float):
+            raise TypeError("epsilon: Argument must be a float.")
+        if value < 0:
+            raise ValueError(
+                "epsilon: Argument must be higher than 0.")
+        if value > 1:
+            raise ValueError(
+                "epsilon: Argument must be lower than 1.")
 
     # arrays for states and actions
     def arrays(self):
@@ -337,11 +413,8 @@ class BaseMethod(AutonomousDecisionSystem):
         return self.Q, self.S, self.actions
 
 
+@attr.s
 class Qlearning(BaseMethod):
-    def __init__(self, v_i, alfa=0.10, gamma=0.90, epsilon=0.10,
-                 episodes_max=100, steps_max=100, seed=None):
-        super().__init__(v_i, alfa, gamma, epsilon, episodes_max, steps_max,
-                         seed)
 
     # choose action
     def choose_action(self, row):
@@ -401,10 +474,8 @@ class Qlearning(BaseMethod):
         return self.r_episode
 
 
+@attr.s
 class Sarsa(BaseMethod):
-    def __init__(self, v_i, alfa=0.10, gamma=0.90, epsilon=0.10,
-                 episodes_max=100, steps_max=100, seed=None):
-        super().__init__(v_i, alfa, gamma, epsilon, episodes_max, steps_max)
 
     # choose action
     def choose_action(self, row):
