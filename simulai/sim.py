@@ -174,7 +174,7 @@ class Plant(metaclass=ABCMeta):
 class BasePlant(Plant):
     """A particularly adaptable plant.
 
-        Parameters
+    Parameters
     ----------
     method: str
         Name of the chosen AI method.
@@ -370,8 +370,10 @@ class BaseMethod(AutonomousDecisionSystem):
             raise ValueError(
                 "epsilon: Argument must be lower than 1.")
 
-    # arrays for states and actions
     def arrays(self):
+        """
+        Arrays for states and actions.
+        """
         for idx, x in enumerate(self.v_i):
             self.s_idx = np.arange(
                 x.lower_limit, x.upper_limit + x.step, x.step)
@@ -381,6 +383,10 @@ class BaseMethod(AutonomousDecisionSystem):
 
     # initialize states, actions and Q table
     def ini_saq(self):
+        """
+        Initialize states, actions and Q table.
+        Return: Q,S and Action.
+        """
         self.arrays()
         n = []
         m = []
@@ -432,9 +438,34 @@ class BaseMethod(AutonomousDecisionSystem):
 
 @attr.s
 class Qlearning(BaseMethod):
+    """Implementation of the artificial intelligence method Q-Learning, whose
+    purpose is to obtain the optimal parameters from the trial and error
+    method, in which it is penalized if the goal is not reached and is
+    rewarded if it is reached, requiring for this a number of episodes.
 
-    # choose action
+    Parameters
+    ----------
+    v_i: positive int
+        Matrix size.
+    alfa: positive float
+        Step value.
+    gamma: positive float
+        Learning value.
+    epsilon: positive float
+        Value of following a greedy policy.
+    episodes_max: positive int
+        Maximum value of episodes.
+    step_max: positive int
+        Maximum step value.
+    seed: int
+        Seed value for the seed() method.
+    """
     def choose_action(self, row):
+        """
+        Choose the action to follow
+        Input param: row
+        Return: i
+        """
         p = np.random.random()
         if p < (1 - self.epsilon):
             i = np.argmax(self.Q[row, :])
@@ -442,8 +473,11 @@ class Qlearning(BaseMethod):
             i = np.random.choice(self.actions.shape[0])
         return i
 
-    # reinforcement learning process
     def process(self):
+        """
+        Learning algorithm
+        Return: r_episode
+        """
         self.ini_saq()
         for n in range(self.episodes_max):
             S0 = self.S[0]
@@ -493,9 +527,34 @@ class Qlearning(BaseMethod):
 
 @attr.s
 class Sarsa(BaseMethod):
+    """Implementation of the artificial intelligence method Q-Learning, whose
+    purpose is to obtain the optimal parameters from the trial and error
+    method, in which it is penalized if the goal is not reached and is
+    rewarded if it is reached, requiring for this a number of episodes.
 
-    # choose action
+    Parameters
+    ----------
+    v_i: positive int
+        Matrix size.
+    alfa: positive float
+        Step value.
+    gamma: positive float
+        Learning value.
+    epsilon: positive float
+        Value of following a greedy policy.
+    episodes_max: positive int
+        Maximum value of episodes.
+    step_max: positive int
+        Maximum step value.
+    seed: int
+        Seed value for the seed() method.
+    """
     def choose_action(self, row):
+        """
+        Choose the action to follow
+        Input param: row
+        Return: i
+        """
         p = np.random.random()
         if p < (1 - self.epsilon):
             i = np.argmax(self.Q[row, :])
@@ -503,8 +562,11 @@ class Sarsa(BaseMethod):
             i = np.random.choice(self.actions.shape[0])
         return i
 
-    # reinforcement learning process
     def process(self):
+        """
+        Learning algorithm
+        Return: r_episode
+        """
         self.ini_saq()
         for n in range(self.episodes_max):
             S0 = self.S[0]
