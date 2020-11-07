@@ -21,7 +21,7 @@ import os
 
 def check_connection(method):
     """
-    This function checks the connection status, returning an error
+    Checks the connection status, returning an error
     menssaje if it fails
 
     Parameters
@@ -38,7 +38,7 @@ def check_connection(method):
 
 class Com(object):
     """
-    Class used to definition of the function of communication
+    Definition of the function of communication
 
     Parameters
     ----------
@@ -56,7 +56,7 @@ class Com(object):
 
     def get_path_file_model(self):
         """
-        Function that returns the complete file path
+        Returns the complete file path
         Input parameter: file name
         Return: file path
         """
@@ -65,7 +65,7 @@ class Com(object):
 
     def connection(self):
         """
-        Function that returns the connection object
+        Returns the connection object
         Input parameter: file name
         Return: connection object
         """
@@ -84,7 +84,7 @@ class Com(object):
     @check_connection
     def setVisible(self, value):
         """
-        This function executes the application Tecnomatix
+        Executes the application Tecnomatix
         Input parameter: model_name and value
         """
         self.plant_simulation.setVisible(value)
@@ -92,7 +92,7 @@ class Com(object):
     @check_connection
     def setValue(self, ref, value):
         """
-       This function set the values in the simulator
+       Set the values in the simulator
        Input parameter: model_name, ref and value
        """
         self.plant_simulation.setValue(ref, value)
@@ -100,7 +100,7 @@ class Com(object):
     @check_connection
     def getValue(self, ref):
         """
-      This function get the values in the simulator
+      Get the values in the simulator
       Input parameter: model_name, ref and value
       """
         return self.plant_simulation.getValue(ref)
@@ -108,7 +108,7 @@ class Com(object):
     @check_connection
     def startSimulation(self, ref):
         """
-        This function makes the simulation start
+        Makes the simulation start
         Input parameter: model_name and ref
         """
         self.plant_simulation.startSimulation(ref)
@@ -116,7 +116,7 @@ class Com(object):
     @check_connection
     def resetSimulation(self, ref):
         """
-        This function makes the simulation reset
+        Makes the simulation reset
         Input parameter: model_name and ref
         """
         self.plant_simulation.resetSimulation(ref)
@@ -124,7 +124,7 @@ class Com(object):
     @check_connection
     def stopSimulation(self, ref):
         """
-        This function makes the simulation stop
+        Makes the simulation stop
         Input parameter: model_name and ref
         """
         self.plant_simulation.stopSimulation(ref)
@@ -132,7 +132,7 @@ class Com(object):
     @check_connection
     def closeModel(self):
         """
-        This function closes the simulation model
+        Closes the simulation model
         Input parameter: model_name
         """
         self.plant_simulation.CloseModel()
@@ -140,7 +140,7 @@ class Com(object):
     @check_connection
     def executeSimTalk(self, ref, value):
         """
-        This function execute the simulation call
+        Execute the simulation call
         Input parameter: name_model, ref and value
         """
         self.plant_simulation.ExecuteSimTalk(ref, value)
@@ -148,7 +148,7 @@ class Com(object):
     @check_connection
     def isSimulationRunning(self):
         """
-        This function check if the simulation is running
+        Check if the simulation is running
         Input parameter: model_name
         """
         return(self.plant_simulation.IsSimulationRunning())
@@ -156,7 +156,7 @@ class Com(object):
     @check_connection
     def loadModel(self, ref, value):
         """
-        This function performs the load of the model
+        Performs the load of the model
         Input parameter: model_name, ref and value
         """
         self.plant_simulation.LoadModel(ref, value)
@@ -164,7 +164,7 @@ class Com(object):
     @check_connection
     def newModel(self):
         """
-        This function create a new model
+        Create a new model
         Input parameter: model_name
         """
         self.plant_simulation.NewModel()
@@ -172,7 +172,7 @@ class Com(object):
     @check_connection
     def openConsoleLogFile(self, ref):
         """
-        This function open the simulation result in the console
+        Open the simulation result in the console
         Input parameter: model_name and ref
         """
         self.plant_simulation.OpenConsoleLogFile(ref)
@@ -180,7 +180,7 @@ class Com(object):
     @check_connection
     def quit(self):
         """
-        This function clear all result
+        Clear all result
         Input parameter: model_name
         """
         self.plant_simulation.Quit()
@@ -188,7 +188,7 @@ class Com(object):
     @check_connection
     def quitAfterTime(self, value):
         """
-        This function clear all result after a time
+        Clear all result after a time
         Input parameter: model_name and value
         """
         self.plant_simulation.QuitAfterTime(value)
@@ -196,7 +196,7 @@ class Com(object):
     @check_connection
     def saveModel(self, ref):
         """
-        This function saves the model result
+        Saves the model result
         Input parameter: model_name and ref
         """
         self.plant_simulation.SaveModel(ref)
@@ -204,7 +204,7 @@ class Com(object):
     @check_connection
     def setLicenseType(self, ref):
         """
-        This function sets the type of license
+        Sets the type of license
         Input parameter: model_name and ref
         """
         self.plant_simulation.SetLicenseType(ref)
@@ -212,7 +212,7 @@ class Com(object):
     @check_connection
     def setNoMessageBox(self, value):
         """
-        This function deletes the messages on the screen
+        Deletes the messages on the screen
         Input parameter: model_name and value
         """
         self.plant_simulation.SetNoMessageBox(value)
@@ -220,7 +220,7 @@ class Com(object):
     @check_connection
     def setPathContext(self, ref):
         """
-        This function set the context
+        Set the context
         Input parameter: model_name and ref
         """
         self.plant_simulation.SetPathContext(ref)
@@ -228,7 +228,7 @@ class Com(object):
     @check_connection
     def setSuppressStartOf3D(self, value):
         """
-        This function eliminate the start of 3D model
+        Eliminate the start of 3D model
         Input parameter: model_name and value
         """
         self.plant_simulation.SetSuppressStartOf3D(value)
@@ -236,7 +236,7 @@ class Com(object):
     @check_connection
     def setTrustModels(self, value):
         """
-        This function set the real model
+        Set the real model
         Input parameter: model_name and value
         """
         self.plant_simulation.SetTrustModels(value)
@@ -244,7 +244,7 @@ class Com(object):
     @check_connection
     def transferModel(self, value):
         """
-        This function transfer the model
+        Transfer the model
         Input parameter: model_name and value
         """
         self.plant_simulation.TransferModel(value)
