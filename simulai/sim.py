@@ -6,10 +6,16 @@
 # License: MIT
 #   Full Text: https://github.com/carosaav/SimulAI/blob/master/LICENSE
 
+
+# =============================================================================
+# DOCS
+# =============================================================================
+
+"""Plant simulation with autonomous decision system."""
+
 # ============================================================================
 # IMPORTS
 # ============================================================================
-
 
 from .interface import Com
 from abc import ABCMeta, abstractmethod
@@ -24,8 +30,9 @@ import attr
 
 @attr.s
 class DiscreteVariable:
-    """Initialize the Tecnomatix Plant Simulation Variables that will be used
-    in the AI ​​method.
+    """Initialize the input Tecnomatix Plant Simulation Variables.
+
+    These variables will be used in the AI ​​method.
     Up to 4 discrete variables are allowed in the problem which can form up to
     625 possible states in the algorithm.
     For example, if 4 variables are chosen, each of them can take 5 possible
@@ -79,9 +86,10 @@ class DiscreteVariable:
 
 @attr.s
 class OutcomeVariable:
-    """Initialize the Tecnomatix Plant Simulation Variables that will be used
-    as the output to optimize in the AI ​​method.
-    These variables must be stored in a Data Table.
+    """Initialize the output Tecnomatix Plant Simulation Variables.
+
+    These variables will be used in the AI ​​method and must be stored in a
+    Data Table.
     The chosen column from which to extract the results and the number of
     rows it has must be indicated.
 
@@ -131,6 +139,13 @@ class OutcomeVariable:
 
 @attr.s
 class Plant(metaclass=ABCMeta):
+    """Metaclass to generate various simulated manufacturing plants.
+
+        Parameters
+    ----------
+    method: str
+        Name of the chosen AI method.
+    """
 
     method = attr.ib()
 
@@ -157,7 +172,7 @@ class Plant(metaclass=ABCMeta):
 
 @attr.s
 class BasePlant(Plant):
-    """
+    """A particularly adaptable plant.
 
         Parameters
     ----------
@@ -248,8 +263,10 @@ class AutonomousDecisionSystem(metaclass=ABCMeta):
 
 @attr.s
 class BaseMethod(AutonomousDecisionSystem):
-    """Initialize the states, actions and Q table required to implement
-    reinforcement learning algorithms, like Q-learning and SARSA.
+    """Initialize states, actions and Q table.
+
+    These elements are required to implement reinforcement learning
+    algorithms, like Q-learning and SARSA.
     The Q table has a maximum of 625 rows, that is, up to 625 states are
     supported. These states are made up of 1 to 4 variables of the Tecnomatix
     Plant Simulation.

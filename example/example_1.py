@@ -33,7 +33,7 @@ var_output = [transportes, buffers, salidas]
 
 my_method = sim.Qlearning(v_i=var_input, episodes_max=5, steps_max=10)
 my_plant = sim.BasePlant(method=my_method, v_i=var_input, v_o=var_output,
-	                     filename="MaterialHandling.spp",modelname=frame,)
+                         filename="MaterialHandling.spp", modelname=frame)
 
 # Step 4- Run the simulation
 

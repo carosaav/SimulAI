@@ -1,9 +1,10 @@
-# This file is part of the SimulAI Project
-# (https://github.com/carosaav/SimulAI).
+
+# This file is part of the
+#   SimulAI Project (https://github.com/carosaav/SimulAI).
 # Copyright (c) 2020, Perez Colo Ivo, Pirozzo Bernardo Manuel,
 # Carolina Saavedra Sueldo
 # License: MIT
-# Full Text: https://github.com/carosaav/SimulAI/blob/master/LICENSE
+#   Full Text: https://github.com/carosaav/SimulAI/blob/master/LICENSE
 
 # ============================================================================
 # IMPORTS
@@ -11,10 +12,9 @@
 
 
 import pytest
+from unittest.mock import patch
 import numpy as np
-
 from numpy.testing import assert_equal
-
 from simulai import sim
 
 
@@ -31,8 +31,7 @@ def var_input():
     stock = sim.DiscreteVariable(
         "Stock", 10, 50, 10, "Models." + frame + ".stock")
     numviajes = sim.DiscreteVariable(
-        "Numero de viajes", 1, 5, 1, "Models." + frame + ".numviajes"
-    )
+        "Numero de viajes", 1, 5, 1, "Models." + frame + ".numviajes")
     vi = [espera, stock, numviajes]
 
     return vi
@@ -42,14 +41,11 @@ def var_input():
 def var_out():
     frame = "Modelo"
     transportes = sim.OutcomeVariable(
-        "Distancia Transportes", "Models." + frame + ".transportes", 2, 9
-    )
+        "Distancia Transportes", "Models." + frame + ".transportes", 2, 9)
     buffers = sim.OutcomeVariable(
-        "Llenado buffers", "Models." + frame + ".buffers", 3, 20
-    )
+        "Llenado buffers", "Models." + frame + ".buffers", 3, 20)
     salidas = sim.OutcomeVariable(
-        "Espera en las Salidas", "Models." + frame + ".salidas", 2, 20
-    )
+        "Espera en las Salidas", "Models." + frame + ".salidas", 2, 20)
     vo = [transportes, buffers, salidas]
 
     return vo
@@ -77,8 +73,6 @@ def my_method(var_input):
 
 def test_DiscreteVariable():
     """Test that the arguments that define a discrete variable
-
-
     are of the right type.
     """
     parm = sim.DiscreteVariable("Time", 0, 10, 1, "path")
@@ -88,6 +82,9 @@ def test_DiscreteVariable():
     assert isinstance(parm.upper_limit, int)
     assert isinstance(parm.step, int)
     assert isinstance(parm.path, str)
+
+    with pytest.raises(TypeError):
+        sim.DiscreteVariable(1, "a", 10.50, "c", 3)
 
 
 def test_OutcomeVariable():
@@ -99,6 +96,9 @@ def test_OutcomeVariable():
     assert isinstance(parm.column, int)
     assert isinstance(parm.num_rows, int)
 
+    with pytest.raises(TypeError):
+        sim.OutcomeVariable(1, 10.50, "c", 3.0)
+
 
 def test_BasePlant(base):
     """Test data type of argument"""
@@ -106,6 +106,9 @@ def test_BasePlant(base):
     assert isinstance(base.v_o, list)
     assert isinstance(base.filename, str)
     assert isinstance(base.modelname, str)
+
+    with pytest.raises(TypeError):
+        sim.OutcomeVariable(5, "abc", 525, [2, 5])
 
 
 def test_get_file_name_plant(base):
@@ -116,22 +119,53 @@ def test_get_file_name_plant(base):
     assert isinstance(filename, str)
 
 
-def test_update(base):
-    """Test type data of the returned value for the variable "r" """
+@patch.object(sim.BasePlant, 'update', return_value=1.10)
+def test_update(mock_method):
+    sim.BasePlant.update([60, 10, 1])
+    mock_method.assert_called_with([60, 10, 1])
 
-    updt = base
-    assert isinstance(updt.r, int)
 
-
-def test_process_simulation(base):
-
+@patch.object(sim.BasePlant, 'process_simulation')
+def test_process_simulation(mock_method2):
     """Test that the connection() function returns a boolean type value.
 
     Use the mock of the simulation software.
     """
-    connect = base.connection()
+    sim.BasePlant.process_simulation()
+    mock_method2.assert_called_with()
 
-    assert isinstance(connect, bool)
+
+def test_default_Q(my_method):
+    """Test the data type of the Qlearning function arguments and
+
+    check the default values.
+    """
+    assert isinstance(my_method.s, list)
+    assert isinstance(my_method.a, list)
+    assert isinstance(my_method.v_i, list)
+    assert isinstance(my_method.alfa, float)
+    assert isinstance(my_method.gamma, float)
+    assert isinstance(my_method.epsilon, float)
+    assert isinstance(my_method.episodes_max, int)
+    assert isinstance(my_method.steps_max, int)
+    assert isinstance(my_method.r_episode, np.ndarray)
+    assert_equal(my_method.s, [])
+    assert_equal(my_method.a, [])
+    assert_equal(my_method.alfa, 0.10)
+    assert_equal(my_method.gamma, 0.90)
+    assert_equal(my_method.epsilon, 0.10)
+    assert_equal(my_method.episodes_max, 1)
+    assert_equal(my_method.steps_max, 10)
+
+
+def test_arrays(my_method):
+    """Test the data type of the arrays generated with the limit and
+
+    step information of the input variables.
+    """
+    my_method.arrays()
+    assert_equal(len(my_method.s), 3)
+    assert_equal(len(my_method.a), 3)
 
 
 def test_ini_saq(my_method):
@@ -153,44 +187,6 @@ def test_ini_saq(my_method):
     assert np.all((A == 0)) == False
 
 
-def test_default_Q(var_input, var_out):
-    """Test the data type of the Qlearning function arguments and
-
-    check the default values.
-    """
-    parm = sim.Qlearning(v_i=var_input)
-
-    assert isinstance(parm.s, list)
-    assert isinstance(parm.a, list)
-    assert isinstance(parm.v_i, list)
-    assert isinstance(parm.alfa, float)
-    assert isinstance(parm.gamma, float)
-    assert isinstance(parm.epsilon, float)
-    assert isinstance(parm.episodes_max, int)
-    assert isinstance(parm.steps_max, int)
-    assert isinstance(parm.r_episode, np.ndarray)
-    assert_equal(parm.s, [])
-    assert_equal(parm.a, [])
-    assert_equal(parm.alfa, 0.10)
-    assert_equal(parm.gamma, 0.90)
-    assert_equal(parm.epsilon, 0.10)
-    assert_equal(parm.episodes_max, 100)
-    assert_equal(parm.steps_max, 100)
-
-
-def test_arrays(my_method):
-    """Test the data type of the arrays generated with the limit and
-
-    step information of the input variables.
-    """
-    arr = my_method.arrays()
-
-    assert isinstance(arr.s, np.ndarray)
-    assert isinstance(arr.s_idx, np.ndarray)
-    assert isinstance(arr.a, np.ndarray)
-    assert isinstance(arr.a_idx, np.ndarray)
-
-
 def test_choose_action(my_method):
     """Test that the function choose_action takes the row "0" of the
 
@@ -204,11 +200,11 @@ def test_choose_action(my_method):
     assert_equal(i, 0)
 
 
-def test_process(my_method):
+@patch.object(sim.Qlearning, 'process')
+def test_process(mock_method3):
     """Test that the process function returns an array.
 
     Use the mock of the simulation software (subscriber).
     """
-    r = my_method.process()
-
-    assert isinstance(r, np.ndarray)
+    sim.Qlearning.process()
+    mock_method3.assert_called_with()
