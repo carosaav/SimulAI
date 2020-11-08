@@ -65,8 +65,15 @@ def base(var_input, var_out):
 
 
 @pytest.fixture
-def my_method(var_input):
+def my_method_Q(var_input):
     method = sim.Qlearning(v_i=var_input, episodes_max=1, steps_max=10)
+
+    return method
+
+
+@pytest.fixture
+def my_method_S(var_input):
+    method = sim.Sarsa(v_i=var_input, episodes_max=1, steps_max=10)
 
     return method
 
@@ -138,46 +145,46 @@ def test_update(mock_method):
     assert isinstance(value, float)
 
 
-def test_default_Q(my_method):
+def test_default_Q(my_method_Q):
     """Test the data type of the Qlearning function arguments and
 
     check the default values.
     """
-    assert isinstance(my_method.s, list)
-    assert isinstance(my_method.a, list)
-    assert isinstance(my_method.v_i, list)
-    assert isinstance(my_method.alfa, float)
-    assert isinstance(my_method.gamma, float)
-    assert isinstance(my_method.epsilon, float)
-    assert isinstance(my_method.episodes_max, int)
-    assert isinstance(my_method.steps_max, int)
-    assert isinstance(my_method.r_episode, np.ndarray)
-    assert_equal(my_method.s, [])
-    assert_equal(my_method.a, [])
-    assert_equal(my_method.alfa, 0.10)
-    assert_equal(my_method.gamma, 0.90)
-    assert_equal(my_method.epsilon, 0.10)
-    assert_equal(my_method.episodes_max, 1)
-    assert_equal(my_method.steps_max, 10)
+    assert isinstance(my_method_Q.s, list)
+    assert isinstance(my_method_Q.a, list)
+    assert isinstance(my_method_Q.v_i, list)
+    assert isinstance(my_method_Q.alfa, float)
+    assert isinstance(my_method_Q.gamma, float)
+    assert isinstance(my_method_Q.epsilon, float)
+    assert isinstance(my_method_Q.episodes_max, int)
+    assert isinstance(my_method_Q.steps_max, int)
+    assert isinstance(my_method_Q.r_episode, np.ndarray)
+    assert_equal(my_method_Q.s, [])
+    assert_equal(my_method_Q.a, [])
+    assert_equal(my_method_Q.alfa, 0.10)
+    assert_equal(my_method_Q.gamma, 0.90)
+    assert_equal(my_method_Q.epsilon, 0.10)
+    assert_equal(my_method_Q.episodes_max, 1)
+    assert_equal(my_method_Q.steps_max, 10)
 
 
-def test_arrays(my_method):
+def test_arrays(my_method_Q):
     """Test the data type of the arrays generated with the limit and
 
     step information of the input variables.
     """
-    my_method.arrays()
-    assert_equal(len(my_method.s), 3)
-    assert_equal(len(my_method.a), 3)
+    my_method_Q.arrays()
+    assert_equal(len(my_method_Q.s), 3)
+    assert_equal(len(my_method_Q.a), 3)
 
 
-def test_ini_saq(my_method):
+def test_ini_saq(my_method_Q):
     """Test that the output Q matrix has the necessary characteristics.
 
     Initially the data type is checked.
     Then dimensions and composition are checked.
     """
-    Q, S, A = my_method.ini_saq()
+    Q, S, A = my_method_Q.ini_saq()
 
     assert isinstance(Q, np.ndarray)
     assert isinstance(S, np.ndarray)
@@ -190,12 +197,12 @@ def test_ini_saq(my_method):
     assert (A == 0).all() == False
 
 
-def test_choose_action(my_method):
+def test_choose_action(my_method_Q):
     """Test that the function choose_action takes the row "0" of the
 
     Q array when p < 1 - epsilon or takes a random row otherwise.
     """
-    method = my_method
+    method = my_method_Q
     QSA = method.ini_saq()
     i = method.choose_action(np.random.randint(624))
 
@@ -210,3 +217,50 @@ def test_process(mock_method2):
     mock_method2.assert_called_with()
 
     assert isinstance(r, list)
+
+
+def test_default_Sarsa(my_method_S):
+    """Test the data type of the Sarsa function arguments and
+
+    check the default values.
+    """
+    assert isinstance(my_method_S.s, list)
+    assert isinstance(my_method_S.a, list)
+    assert isinstance(my_method_S.v_i, list)
+    assert isinstance(my_method_S.alfa, float)
+    assert isinstance(my_method_S.gamma, float)
+    assert isinstance(my_method_S.epsilon, float)
+    assert isinstance(my_method_S.episodes_max, int)
+    assert isinstance(my_method_S.steps_max, int)
+    assert isinstance(my_method_S.r_episode, np.ndarray)
+    assert_equal(my_method_S.s, [])
+    assert_equal(my_method_S.a, [])
+    assert_equal(my_method_S.alfa, 0.10)
+    assert_equal(my_method_S.gamma, 0.90)
+    assert_equal(my_method_S.epsilon, 0.10)
+    assert_equal(my_method_S.episodes_max, 1)
+    assert_equal(my_method_S.steps_max, 10)
+
+
+def test_choose_action_S(my_method_S):
+    """Test that the function choose_action takes the row "0" of the
+
+    Q array when p < 1 - epsilon or takes a random row otherwise.
+    """
+    method = my_method_S
+    QSA = method.ini_saq()
+    i = method.choose_action(np.random.randint(624))
+
+    # assert (isinstance(i, int))
+    assert_equal(i, 0)
+
+
+@patch.object(sim.Sarsa, 'process', return_value=[1., 0., 0., 2., 2.])
+def test_process_S(mock_method3):
+    """Test that the process function returns an array."""
+    r = sim.Sarsa.process()
+    mock_method3.assert_called_with()
+
+    assert isinstance(r, list)
+
+
