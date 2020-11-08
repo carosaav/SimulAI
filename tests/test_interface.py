@@ -14,7 +14,7 @@ import pytest
 from unittest.mock import patch
 import numpy as np
 from numpy.testing import assert_equal
-from simulai import sim
+from simulai import interface
 
 
 # ============================================================================
@@ -22,11 +22,22 @@ from simulai import sim
 # ============================================================================
 
 
-@patch.object(sim.BasePlant, 'process_simulation', return_v=bool)
-def test_process_simulation(mock_method2):
-    """Test that the connection() function returns a boolean type value.
+@pytest.fixture
+def base():
+	com = interface.Com("frame") 
 
-    Use the mock of the simulation software.
-    """
-    sim.BasePlant.process_simulation()
-    mock_method2.assert_called_with()
+	return com
+
+
+def test_Com(base):
+		
+	assert isinstance(base.model_name, str)
+	assert isinstance(base.is_connected, bool)
+
+
+def test_get_path_file_model(base):
+ 
+    assert isinstance(base.get_path_file_model(), str)
+
+def test_connection(base):
+	
