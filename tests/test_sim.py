@@ -130,20 +130,12 @@ def test_get_file_name_plant(base):
     assert isinstance(filename, str)
 
 
-@patch.object(sim.BasePlant, 'update', return_value=1.10)
+@patch.object(sim.BasePlant, 'update', return_value=np.random.uniform(0, 5))
 def test_update(mock_method):
-    sim.BasePlant.update([60, 10, 1])
+    value = sim.BasePlant.update([60, 10, 1])
     mock_method.assert_called_with([60, 10, 1])
 
-
-@patch.object(sim.BasePlant, 'process_simulation')
-def test_process_simulation(mock_method2):
-    """Test that the connection() function returns a boolean type value.
-
-    Use the mock of the simulation software.
-    """
-    sim.BasePlant.process_simulation()
-    mock_method2.assert_called_with()
+    assert isinstance(value, float)
 
 
 def test_default_Q(my_method):
@@ -191,11 +183,11 @@ def test_ini_saq(my_method):
     assert isinstance(S, np.ndarray)
     assert isinstance(A, np.ndarray)
     assert Q.shape == (625, 27)
-    assert np.all((Q == 0)) == True
     assert S.shape == (625, 3)
-    assert np.all((S == 0)) == False
     assert A.shape == (27, 3)
-    assert np.all((A == 0)) == False
+    assert (Q == 0).all() 
+    assert (S == 0).all() == False
+    assert (A == 0).all() == False
 
 
 def test_choose_action(my_method):
@@ -211,11 +203,10 @@ def test_choose_action(my_method):
     assert_equal(i, 0)
 
 
-@patch.object(sim.Qlearning, 'process')
-def test_process(mock_method3):
-    """Test that the process function returns an array.
+@patch.object(sim.Qlearning, 'process', return_value=[1., 0., 0., 2., 2.])
+def test_process(mock_method2):
+    """Test that the process function returns an array."""
+    r = sim.Qlearning.process()
+    mock_method2.assert_called_with()
 
-    Use the mock of the simulation software (subscriber).
-    """
-    sim.Qlearning.process()
-    mock_method3.assert_called_with()
+    assert isinstance(r, list)
