@@ -70,6 +70,18 @@ def my_method(var_input):
 
     return method
 
+testdata = [(0.1, 0.2, "string", "string"), 
+            ((4.5 + 3j), (4.5 + 3j), 0.1, 0.2), 
+            (False, True, (4.5 + 3j), (4.5 + 3j)), 
+            ([1, "test", 2], [1, "test", 2], False, True), 
+            (("a", "b", "c"), ("a", "b", "c"), 
+                [1, "test", 2], [1, "test", 2]), 
+            ({"a":1, "b":"test", "c":2}, {"a":1, "b":"test", "c":2}, 
+                ("a", "b", "c"), ("a", "b", "c") ), 
+            (set([3.0, 'Car', True]), set([3.0, 'Car', True]), 
+                {"a":1, "b":"test", "c":2}, {"a":1, "b":"test", "c":2}),
+            (0.1, 0.2, set([3.0, 'Car', True]), set([3.0, 'Car', True]))]
+
 
 def test_DiscreteVariable():
     """Test that the arguments that define a discrete variable
@@ -84,8 +96,7 @@ def test_DiscreteVariable():
     assert isinstance(parm.path, str)
 
     with pytest.raises(TypeError):
-        sim.DiscreteVariable(1, "a", 10.50, "c", 3)
-
+        sim.DiscreteVariable(testdata)
 
 def test_OutcomeVariable():
     """Test that the output variable has the correct types of arguments."""
@@ -97,7 +108,7 @@ def test_OutcomeVariable():
     assert isinstance(parm.num_rows, int)
 
     with pytest.raises(TypeError):
-        sim.OutcomeVariable(1, 10.50, "c", 3.0)
+        sim.OutcomeVariable(testdata)
 
 
 def test_BasePlant(base):
@@ -108,7 +119,7 @@ def test_BasePlant(base):
     assert isinstance(base.modelname, str)
 
     with pytest.raises(TypeError):
-        sim.OutcomeVariable(5, "abc", 525, [2, 5])
+        sim.OutcomeVariable(testdata)
 
 
 def test_get_file_name_plant(base):
