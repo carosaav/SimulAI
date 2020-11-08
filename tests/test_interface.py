@@ -13,6 +13,7 @@
 import pytest
 from unittest.mock import patch
 import numpy as np
+import random
 from numpy.testing import assert_equal
 from simulai import interface
 
@@ -39,5 +40,20 @@ def test_get_path_file_model(base):
  
     assert isinstance(base.get_path_file_model(), str)
 
-def test_connection(base):
-	
+
+@patch.object(interface.Com, 'connection', return_value=random.choice([True, False]))
+def test_connection(mock_method):
+	retr = interface.Com.connection()
+	mock_method.assert_called_with()
+
+	assert isinstance(retr, bool)
+
+
+@patch.object(interface.Com, 'connection', return_value=random.choice([True, False]))
+def test_setVible(mock_method1):
+	retr = interface.Com.connection()
+	mock_method1.assert_called_with()
+	method = interface.Com.setVisible(retr)
+	visible = interface.check_connection(method)
+
+	assert isinstance(visible, bool)
