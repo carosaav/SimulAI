@@ -12,9 +12,7 @@
 
 import pytest
 from unittest.mock import patch
-import numpy as np
 import random
-from numpy.testing import assert_equal
 from simulai import interface
 
 
@@ -25,31 +23,32 @@ from simulai import interface
 
 @pytest.fixture
 def base():
-	com = interface.Com("frame") 
+    com = interface.Com("frame")
 
-	return com
+    return com
 
 
 def test_Com(base):
-		
-	assert isinstance(base.model_name, str)
-	assert isinstance(base.is_connected, bool)
+
+    assert isinstance(base.model_name, str)
+    assert isinstance(base.is_connected, bool)
 
 
 def test_get_path_file_model(base):
- 
+
     assert isinstance(base.get_path_file_model(), str)
 
 
-@patch.object(interface.Com, 'connection', return_value=random.choice([True, False]))
+@patch.object(interface.Com, 'connection',
+              return_value=random.choice([True, False]))
 def test_connection(mock_method):
-	retr = interface.Com.connection()
-	mock_method.assert_called_with()
+    retr = interface.Com.connection()
+    mock_method.assert_called_with()
 
-	assert isinstance(retr, bool)
+    assert isinstance(retr, bool)
 
 
 def test_setVisible(base):
-	visible = base.setVisible()
+    visible = base.setVisible()
 
-	assert isinstance(visible.value, bool)
+    assert isinstance(visible.value, bool)

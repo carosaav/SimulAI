@@ -18,7 +18,7 @@ sys.path.insert(0, os.path.abspath('..'))
 # -- Project information -----------------------------------------------------
 
 project = 'SimulAI'
-copyright = '2020, Perez Colo Ivo, Pirozzo Manuel Bernardo, Carolina Saavedra Sueldo'
+copyright = '2020, Perez Colo, Pirozzo, Saavedra Sueldo'
 author = 'Perez Colo Ivo, Pirozzo Manuel Bernardo, Carolina Saavedra Sueldo'
 
 # The full version, including alpha/beta/rc tags

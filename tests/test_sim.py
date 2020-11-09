@@ -77,16 +77,17 @@ def my_method_S(var_input):
 
     return method
 
-testdata = [(0.1, 0.2, "string", "string"), 
-            ((4.5 + 3j), (4.5 + 3j), 0.1, 0.2), 
-            (False, True, (4.5 + 3j), (4.5 + 3j)), 
-            ([1, "test", 2], [1, "test", 2], False, True), 
-            (("a", "b", "c"), ("a", "b", "c"), 
-                [1, "test", 2], [1, "test", 2]), 
-            ({"a":1, "b":"test", "c":2}, {"a":1, "b":"test", "c":2}, 
-                ("a", "b", "c"), ("a", "b", "c") ), 
-            (set([3.0, 'Car', True]), set([3.0, 'Car', True]), 
-                {"a":1, "b":"test", "c":2}, {"a":1, "b":"test", "c":2}),
+
+testdata = [(0.1, 0.2, "string", "string"),
+            ((4.5 + 3j), (4.5 + 3j), 0.1, 0.2),
+            (False, True, (4.5 + 3j), (4.5 + 3j)),
+            ([1, "test", 2], [1, "test", 2], False, True),
+            (("a", "b", "c"), ("a", "b", "c"),
+                [1, "test", 2], [1, "test", 2]),
+            ({"a": 1, "b": "test", "c": 2}, {"a": 1, "b": "test", "c": 2},
+                ("a", "b", "c"), ("a", "b", "c")),
+            (set([3.0, 'Car', True]), set([3.0, 'Car', True]),
+                {"a": 1, "b": "test", "c": 2}, {"a": 1, "b": "test", "c": 2}),
             (0.1, 0.2, set([3.0, 'Car', True]), set([3.0, 'Car', True]))]
 
 
@@ -104,6 +105,7 @@ def test_DiscreteVariable():
 
     with pytest.raises(TypeError):
         sim.DiscreteVariable(testdata)
+
 
 def test_OutcomeVariable():
     """Test that the output variable has the correct types of arguments."""
@@ -192,9 +194,9 @@ def test_ini_saq(my_method_Q):
     assert Q.shape == (625, 27)
     assert S.shape == (625, 3)
     assert A.shape == (27, 3)
-    assert (Q == 0).all() 
-    assert (S == 0).all() == False
-    assert (A == 0).all() == False
+    assert (Q == 0).all()
+    assert (S == 0).all() is False
+    assert (A == 0).all() is False
 
 
 def test_choose_action(my_method_Q):
@@ -203,7 +205,7 @@ def test_choose_action(my_method_Q):
     Q array when p < 1 - epsilon or takes a random row otherwise.
     """
     method = my_method_Q
-    QSA = method.ini_saq()
+    method.ini_saq()
     i = method.choose_action(np.random.randint(624))
 
     # assert (isinstance(i, int))
@@ -248,7 +250,7 @@ def test_choose_action_S(my_method_S):
     Q array when p < 1 - epsilon or takes a random row otherwise.
     """
     method = my_method_S
-    QSA = method.ini_saq()
+    method.ini_saq()
     i = method.choose_action(np.random.randint(624))
 
     # assert (isinstance(i, int))
@@ -262,5 +264,3 @@ def test_process_S(mock_method3):
     mock_method3.assert_called_with()
 
     assert isinstance(r, list)
-
-
