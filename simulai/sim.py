@@ -38,7 +38,7 @@ class DiscreteVariable:
     For example, if 4 variables are chosen, each of them can take 5 possible
     values and states formed will be S = (Var1, Var2, Var3, Var4).
 
-        Parameters
+    Parameters
     ----------
     name: str
         Name of the Variable.
@@ -93,7 +93,7 @@ class OutcomeVariable:
     The chosen column from which to extract the results and the number of
     rows it has must be indicated.
 
-        Parameters
+    Parameters
     ----------
     name: str
         Name of the Variable.
@@ -141,7 +141,7 @@ class OutcomeVariable:
 class Plant(metaclass=ABCMeta):
     """Metaclass to generate various simulated manufacturing plants.
 
-        Parameters
+    Parameters
     ----------
     method: str
         Name of the chosen AI method.
@@ -274,7 +274,7 @@ class BaseMethod(AutonomousDecisionSystem):
     The reward function depends on the results defined in the respective plant
     class.
 
-        Parameters
+    Parameters
     ----------
     v_i: list
         List of chosen input variables.
@@ -371,9 +371,7 @@ class BaseMethod(AutonomousDecisionSystem):
                 "epsilon: Argument must be lower than 1.")
 
     def arrays(self):
-        """
-        Arrays for states and actions.
-        """
+        """Arrays for states and actions."""
         for idx, x in enumerate(self.v_i):
             self.s_idx = np.arange(
                 x.lower_limit, x.upper_limit + x.step, x.step)
@@ -383,8 +381,8 @@ class BaseMethod(AutonomousDecisionSystem):
 
     # initialize states, actions and Q table
     def ini_saq(self):
-        """
-        Initialize states, actions and Q table.
+        """Initialize states, actions and Q table.
+
         Return: Q,S and Action.
         """
         self.arrays()
@@ -438,8 +436,9 @@ class BaseMethod(AutonomousDecisionSystem):
 
 @attr.s
 class Qlearning(BaseMethod):
-    """Implementation of the artificial intelligence method Q-Learning, whose
-    purpose is to obtain the optimal parameters from the trial and error
+    """Implementation of the artificial intelligence method Q-Learning.
+
+     Whose purpose is to obtain the optimal parameters from the trial and error
     method, in which it is penalized if the goal is not reached and is
     rewarded if it is reached, requiring for this a number of episodes.
 
@@ -460,10 +459,11 @@ class Qlearning(BaseMethod):
     seed: int
         Seed value for the seed() method.
     """
+
     def choose_action(self, row):
-        """
-        Choose the action to follow
-        Input param: row
+        """Choose the action to follow.
+
+        Input param: rows
         Return: i
         """
         p = np.random.random()
@@ -474,8 +474,8 @@ class Qlearning(BaseMethod):
         return i
 
     def process(self):
-        """
-        Learning algorithm
+        """Learning algorithms.
+
         Return: r_episode
         """
         self.ini_saq()
@@ -527,8 +527,10 @@ class Qlearning(BaseMethod):
 
 @attr.s
 class Sarsa(BaseMethod):
-    """Implementation of the artificial intelligence method Q-Learning, whose
-    purpose is to obtain the optimal parameters from the trial and error
+
+    """Implementation of the artificial intelligence method Q-Learning.
+
+    Whose purpose is to obtain the optimal parameters from the trial and error
     method, in which it is penalized if the goal is not reached and is
     rewarded if it is reached, requiring for this a number of episodes.
 
@@ -550,9 +552,9 @@ class Sarsa(BaseMethod):
         Seed value for the seed() method.
     """
     def choose_action(self, row):
-        """
-        Choose the action to follow
-        Input param: row
+        """Choose the action to follow.
+
+        Input param: rows
         Return: i
         """
         p = np.random.random()
@@ -563,8 +565,8 @@ class Sarsa(BaseMethod):
         return i
 
     def process(self):
-        """
-        Learning algorithm
+        """Learning algorithm.
+
         Return: r_episode
         """
         self.ini_saq()

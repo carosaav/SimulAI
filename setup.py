@@ -4,7 +4,7 @@
 # This file is part of the
 #   SimulAI Project (https://github.com/carosaav/SimulAI).
 # Copyright (c) 2020,
-# Perez Colo Ivo, Pirozzo Manuel Bernardo, Saavedra Sueldo Carolina
+# Perez Colo Ivo, Pirozzo Bernardo Manuel, Saavedra Sueldo Carolina
 # License: MIT
 #   Full Text: https://github.com/carosaav
 
