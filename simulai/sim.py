@@ -319,8 +319,7 @@ class BaseMethod(AutonomousDecisionSystem):
     def __attrs_post_init__(self):
         self.r_episode = np.arange(self.episodes_max, dtype=float)
 
-        if self.seed is not None:
-            np.random.seed(self.seed)
+        self._random = np.random.RandomState(seed=self.seed)
 
     @v_i.validator
     def _validate_v_i(self, attribute, value):
@@ -466,11 +465,11 @@ class Qlearning(BaseMethod):
         Input param: rows
         Return: i
         """
-        p = np.random.random()
+        p = self._random.random()
         if p < (1 - self.epsilon):
             i = np.argmax(self.Q[row, :])
         else:
-            i = np.random.choice(self.actions.shape[0])
+            i = self._random.choice(self.actions.shape[0])
         return i
 
     def process(self):
@@ -557,11 +556,11 @@ class Sarsa(BaseMethod):
         Input param: rows
         Return: i
         """
-        p = np.random.random()
+        p = self._random.random()
         if p < (1 - self.epsilon):
             i = np.argmax(self.Q[row, :])
         else:
-            i = np.random.choice(self.actions.shape[0])
+            i = self._random.choice(self.actions.shape[0])
         return i
 
     def process(self):
