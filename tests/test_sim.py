@@ -65,15 +65,17 @@ def base(var_input, var_out):
 
 
 @pytest.fixture
-def my_method_Q(var_input):
-    method = sim.Qlearning(v_i=var_input, episodes_max=1, steps_max=10)
+def my_method_Q(var_input, request):
+    seed = request
+    method = sim.Qlearning(v_i=var_input, episodes_max=1, steps_max=10, seed=None)
 
     return method
 
 
 @pytest.fixture
-def my_method_S(var_input):
-    method = sim.Sarsa(v_i=var_input, episodes_max=1, steps_max=10)
+def my_method_S(var_input, request):
+    seed = request
+    method = sim.Sarsa(v_i=var_input, episodes_max=1, steps_max=10, seed=None)
 
     return method
 
@@ -199,6 +201,7 @@ def test_ini_saq(my_method_Q):
     assert (A == 0).all() is False
 
 
+@pytest.mark.parametrize('my_method_Q', ['24', '20', '12'], indirect=True)
 def test_choose_action(my_method_Q):
     """Test that the function choose_action takes the row "0" of the
 
@@ -208,7 +211,7 @@ def test_choose_action(my_method_Q):
     method.ini_saq()
     i = method.choose_action(np.random.randint(624))
 
-    # assert (isinstance(i, int))
+    #assert (isinstance(i, tuple))
     assert_equal(i, 0)
 
 
@@ -244,6 +247,7 @@ def test_default_Sarsa(my_method_S):
     assert_equal(my_method_S.steps_max, 10)
 
 
+@pytest.mark.parametrize('my_method_S', ['24', '20', '12'], indirect=True)
 def test_choose_action_S(my_method_S):
     """Test that the function choose_action takes the row "0" of the
 
