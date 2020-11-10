@@ -23,7 +23,7 @@ from simulai import interface
 
 @pytest.fixture
 def base():
-    com = interface.Com("frame")
+    com = interface.Com("MaterialHandling.spp")
 
     return com
 
