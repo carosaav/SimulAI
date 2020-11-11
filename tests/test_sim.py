@@ -36,6 +36,26 @@ def var_input():
 
     return vi
 
+@pytest.fixture
+def espera():
+	espera = sim.DiscreteVariable(
+        "Espera", 60, 300, 10, "Models.Modelo.espera")
+	return espera
+
+
+@pytest.fixture
+def stock():
+	stock = sim.DiscreteVariable(
+        "Stock", 10, 50, 10, "Models.Modelo.stock")
+	return stock
+
+
+@pytest.fixture
+def numviajes():
+	numviajes = sim.DiscreteVariable(
+        "Numero de viajes", 1, 5, 1, "Models.Modelo.numviajes")
+	return numviajes
+
 
 @pytest.fixture
 def var_out():
@@ -65,8 +85,7 @@ def base(var_input, var_out):
 
 
 @pytest.fixture
-def my_method_Q(var_input, request):
-    seed = request
+def my_method_Q(var_input):
     method = sim.Qlearning(v_i=var_input, episodes_max=1, steps_max=10, seed=None)
 
     return method
@@ -130,7 +149,7 @@ def test_BasePlant(base):
     assert isinstance(base.modelname, str)
 
     with pytest.raises(TypeError):
-        sim.OutcomeVariable(testdata)
+        sim.BasePlant(testdata)
 
 
 def test_get_file_name_plant(base):
@@ -148,6 +167,26 @@ def test_update(mock_method):
 
     assert isinstance(value, float)
 
+
+@pytest.mark.parametrize('vifail, epfail, stfail', [
+								([espera, stock, numviajes], "ten", 1), 
+								([espera, stock, numviajes], 5, "two"), 
+								([espera, stock, numviajes], 5., 3.),
+								([espera, stock, numviajes], 5, {"a":"two"}),
+								(1, 5, 3),
+								("list", 2, 6),
+								({"a":espera, "b":stock}, 1, 1)])
+@pytest.mark.parametrize('vi, epmax, stmax', [
+								([espera, stock, numviajes], 1, 5)])
+def test_Q(vi, vifail, epmax, epfail, stmax, stfail):
+    method = sim.Qlearning(v_i=vi, episodes_max=epmax, steps_max=stmax)
+
+    assert isinstance(method.v_i, list)
+    assert isinstance(method.episodes_max, int)
+    assert isinstance(method.steps_max, int)
+
+    with pytest.raises(TypeError):
+        sim.Qlearning(vifail, epfail, stfail)
 
 def test_default_Q(my_method_Q):
     """Test the data type of the Qlearning function arguments and
@@ -197,22 +236,25 @@ def test_ini_saq(my_method_Q):
     assert S.shape == (625, 3)
     assert A.shape == (27, 3)
     assert (Q == 0).all()
-    assert (S == 0).all() is False
-    assert (A == 0).all() is False
+    assert (S == 0).all() == False
+    assert (A == 0).all() == False
 
 
-@pytest.mark.parametrize('my_method_Q', ['24', '20', '12'], indirect=True)
-def test_choose_action(my_method_Q):
+@pytest.mark.xfail
+@pytest.mark.parametrize('input_seed, expected',
+						[(24, 0), (20, 0), (12, 0)],
+						indirect=['input_seed'])
+def test_choose_action(my_method_Q, input_seed, expected):
     """Test that the function choose_action takes the row "0" of the
 
     Q array when p < 1 - epsilon or takes a random row otherwise.
     """
-    method = my_method_Q
+    method = my_method_Q(seed=input_seed)
     method.ini_saq()
     i = method.choose_action(np.random.randint(624))
 
     #assert (isinstance(i, tuple))
-    assert_equal(i, 0)
+    assert_equal(i, expected)
 
 
 @patch.object(sim.Qlearning, 'process', return_value=[1., 0., 0., 2., 2.])

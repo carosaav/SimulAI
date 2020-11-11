@@ -48,6 +48,7 @@ def test_connection(mock_method):
     assert isinstance(retr, bool)
 
 
+@pytest.mark.xfail
 def test_setVisible(base):
     visible = base.setVisible()
 
