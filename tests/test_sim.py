@@ -36,25 +36,26 @@ def var_input():
 
     return vi
 
+
 @pytest.fixture
 def espera():
-	espera = sim.DiscreteVariable(
+    espera = sim.DiscreteVariable(
         "Espera", 60, 300, 10, "Models.Modelo.espera")
-	return espera
+    return espera
 
 
 @pytest.fixture
 def stock():
-	stock = sim.DiscreteVariable(
+    stock = sim.DiscreteVariable(
         "Stock", 10, 50, 10, "Models.Modelo.stock")
-	return stock
+    return stock
 
 
 @pytest.fixture
 def numviajes():
-	numviajes = sim.DiscreteVariable(
+    numviajes = sim.DiscreteVariable(
         "Numero de viajes", 1, 5, 1, "Models.Modelo.numviajes")
-	return numviajes
+    return numviajes
 
 
 @pytest.fixture
@@ -86,14 +87,15 @@ def base(var_input, var_out):
 
 @pytest.fixture
 def my_method_Q(var_input):
-    method = sim.Qlearning(v_i=var_input, episodes_max=1, steps_max=10, seed=None)
+    method = sim.Qlearning(v_i=var_input, episodes_max=1,
+                           steps_max=10, seed=None)
 
     return method
 
 
 @pytest.fixture
 def my_method_S(var_input, request):
-    seed = request
+    # seed = request
     method = sim.Sarsa(v_i=var_input, episodes_max=1, steps_max=10, seed=None)
 
     return method
@@ -169,15 +171,15 @@ def test_update(mock_method):
 
 
 @pytest.mark.parametrize('vifail, epfail, stfail', [
-								([espera, stock, numviajes], "ten", 1), 
-								([espera, stock, numviajes], 5, "two"), 
-								([espera, stock, numviajes], 5., 3.),
-								([espera, stock, numviajes], 5, {"a":"two"}),
-								(1, 5, 3),
-								("list", 2, 6),
-								({"a":espera, "b":stock}, 1, 1)])
+                                ([espera, stock, numviajes], "ten", 1),
+                                ([espera, stock, numviajes], 5, "two"),
+                                ([espera, stock, numviajes], 5., 3.),
+                                ([espera, stock, numviajes], 5, {"a": "two"}),
+                                (1, 5, 3),
+                                ("list", 2, 6),
+                                ({"a": espera, "b": stock}, 1, 1)])
 @pytest.mark.parametrize('vi, epmax, stmax', [
-								([espera, stock, numviajes], 1, 5)])
+                                ([espera, stock, numviajes], 1, 5)])
 def test_Q(vi, vifail, epmax, epfail, stmax, stfail):
     method = sim.Qlearning(v_i=vi, episodes_max=epmax, steps_max=stmax)
 
@@ -187,6 +189,7 @@ def test_Q(vi, vifail, epmax, epfail, stmax, stfail):
 
     with pytest.raises(TypeError):
         sim.Qlearning(vifail, epfail, stfail)
+
 
 def test_default_Q(my_method_Q):
     """Test the data type of the Qlearning function arguments and
@@ -236,14 +239,14 @@ def test_ini_saq(my_method_Q):
     assert S.shape == (625, 3)
     assert A.shape == (27, 3)
     assert (Q == 0).all()
-    assert (S == 0).all() == False
-    assert (A == 0).all() == False
+    assert (S == 0).all() is False
+    assert (A == 0).all() is False
 
 
 @pytest.mark.xfail
 @pytest.mark.parametrize('input_seed, expected',
-						[(24, 0), (20, 0), (12, 0)],
-						indirect=['input_seed'])
+                         [(24, 0), (20, 0), (12, 0)],
+                         indirect=['input_seed'])
 def test_choose_action(my_method_Q, input_seed, expected):
     """Test that the function choose_action takes the row "0" of the
 
@@ -253,7 +256,7 @@ def test_choose_action(my_method_Q, input_seed, expected):
     method.ini_saq()
     i = method.choose_action(np.random.randint(624))
 
-    #assert (isinstance(i, tuple))
+    # assert (isinstance(i, tuple))
     assert_equal(i, expected)
 
 

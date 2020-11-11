@@ -9,14 +9,20 @@
 # IMPORTS
 # ============================================================================
 
-
-import win32com.client as win32
+try:
+    import win32com.client as win32
+except ModuleNotFoundError:
+    print("Install pywin32")
 import os
 
 
 # ============================================================================
 # COMMUNICATION
 # ============================================================================
+
+class ConnectionError(Exception):
+    pass
+
 
 def check_connection(method):
     """Check the connection status, returning an error.
@@ -72,7 +78,7 @@ class Com(object):
             print("The connection was successful")
             self.is_connected = True
             return True
-        except ConnectionError:
+        except Exception:
             print("Connection error. path file: " + path_file)
             return False
 
