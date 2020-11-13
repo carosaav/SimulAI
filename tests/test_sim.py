@@ -15,6 +15,7 @@ import pytest
 from unittest.mock import patch
 import numpy as np
 from numpy.testing import assert_equal
+from abc import ABCMeta, abstractmethod
 from simulai import sim
 
 
@@ -24,14 +25,7 @@ from simulai import sim
 
 
 @pytest.fixture
-def var_input():
-    frame = "Modelo"
-    espera = sim.DiscreteVariable(
-        "Espera", 60, 300, 10, "Models." + frame + ".espera")
-    stock = sim.DiscreteVariable(
-        "Stock", 10, 50, 10, "Models." + frame + ".stock")
-    numviajes = sim.DiscreteVariable(
-        "Numero de viajes", 1, 5, 1, "Models." + frame + ".numviajes")
+def var_input(espera, stock, numviajes):
     vi = [espera, stock, numviajes]
 
     return vi
@@ -59,14 +53,28 @@ def numviajes():
 
 
 @pytest.fixture
-def var_out():
-    frame = "Modelo"
+def transportes():
     transportes = sim.OutcomeVariable(
-        "Distancia Transportes", "Models." + frame + ".transportes", 2, 9)
+        "Distancia Transportes", "Models.Modelo.transportes", 2, 9)
+    return transportes
+
+
+@pytest.fixture
+def buffers():
     buffers = sim.OutcomeVariable(
-        "Llenado buffers", "Models." + frame + ".buffers", 3, 20)
+        "Llenado buffers", "Models.Modelo.buffers", 3, 20)
+    return buffers
+
+
+@pytest.fixture
+def salidas():
     salidas = sim.OutcomeVariable(
-        "Espera en las Salidas", "Models." + frame + ".salidas", 2, 20)
+        "Espera en las Salidas", "Models.Modelo.salidas", 2, 20)
+    return salidas
+
+
+@pytest.fixture
+def var_out(transportes, buffers, salidas):            
     vo = [transportes, buffers, salidas]
 
     return vo
@@ -101,24 +109,19 @@ def my_method_S(var_input, request):
     return method
 
 
-testdata = [(0.1, 0.2, "string", "string"),
-            ((4.5 + 3j), (4.5 + 3j), 0.1, 0.2),
-            (False, True, (4.5 + 3j), (4.5 + 3j)),
-            ([1, "test", 2], [1, "test", 2], False, True),
-            (("a", "b", "c"), ("a", "b", "c"),
-                [1, "test", 2], [1, "test", 2]),
-            ({"a": 1, "b": "test", "c": 2}, {"a": 1, "b": "test", "c": 2},
-                ("a", "b", "c"), ("a", "b", "c")),
-            (set([3.0, 'Car', True]), set([3.0, 'Car', True]),
-                {"a": 1, "b": "test", "c": 2}, {"a": 1, "b": "test", "c": 2}),
-            (0.1, 0.2, set([3.0, 'Car', True]), set([3.0, 'Car', True]))]
-
-
-def test_DiscreteVariable():
+@pytest.mark.parametrize('namef, lowf, upf, stf, pathf', [
+                    ("Espera", 60., 300, 10, "Models.Modelo.espera"),
+                    ("Espera", 60, 300., 10, "Models.Modelo.espera"),
+                    ("Espera", 60, 300, 10., "Models.Modelo.espera"),
+                    (["Espera"], 60, 300, 10, "Models.Modelo.espera"),
+                    ({"e":"Espera"}, 60, 300, 10, "Models.Modelo.espera"),
+                    ("Espera", 60, 300, (4.5 + 3j), "Models.Modelo.espera"),
+                    ("Espera", 60, 300, 10, False)])
+def test_DiscreteVariable(namef, lowf, upf, stf, pathf):
     """Test that the arguments that define a discrete variable
     are of the right type.
     """
-    parm = sim.DiscreteVariable("Time", 0, 10, 1, "path")
+    parm = sim.DiscreteVariable("Espera", 60, 300, 10, "Models.Modelo.espera")
 
     assert isinstance(parm.name, str)
     assert isinstance(parm.lower_limit, int)
@@ -127,10 +130,16 @@ def test_DiscreteVariable():
     assert isinstance(parm.path, str)
 
     with pytest.raises(TypeError):
-        sim.DiscreteVariable(testdata)
+        sim.DiscreteVariable(namef, lowf, upf, stf, pathf)
 
 
-def test_OutcomeVariable():
+@pytest.mark.parametrize('namef, pathf, colf, rowf', [
+                                (False, "Model", 2, 9),
+                                ("Distance", "Model", 2., 9),
+                                ("Distance", True, 2, 9.),
+                                (4.2, "Model", 2, 9),
+                                ("Distance", {"m":"Model"}, 2, 9)])
+def test_OutcomeVariable(namef, pathf, colf, rowf):
     """Test that the output variable has the correct types of arguments."""
     parm = sim.OutcomeVariable("Time", "path", 5, 1)
 
@@ -140,10 +149,19 @@ def test_OutcomeVariable():
     assert isinstance(parm.num_rows, int)
 
     with pytest.raises(TypeError):
-        sim.OutcomeVariable(testdata)
+        sim.OutcomeVariable(namef, pathf, colf, rowf)
 
 
-def test_BasePlant(base):
+@pytest.mark.parametrize('vif, vof, filenamef, modelnamef', [
+    ([espera, stock, numviajes], 
+    					[transportes, buffers, salidas], 2, "frame"),
+    ([espera, stock, numviajes], 
+    					[transportes, buffers, salidas], "MH.spp", 2.),
+    (2, [transportes, buffers, salidas], "MH.spp", "frame"),
+    ([espera, stock, numviajes], True, "MH.spp", "frame"),
+    ("espera, stock, numviajes", 
+    					[transportes, buffers, salidas], "MH.spp", "frame")])
+def test_BasePlant(base, vif, vof, filenamef, modelnamef):
     """Test data type of argument"""
     assert isinstance(base.v_i, list)
     assert isinstance(base.v_o, list)
@@ -151,7 +169,7 @@ def test_BasePlant(base):
     assert isinstance(base.modelname, str)
 
     with pytest.raises(TypeError):
-        sim.BasePlant(testdata)
+        sim.BasePlant(vif, vof, filenamef, modelnamef)
 
 
 def test_get_file_name_plant(base):
@@ -239,8 +257,8 @@ def test_ini_saq(my_method_Q):
     assert S.shape == (625, 3)
     assert A.shape == (27, 3)
     assert (Q == 0).all()
-    assert (S == 0).all() is False
-    assert (A == 0).all() is False
+    assert bool((S == 0).all()) is False
+    assert bool((A == 0).all()) is False
 
 
 @pytest.mark.xfail
