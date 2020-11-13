@@ -15,7 +15,6 @@ import pytest
 from unittest.mock import patch
 import numpy as np
 from numpy.testing import assert_equal
-from abc import ABCMeta, abstractmethod
 from simulai import sim
 
 
@@ -94,7 +93,7 @@ def base(var_input, var_out):
 
 
 @pytest.fixture
-def my_method_Q(var_input):
+def BaseM(var_input):
     method = sim.Qlearning(v_i=var_input, episodes_max=1,
                            steps_max=10, seed=None)
 
@@ -188,6 +187,8 @@ def test_update(mock_method):
     assert isinstance(value, float)
 
 
+@pytest.mark.parametrize('vi5', ["espera", "stock", "numviajes", 
+                                   "tiempo", "velocidad"])
 @pytest.mark.parametrize('vifail, epfail, stfail', [
                                 ([espera, stock, numviajes], "ten", 1),
                                 ([espera, stock, numviajes], 5, "two"),
@@ -196,10 +197,40 @@ def test_update(mock_method):
                                 (1, 5, 3),
                                 ("list", 2, 6),
                                 ({"a": espera, "b": stock}, 1, 1)])
-@pytest.mark.parametrize('vi, epmax, stmax', [
-                                ([espera, stock, numviajes], 1, 5)])
-def test_Q(vi, vifail, epmax, epfail, stmax, stfail):
-    method = sim.Qlearning(v_i=vi, episodes_max=epmax, steps_max=stmax)
+@pytest.mark.parametrize('var_input, epmax, stmax', [
+                                ([espera, stock, numviajes], 1, 10)])
+@patch.multiple(sim.BaseMethod, __abstractmethods__=set())
+def test_BaseMethod(var_input, vifail, vi5, epmax, epfail, stmax, stfail):
+     BaseM = sim.BaseMethod(v_i=var_input, episodes_max=epmax, steps_max=stmax,
+                          alfa=0.1, gamma=0.9, epsilon=0.1, 
+                                   s=["a", "b"], a=["a", "b"], seed=None)
+
+     assert isinstance(BaseM.s, list)
+     assert isinstance(BaseM.a, list)
+     assert isinstance(BaseM.v_i, list)
+     assert isinstance(BaseM.alfa, float)
+     assert isinstance(BaseM.gamma, float)
+     assert isinstance(BaseM.epsilon, float)
+     assert isinstance(BaseM.episodes_max, int)
+     assert isinstance(BaseM.steps_max, int)
+     assert isinstance(BaseM.r_episode, np.ndarray)
+     assert_equal(len(BaseM.s), 2)
+     assert_equal(len(BaseM.a), 2)
+     assert_equal(BaseM.alfa, 0.10)
+     assert_equal(BaseM.gamma, 0.90)
+     assert_equal(BaseM.epsilon, 0.10)
+     assert_equal(BaseM.episodes_max, 1)
+     assert_equal(BaseM.steps_max, 10)
+
+     with pytest.raises(TypeError):
+          sim.BaseMethod (vifail, epfail, stfail)
+
+     with pytest.raises(Exception):
+          sim.BaseMethod (vi5, epfail, stfail)
+
+@pytest.mark.xfail  
+def test_Q():
+    method = sim.Qlearning()
 
     assert isinstance(method.v_i, list)
     assert isinstance(method.episodes_max, int)
@@ -209,46 +240,23 @@ def test_Q(vi, vifail, epmax, epfail, stmax, stfail):
         sim.Qlearning(vifail, epfail, stfail)
 
 
-def test_default_Q(my_method_Q):
-    """Test the data type of the Qlearning function arguments and
-
-    check the default values.
-    """
-    assert isinstance(my_method_Q.s, list)
-    assert isinstance(my_method_Q.a, list)
-    assert isinstance(my_method_Q.v_i, list)
-    assert isinstance(my_method_Q.alfa, float)
-    assert isinstance(my_method_Q.gamma, float)
-    assert isinstance(my_method_Q.epsilon, float)
-    assert isinstance(my_method_Q.episodes_max, int)
-    assert isinstance(my_method_Q.steps_max, int)
-    assert isinstance(my_method_Q.r_episode, np.ndarray)
-    assert_equal(my_method_Q.s, [])
-    assert_equal(my_method_Q.a, [])
-    assert_equal(my_method_Q.alfa, 0.10)
-    assert_equal(my_method_Q.gamma, 0.90)
-    assert_equal(my_method_Q.epsilon, 0.10)
-    assert_equal(my_method_Q.episodes_max, 1)
-    assert_equal(my_method_Q.steps_max, 10)
-
-
-def test_arrays(my_method_Q):
+def test_arrays(BaseM):
     """Test the data type of the arrays generated with the limit and
 
     step information of the input variables.
     """
-    my_method_Q.arrays()
-    assert_equal(len(my_method_Q.s), 3)
-    assert_equal(len(my_method_Q.a), 3)
+    BaseM.arrays()
+    assert_equal(len(BaseM.s), 3)
+    assert_equal(len(BaseM.a), 3)
 
 
-def test_ini_saq(my_method_Q):
+def test_ini_saq(BaseM):
     """Test that the output Q matrix has the necessary characteristics.
 
     Initially the data type is checked.
     Then dimensions and composition are checked.
     """
-    Q, S, A = my_method_Q.ini_saq()
+    Q, S, A = BaseM.ini_saq()
 
     assert isinstance(Q, np.ndarray)
     assert isinstance(S, np.ndarray)
@@ -265,12 +273,12 @@ def test_ini_saq(my_method_Q):
 @pytest.mark.parametrize('input_seed, expected',
                          [(24, 0), (20, 0), (12, 0)],
                          indirect=['input_seed'])
-def test_choose_action(my_method_Q, input_seed, expected):
+def test_choose_action(BaseM, input_seed, expected):
     """Test that the function choose_action takes the row "0" of the
 
     Q array when p < 1 - epsilon or takes a random row otherwise.
     """
-    method = my_method_Q(seed=input_seed)
+    method = BaseM(seed=input_seed)
     method.ini_saq()
     i = method.choose_action(np.random.randint(624))
 
