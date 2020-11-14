@@ -13,6 +13,7 @@
 import pytest
 from unittest.mock import patch
 import random
+from numpy.testing import assert_equal
 from simulai import interface
 
 
@@ -31,25 +32,28 @@ def base():
 def test_Com(base):
 
     assert isinstance(base.model_name, str)
+    assert_equal(base.model_name, "MaterialHandling.spp")
     assert isinstance(base.is_connected, bool)
-
+    assert_equal(base.is_connected, False)
+    assert isinstance(base.plant_simulation, str)
+    assert_equal(base.plant_simulation, "")
 
 def test_get_path_file_model(base):
 
     assert isinstance(base.get_path_file_model(), str)
 
 
-@patch.object(interface.Com, 'connection',
-              return_value=random.choice([True, False]))
-def test_connection(mock_method):
-    retr = interface.Com.connection()
-    mock_method.assert_called_with()
+def test_connection(base):
+    comm = base.connection()
 
-    assert isinstance(retr, bool)
+    assert isinstance(comm, bool)
 
 
 @pytest.mark.xfail
-def test_setVisible(base):
-    visible = base.setVisible()
+@patch.object(interface.Com, 'connection', return_value=True)
+def test_setVisible(base, mock_method):
+    valor = interface.Com.connection()
+    mock_method.assert_called_with()
 
-    assert isinstance(visible.value, bool)
+    with pytest.raises(ConnectionError):
+        base.setVisible(True)
