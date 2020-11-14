@@ -165,24 +165,7 @@ def test_OutcomeVariable(namef, pathf, colf, rowf):
         sim.OutcomeVariable("Time", "path", 5, -1)
 
 
-@pytest.mark.parametrize(
-    "vif, vof, filenamef, modelnamef",
-    [
-        ([espera, stock, numviajes], [transportes, buffers, salidas],
-         2, "frame"),
-        ([espera, stock, numviajes], [transportes, buffers, salidas],
-         "MH.spp", 2.0),
-        (2, [transportes, buffers, salidas], "MH.spp", "frame"),
-        ([espera, stock, numviajes], True, "MH.spp", "frame"),
-        (
-            "espera, stock, numviajes",
-            [transportes, buffers, salidas],
-            "MH.spp",
-            "frame",
-        ),
-    ],
-)
-def test_BasePlant(base, vif, vof, filenamef, modelnamef):
+def test_BasePlant(base, var_input, var_out):
 
     assert isinstance(base.v_i, list), "Should be a list"
     assert isinstance(base.v_o, list), "Should be a list"
@@ -190,8 +173,11 @@ def test_BasePlant(base, vif, vof, filenamef, modelnamef):
     assert isinstance(base.modelname, str), "Should be a string"
 
     with pytest.raises(TypeError):
-        sim.BasePlant(vif, vof, filenamef, modelnamef)
-
+        sim.BasePlant(1, var_out, "MH.spp", "frame")
+        sim.BasePlant(var_input, 2., "MH.spp", "frame")
+        sim.BasePlant(var_input, var_out, 10, "frame")
+        sim.BasePlant(var_input, var_out, "MH.spp", 10)
+        
 
 def test_get_file_name_plant(base):
     filename = base.get_file_name_plant()
