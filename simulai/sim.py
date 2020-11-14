@@ -67,16 +67,22 @@ class DiscreteVariable:
     def _validate_lower_limit(self, attribute, value):
         if not isinstance(value, int):
             raise TypeError("Lower Limit: Argument must be an integer.")
+        if value < 0:
+            raise ValueError("Lower limit: Argument must be higher than 0.")
 
     @upper_limit.validator
     def _validate_upper_limit(self, attribute, value):
         if not isinstance(value, int):
             raise TypeError("Upper Limit: Argument must be an integer.")
+        if value < 0:
+            raise ValueError("Upper Limit: Argument must be higher than 0.")
 
     @step.validator
     def _validate_step(self, attribute, value):
         if not isinstance(value, int):
             raise TypeError("Step: Argument must be an integer.")
+        if value < 0:
+            raise ValueError("Step: Argument must be higher than 0.")
 
     @path.validator
     def _validate_path(self, attribute, value):
@@ -125,11 +131,15 @@ class OutcomeVariable:
     def _validate_column(self, attribute, value):
         if not isinstance(value, int):
             raise TypeError("Column: Argument must be an integer.")
+        if value < 0:
+            raise ValueError("Column: Argument must be higher than 0.")
 
     @num_rows.validator
     def _validate_num_rows(self, attribute, value):
         if not isinstance(value, int):
-            raise TypeError("Num_rows: Argument must be an integer.")
+            raise TypeError("Num Rows: Argument must be an integer.")
+        if value < 0:
+            raise ValueError("Num Rows: Argument must be higher than 0.")
 
 
 # ============================================================================
@@ -278,10 +288,10 @@ class BaseMethod(AutonomousDecisionSystem):
     ----------
     v_i: list
         List of chosen input variables.
-    episodes_max: int
-        Total number of episodes to run.
-    steps_max: int
-        Total number of steps in each episode.
+    episodes_max: positive int
+        Total number of episodes to run. Should be a positive integer.
+    steps_max: positive int
+        Total number of steps in each episode. Should be a positive integer.
     alfa: float
         Reinforcement learning hyperparameter,
         learning rate, varies from 0 to 1. Default value= 0.10
@@ -293,7 +303,7 @@ class BaseMethod(AutonomousDecisionSystem):
         probability for the epsilon-greedy action selection,
         varies from 0 to 1. Default value= 0.10
     seed: int
-        Seed value for the seed() method.
+        Seed value for the seed() method. Default value=None.
     """
 
     v_i = attr.ib()
@@ -329,45 +339,43 @@ class BaseMethod(AutonomousDecisionSystem):
     @episodes_max.validator
     def _validate_episodes_max(self, attribute, value):
         if not isinstance(value, int):
-            raise TypeError("Episodes_max: Argument must be an integer.")
+            raise TypeError("Episodes Max: Argument must be an integer.")
+        if value < 0:
+            raise ValueError("Episodes Max: Argument must be higher than 0.")
 
     @steps_max.validator
     def _validate_steps_max(self, attribute, value):
         if not isinstance(value, int):
-            raise TypeError("Steps_max: Argument must be an integer.")
+            raise TypeError("Steps Max: Argument must be an integer.")
+        if value < 0:
+            raise ValueError("Steps Max: Argument must be higher than 0.")
 
     @alfa.validator
     def _validate_alfa(self, attribute, value):
         if not isinstance(value, float):
-            raise TypeError("alfa: Argument must be a float.")
+            raise TypeError("Alfa: Argument must be a float.")
         if value < 0:
-            raise ValueError(
-                "alfa: Argument must be higher than 0.")
+            raise ValueError("Alfa: Argument must be higher than 0.")
         if value > 1:
-            raise ValueError(
-                "alfa: Argument must be lower than 1.")
+            raise ValueError("Alfa: Argument must be lower than 1.")
 
     @gamma.validator
     def _validate_gamma(self, attribute, value):
         if not isinstance(value, float):
-            raise TypeError("gamma: Argument must be a float.")
+            raise TypeError("Gamma: Argument must be a float.")
         if value < 0:
-            raise ValueError(
-                "gamma: Argument must be higher than 0.")
+            raise ValueError("Gamma: Argument must be higher than 0.")
         if value > 1:
-            raise ValueError(
-                "gamma: Argument must be lower than 1.")
+            raise ValueError("Gamma: Argument must be lower than 1.")
 
     @epsilon.validator
     def _validate_epsilon(self, attribute, value):
         if not isinstance(value, float):
-            raise TypeError("epsilon: Argument must be a float.")
+            raise TypeError("Epsilon: Argument must be a float.")
         if value < 0:
-            raise ValueError(
-                "epsilon: Argument must be higher than 0.")
+            raise ValueError("Epsilon: Argument must be higher than 0.")
         if value > 1:
-            raise ValueError(
-                "epsilon: Argument must be lower than 1.")
+            raise ValueError("Epsilon: Argument must be lower than 1.")
 
     def arrays(self):
         """Arrays for states and actions."""
