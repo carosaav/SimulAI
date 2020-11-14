@@ -80,17 +80,15 @@ def var_out(transportes, buffers, salidas):
 
 
 @pytest.fixture
-def my_method_Q(var_input, request):
-    # seed = request
-    method = sim.Qlearning(v_i=var_input, episodes_max=1, 
-                    steps_max=10, seed=None)
+def my_method_Q(var_input):
+    method = sim.Qlearning(v_i=var_input, episodes_max=1,
+                         steps_max=10, seed=None)
 
     return method
 
 
 @pytest.fixture
-def my_method_S(var_input, request):
-    # seed = request
+def my_method_S(var_input):
     method = sim.Sarsa(v_i=var_input, episodes_max=1, steps_max=10, seed=None)
 
     return method
@@ -205,8 +203,7 @@ def test_update(update):
 def test_BaseMethod(var_input, vifail, vi5, epmax, epfail, epvalue,
                           stmax, stfail, stvalue):
      BaseM = sim.BaseMethod(v_i=var_input, episodes_max=epmax, steps_max=stmax,
-                          alfa=0.1, gamma=0.9, epsilon=0.1, 
-                                   s=["a", "b"], a=["a", "b"], seed=None)
+                            seed=None)
 
      assert isinstance(BaseM.s, list), "Should be a list"
      assert isinstance(BaseM.a, list), "Should be a list"
@@ -217,8 +214,8 @@ def test_BaseMethod(var_input, vifail, vi5, epmax, epfail, epvalue,
      assert isinstance(BaseM.episodes_max, int), "Should be an integer"
      assert isinstance(BaseM.steps_max, int), "Should be an integer"
      assert isinstance(BaseM.r_episode, np.ndarray), "Should be an array"
-     assert_equal(len(BaseM.s), 2)
-     assert_equal(len(BaseM.a), 2)
+     assert_equal(len(BaseM.s), 0)
+     assert_equal(len(BaseM.a), 0)
      assert_equal(BaseM.alfa, 0.10)
      assert_equal(BaseM.gamma, 0.90)
      assert_equal(BaseM.epsilon, 0.10)
@@ -238,59 +235,62 @@ def test_BaseMethod(var_input, vifail, vi5, epmax, epfail, epvalue,
 @pytest.mark.xfail  
 @patch.multiple(sim.BaseMethod, __abstractmethods__=set())
 def test_ini_saq(var_input):
-     BaseM = sim.BaseMethod(v_i=var_input, episodes_max=1, steps_max=10,
-                          alfa=0.1, gamma=0.9, epsilon=0.1, seed=None)
-     initial = BaseM.ini_saq()
+    baseM = sim.BaseMethod(v_i=var_input, episodes_max=1, steps_max=10)
+    initial = baseM.ini_saq()
 
-     assert isinstance(initial.n, list)
-     assert isinstance(initial.m, list)
-     assert isinstance(initial.Q, np.ndarray)
-     assert isinstance(S, np.ndarray)
-     assert isinstance(A, np.ndarray)
-     assert Q.shape == (625, 27)
-     assert S.shape == (625, 3)
-     assert A.shape == (27, 3)
-     assert (Q == 0).all()
-     assert bool((S == 0).all()) is False
-     assert bool((A == 0).all()) is False
-
-
-@pytest.mark.xfail  
-def test_Q():
-    method = sim.Qlearning()
-
-    assert isinstance(method.v_i, list)
-    assert isinstance(method.episodes_max, int)
-    assert isinstance(method.steps_max, int)
-
-    with pytest.raises(TypeError):
-        sim.Qlearning(vifail, epfail, stfail)
+    assert isinstance(initial.n, list)
+    assert isinstance(initial.m, list)
+    assert isinstance(initial.Q, np.ndarray)
+    assert isinstance(initial.S, np.ndarray)
+    assert isinstance(initial.actions, np.ndarray)
+    assert initial.Q.shape == (625, 27)
+    assert initial.S.shape == (625, 3)
+    assert initial.actions.shape == (27, 3)
+    assert (initial.Q == 0).all()
+    assert bool((initial.S == 0).all()) is False
+    assert bool((initial.actions == 0).all()) is False
 
 
-@pytest.mark.xfail
-@pytest.mark.parametrize('input_seed, expected',
-                         [(24, 0), (20, 0), (12, 0)],
-                         indirect=['input_seed'])
-def test_choose_action(BaseM, input_seed, expected):
-    """Test that the function choose_action takes the row "0" of the
-
-    Q array when p < 1 - epsilon or takes a random row otherwise.
-    """
-    method = BaseM(seed=input_seed)
+@pytest.mark.parametrize('seed_input, expected', [(24, 0), (20, 0), (12, 0)])
+def test_choose_action_Q(var_input, seed_input, expected):
+    method = sim.Qlearning(v_i=var_input, episodes_max=1,
+                                steps_max=10, seed=seed_input)
     method.ini_saq()
     i = method.choose_action(np.random.randint(624))
 
-    # assert (isinstance(i, tuple))
     assert_equal(i, expected)
 
 
-@patch.object(sim.Qlearning, 'process', return_value=[1., 0., 0., 2., 2.])
+@pytest.mark.parametrize('seed_input, expected', [(24, 0), (20, 0), (12, 0)])
+def test_choose_action_S(var_input, seed_input, expected):
+    method = sim.Sarsa(v_i=var_input, episodes_max=1,
+                                steps_max=10, seed=seed_input)
+    method.ini_saq()
+    i = method.choose_action(np.random.randint(624))
+
+    assert_equal(i, expected)
+
+
+@pytest.mark.xfail  
 def test_process(mock_method2):
     """Test that the process function returns an array."""
     r = sim.Qlearning.process()
     mock_method2.assert_called_with()
 
     assert isinstance(r, list)
+
+
+def test_Q_SARSA(my_method_Q, my_method_S):
+    method1 = my_method_Q
+    method2 = my_method_S
+
+    assert_equal(method1.v_i, method2.v_i)
+    assert_equal(method1.episodes_max, method2.episodes_max)
+    assert_equal(method1.steps_max, method2.steps_max)
+
+
+
+
 
 
 def test_default_Sarsa(my_method_S):
@@ -314,20 +314,6 @@ def test_default_Sarsa(my_method_S):
     assert_equal(my_method_S.epsilon, 0.10)
     assert_equal(my_method_S.episodes_max, 1)
     assert_equal(my_method_S.steps_max, 10)
-
-
-@pytest.mark.parametrize('my_method_S', ['24', '20', '12'], indirect=True)
-def test_choose_action_S(my_method_S):
-    """Test that the function choose_action takes the row "0" of the
-
-    Q array when p < 1 - epsilon or takes a random row otherwise.
-    """
-    method = my_method_S
-    method.ini_saq()
-    i = method.choose_action(np.random.randint(624))
-
-    # assert (isinstance(i, int))
-    assert_equal(i, 0)
 
 
 @patch.object(sim.Sarsa, 'process', return_value=[1., 0., 0., 2., 2.])
