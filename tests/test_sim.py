@@ -206,7 +206,7 @@ def test_update(update):
 @patch.multiple(sim.BaseMethod, __abstractmethods__=set())
 def test_BaseMethod(var_input, epmax, stmax):
     BaseM = sim.BaseMethod(
-        v_i=var_input, episodes_max=epmax, steps_max=stmax, seed=None
+        v_i=var_input, episodes_max=epmax, steps_max=stmax, seed=None,
     )
 
     assert isinstance(BaseM.s, list), "Should be a list"
@@ -233,7 +233,7 @@ def test_BaseMethod(var_input, epmax, stmax):
     with pytest.raises(TypeError):
         sim.BaseMethod(var_input, epmax, "nine")
     with pytest.raises(TypeError):
-        sim.BaseMethod(var_input, epmax, stmax, alfa="zero")
+        sim.BaseMethod(var_input, epmax, stmax, alfa=2)
     with pytest.raises(TypeError):
         sim.BaseMethod(var_input, epmax, stmax, gamma=2)
     with pytest.raises(TypeError):
@@ -248,17 +248,17 @@ def test_BaseMethod(var_input, epmax, stmax):
     with pytest.raises(ValueError):
         sim.BaseMethod(var_input, epmax, -1)
     with pytest.raises(ValueError):
-        sim.BaseMethod(var_input, epmax, stmax, alfa=-1)
+        sim.BaseMethod(var_input, epmax, stmax, alfa=-1.)
     with pytest.raises(ValueError):
-        sim.BaseMethod(var_input, epmax, stmax, alfa=3)
+        sim.BaseMethod(var_input, epmax, stmax, alfa=3.)
     with pytest.raises(ValueError):
-        sim.BaseMethod(var_input, epmax, stmax, gamma=-1)
+        sim.BaseMethod(var_input, epmax, stmax, gamma=-1.)
     with pytest.raises(ValueError):
-        sim.BaseMethod(var_input, epmax, stmax, gamma=3)
+        sim.BaseMethod(var_input, epmax, stmax, gamma=3.)
     with pytest.raises(ValueError):
-        sim.BaseMethod(var_input, epmax, stmax, epsilon=-1)
+        sim.BaseMethod(var_input, epmax, stmax, epsilon=-1.)
     with pytest.raises(ValueError):
-        sim.BaseMethod(var_input, epmax, stmax, epsilon=3)
+        sim.BaseMethod(var_input, epmax, stmax, epsilon=3.)
 
 
 @pytest.mark.xfail
