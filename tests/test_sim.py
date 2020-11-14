@@ -132,6 +132,11 @@ def test_DiscreteVariable(namef, lowf, upf, stf, pathf):
     with pytest.raises(TypeError):
         sim.DiscreteVariable(namef, lowf, upf, stf, pathf)
 
+    with pytest.raises(ValueError):
+        sim.DiscreteVariable("Espera", -60, 300, 10, "Models.Modelo.espera")
+        sim.DiscreteVariable("Espera", 60, -300, 10, "Models.Modelo.espera")
+        sim.DiscreteVariable("Espera", 60, 300, -10, "Models.Modelo.espera")
+
 
 @pytest.mark.parametrize(
     "namef, pathf, colf, rowf",
@@ -141,6 +146,7 @@ def test_DiscreteVariable(namef, lowf, upf, stf, pathf):
         ("Distance", True, 2, 9.0),
         (4.2, "Model", 2, 9),
         ("Distance", {"m": "Model"}, 2, 9),
+        ("Distance", "Model", 2, "nine"),
     ],
 )
 def test_OutcomeVariable(namef, pathf, colf, rowf):
@@ -153,6 +159,10 @@ def test_OutcomeVariable(namef, pathf, colf, rowf):
 
     with pytest.raises(TypeError):
         sim.OutcomeVariable(namef, pathf, colf, rowf)
+
+    with pytest.raises(ValueError):
+        sim.OutcomeVariable("Time", "path", -5, 1)
+        sim.OutcomeVariable("Time", "path", 5, -1)
 
 
 @pytest.mark.parametrize(
