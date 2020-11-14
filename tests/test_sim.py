@@ -116,9 +116,6 @@ def base(var_input, var_out, my_method_Q):
                     ("Espera", 60, 300, (4.5 + 3j), "Models.Modelo.espera"),
                     ("Espera", 60, 300, 10, False)])
 def test_DiscreteVariable(namef, lowf, upf, stf, pathf):
-    """Test that the arguments that define a discrete variable
-    are of the right type.
-    """
     parm = sim.DiscreteVariable("Espera", 60, 300, 10, "Models.Modelo.espera")
 
     assert isinstance(parm.name, str), "Should be a string"
@@ -138,7 +135,6 @@ def test_DiscreteVariable(namef, lowf, upf, stf, pathf):
                                 (4.2, "Model", 2, 9),
                                 ("Distance", {"m":"Model"}, 2, 9)])
 def test_OutcomeVariable(namef, pathf, colf, rowf):
-    """Test that the output variable has the correct types of arguments."""
     parm = sim.OutcomeVariable("Time", "path", 5, 1)
 
     assert isinstance(parm.name, str), "Should be a string"
@@ -171,7 +167,6 @@ def test_BasePlant(base, vif, vof, filenamef, modelnamef):
 
 
 def test_get_file_name_plant(base):
-    """Test data type and value of file name"""
     filename = base.get_file_name_plant()
 
     assert filename == "MaterialHandling.spp"
@@ -238,8 +233,8 @@ def test_ini_saq(var_input):
     baseM = sim.BaseMethod(v_i=var_input, episodes_max=1, steps_max=10)
     initial = baseM.ini_saq()
 
-    assert isinstance(initial.n, list)
-    assert isinstance(initial.m, list)
+    assert isinstance(initial.n, list), "Should be a list"
+    assert isinstance(initial.m, list), "Should be a list"
     assert isinstance(initial.Q, np.ndarray)
     assert isinstance(initial.S, np.ndarray)
     assert isinstance(initial.actions, np.ndarray)
@@ -261,6 +256,21 @@ def test_choose_action_Q(var_input, seed_input, expected):
     assert_equal(i, expected)
 
 
+@pytest.mark.xfail
+def test_process_Q(my_method_Q):
+    process = my_method_Q.process()
+
+    assert isinstance(process.r_episode, list), "Should be a list"
+    assert isinstance(process.S0, float), "Should be a float"
+    assert isinstance(process.t, int), "Should be a int"
+    assert isinstance(process.r_acum, float), "Should be a float"
+    assert isinstance(process.res0, float), "Should be a float"
+    assert isinstance(process.j, int), "Should be a int"
+    assert isinstance(process.Snew, float), "Should be a float"
+    assert isinstance(process.res1, float), "Should be a float"
+    assert isinstance(process.r, int), "Should be a int"
+
+
 @pytest.mark.parametrize('seed_input, expected', [(24, 0), (20, 0), (12, 0)])
 def test_choose_action_S(var_input, seed_input, expected):
     method = sim.Sarsa(v_i=var_input, episodes_max=1,
@@ -271,13 +281,21 @@ def test_choose_action_S(var_input, seed_input, expected):
     assert_equal(i, expected)
 
 
-@pytest.mark.xfail  
-def test_process(mock_method2):
-    """Test that the process function returns an array."""
-    r = sim.Qlearning.process()
-    mock_method2.assert_called_with()
+@pytest.mark.xfail
+def test_process_S(my_method_S):
+    process = my_method_S.process()
 
-    assert isinstance(r, list)
+    assert isinstance(process.r_episode, list), "Should be a list"
+    assert isinstance(process.S0, float), "Should be a float"
+    assert isinstance(process.A0, int), "Should be a int"
+    assert isinstance(process.t, int), "Should be a float"
+    assert isinstance(process.r_acum, float), "Should be a float"
+    assert isinstance(process.res0, float), "Should be a float"
+    assert isinstance(process.j, int), "Should be a int"
+    assert isinstance(process.Snew, float), "Should be a float"
+    assert isinstance(process.Anew, int), "Should be a int"
+    assert isinstance(process.res1, float), "Should be a float"
+    assert isinstance(process.r, int), "Should be a int"
 
 
 def test_Q_SARSA(my_method_Q, my_method_S):
@@ -287,39 +305,9 @@ def test_Q_SARSA(my_method_Q, my_method_S):
     assert_equal(method1.v_i, method2.v_i)
     assert_equal(method1.episodes_max, method2.episodes_max)
     assert_equal(method1.steps_max, method2.steps_max)
-
-
-
-
-
-
-def test_default_Sarsa(my_method_S):
-    """Test the data type of the Sarsa function arguments and
-
-    check the default values.
-    """
-    assert isinstance(my_method_S.s, list)
-    assert isinstance(my_method_S.a, list)
-    assert isinstance(my_method_S.v_i, list)
-    assert isinstance(my_method_S.alfa, float)
-    assert isinstance(my_method_S.gamma, float)
-    assert isinstance(my_method_S.epsilon, float)
-    assert isinstance(my_method_S.episodes_max, int)
-    assert isinstance(my_method_S.steps_max, int)
-    assert isinstance(my_method_S.r_episode, np.ndarray)
-    assert_equal(my_method_S.s, [])
-    assert_equal(my_method_S.a, [])
-    assert_equal(my_method_S.alfa, 0.10)
-    assert_equal(my_method_S.gamma, 0.90)
-    assert_equal(my_method_S.epsilon, 0.10)
-    assert_equal(my_method_S.episodes_max, 1)
-    assert_equal(my_method_S.steps_max, 10)
-
-
-@patch.object(sim.Sarsa, 'process', return_value=[1., 0., 0., 2., 2.])
-def test_process_S(mock_method3):
-    """Test that the process function returns an array."""
-    r = sim.Sarsa.process()
-    mock_method3.assert_called_with()
-
-    assert isinstance(r, list)
+    assert_equal(method1.s, method2.s)
+    assert_equal(method1.a, method2.a)
+    assert_equal(method1.s, method2.s)
+    assert_equal(method1.alfa, method2.alfa)
+    assert_equal(method1.gamma, method2.gamma)
+    assert_equal(method1.epsilon, method2.epsilon)
