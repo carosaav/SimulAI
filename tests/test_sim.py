@@ -1,4 +1,3 @@
-
 # This file is part of the
 #   SimulAI Project (https://github.com/carosaav/SimulAI).
 # Copyright (c) 2020, Perez Colo Ivo, Pirozzo Bernardo Manuel,
@@ -32,48 +31,50 @@ def var_input(espera, stock, numviajes):
 
 @pytest.fixture
 def espera():
-    espera = sim.DiscreteVariable(
-        "Espera", 60, 300, 10, "Models.Modelo.espera")
+    espera = sim.DiscreteVariable("Espera", 60, 300, 10,
+                                  "Models.Modelo.espera")
     return espera
 
 
 @pytest.fixture
 def stock():
-    stock = sim.DiscreteVariable(
-        "Stock", 10, 50, 10, "Models.Modelo.stock")
+    stock = sim.DiscreteVariable("Stock", 10, 50, 10, "Models.Modelo.stock")
     return stock
 
 
 @pytest.fixture
 def numviajes():
     numviajes = sim.DiscreteVariable(
-        "Numero de viajes", 1, 5, 1, "Models.Modelo.numviajes")
+        "Numero de viajes", 1, 5, 1, "Models.Modelo.numviajes"
+    )
     return numviajes
 
 
 @pytest.fixture
 def transportes():
     transportes = sim.OutcomeVariable(
-        "Distancia Transportes", "Models.Modelo.transportes", 2, 9)
+        "Distancia Transportes", "Models.Modelo.transportes", 2, 9
+    )
     return transportes
 
 
 @pytest.fixture
 def buffers():
-    buffers = sim.OutcomeVariable(
-        "Llenado buffers", "Models.Modelo.buffers", 3, 20)
+    buffers = sim.OutcomeVariable("Llenado buffers",
+                                  "Models.Modelo.buffers", 3, 20)
     return buffers
 
 
 @pytest.fixture
 def salidas():
     salidas = sim.OutcomeVariable(
-        "Espera en las Salidas", "Models.Modelo.salidas", 2, 20)
+        "Espera en las Salidas", "Models.Modelo.salidas", 2, 20
+    )
     return salidas
 
 
 @pytest.fixture
-def var_out(transportes, buffers, salidas):            
+def var_out(transportes, buffers, salidas):
     vo = [transportes, buffers, salidas]
 
     return vo
@@ -82,7 +83,7 @@ def var_out(transportes, buffers, salidas):
 @pytest.fixture
 def my_method_Q(var_input):
     method = sim.Qlearning(v_i=var_input, episodes_max=1,
-                         steps_max=10, seed=None)
+                           steps_max=10, seed=None)
 
     return method
 
@@ -107,14 +108,18 @@ def base(var_input, var_out, my_method_Q):
     return plant
 
 
-@pytest.mark.parametrize('namef, lowf, upf, stf, pathf', [
-                    ("Espera", 60., 300, 10, "Models.Modelo.espera"),
-                    ("Espera", 60, 300., 10, "Models.Modelo.espera"),
-                    ("Espera", 60, 300, 10., "Models.Modelo.espera"),
-                    (["Espera"], 60, 300, 10, "Models.Modelo.espera"),
-                    ({"e":"Espera"}, 60, 300, 10, "Models.Modelo.espera"),
-                    ("Espera", 60, 300, (4.5 + 3j), "Models.Modelo.espera"),
-                    ("Espera", 60, 300, 10, False)])
+@pytest.mark.parametrize(
+    "namef, lowf, upf, stf, pathf",
+    [
+        ("Espera", 60.0, 300, 10, "Models.Modelo.espera"),
+        ("Espera", 60, 300.0, 10, "Models.Modelo.espera"),
+        ("Espera", 60, 300, 10.0, "Models.Modelo.espera"),
+        (["Espera"], 60, 300, 10, "Models.Modelo.espera"),
+        ({"e": "Espera"}, 60, 300, 10, "Models.Modelo.espera"),
+        ("Espera", 60, 300, (4.5 + 3j), "Models.Modelo.espera"),
+        ("Espera", 60, 300, 10, False),
+    ],
+)
 def test_DiscreteVariable(namef, lowf, upf, stf, pathf):
     parm = sim.DiscreteVariable("Espera", 60, 300, 10, "Models.Modelo.espera")
 
@@ -128,12 +133,16 @@ def test_DiscreteVariable(namef, lowf, upf, stf, pathf):
         sim.DiscreteVariable(namef, lowf, upf, stf, pathf)
 
 
-@pytest.mark.parametrize('namef, pathf, colf, rowf', [
-                                (False, "Model", 2, 9),
-                                ("Distance", "Model", 2., 9),
-                                ("Distance", True, 2, 9.),
-                                (4.2, "Model", 2, 9),
-                                ("Distance", {"m":"Model"}, 2, 9)])
+@pytest.mark.parametrize(
+    "namef, pathf, colf, rowf",
+    [
+        (False, "Model", 2, 9),
+        ("Distance", "Model", 2.0, 9),
+        ("Distance", True, 2, 9.0),
+        (4.2, "Model", 2, 9),
+        ("Distance", {"m": "Model"}, 2, 9),
+    ],
+)
 def test_OutcomeVariable(namef, pathf, colf, rowf):
     parm = sim.OutcomeVariable("Time", "path", 5, 1)
 
@@ -146,15 +155,23 @@ def test_OutcomeVariable(namef, pathf, colf, rowf):
         sim.OutcomeVariable(namef, pathf, colf, rowf)
 
 
-@pytest.mark.parametrize('vif, vof, filenamef, modelnamef', [
-    ([espera, stock, numviajes], 
-    					[transportes, buffers, salidas], 2, "frame"),
-    ([espera, stock, numviajes], 
-    					[transportes, buffers, salidas], "MH.spp", 2.),
-    (2, [transportes, buffers, salidas], "MH.spp", "frame"),
-    ([espera, stock, numviajes], True, "MH.spp", "frame"),
-    ("espera, stock, numviajes", 
-    					[transportes, buffers, salidas], "MH.spp", "frame")])
+@pytest.mark.parametrize(
+    "vif, vof, filenamef, modelnamef",
+    [
+        ([espera, stock, numviajes], [transportes, buffers, salidas],
+         2, "frame"),
+        ([espera, stock, numviajes], [transportes, buffers, salidas],
+         "MH.spp", 2.0),
+        (2, [transportes, buffers, salidas], "MH.spp", "frame"),
+        ([espera, stock, numviajes], True, "MH.spp", "frame"),
+        (
+            "espera, stock, numviajes",
+            [transportes, buffers, salidas],
+            "MH.spp",
+            "frame",
+        ),
+    ],
+)
 def test_BasePlant(base, vif, vof, filenamef, modelnamef):
 
     assert isinstance(base.v_i, list), "Should be a list"
@@ -173,7 +190,7 @@ def test_get_file_name_plant(base):
     assert isinstance(filename, str), "Should be a string"
 
 
-@patch.object(sim.BasePlant, 'update', return_value=np.random.uniform(0, 5))
+@patch.object(sim.BasePlant, "update", return_value=np.random.uniform(0, 5))
 def test_update(update):
     value = sim.BasePlant.update([60, 10, 1])
     update.assert_called_with([60, 10, 1])
@@ -181,53 +198,60 @@ def test_update(update):
     assert isinstance(value, float), "Should be a float"
 
 
-@pytest.mark.parametrize('epvalue, stvalue', [(-1, 1), (1, -2)])
-@pytest.mark.parametrize('vi5', ["espera", "stock", "numviajes", 
-                                   "tiempo", "velocidad"])
-@pytest.mark.parametrize('vifail, epfail, stfail', [
-                                ([espera, stock, numviajes], "ten", 1),
-                                ([espera, stock, numviajes], 5, "two"),
-                                ([espera, stock, numviajes], 5., 3.),
-                                ([espera, stock, numviajes], 5, {"a": "two"}),
-                                (1, 5, 3),
-                                ("list", 2, 6),
-                                ({"a": espera, "b": stock}, 1, 1)])
-@pytest.mark.parametrize('var_input, epmax, stmax', [
-                                ([espera, stock, numviajes], 1, 10)])
+@pytest.mark.parametrize("epvalue, stvalue", [(-1, 1), (1, -2)])
+@pytest.mark.parametrize("vi5", ["espera", "stock", "numviajes", "tiempo",
+                         "velocidad"])
+@pytest.mark.parametrize(
+    "vifail, epfail, stfail",
+    [
+        ([espera, stock, numviajes], "ten", 1),
+        ([espera, stock, numviajes], 5, "two"),
+        ([espera, stock, numviajes], 5.0, 3.0),
+        ([espera, stock, numviajes], 5, {"a": "two"}),
+        (1, 5, 3),
+        ("list", 2, 6),
+        ({"a": espera, "b": stock}, 1, 1),
+    ],
+)
+@pytest.mark.parametrize(
+    "var_input, epmax, stmax", [([espera, stock, numviajes], 1, 10)]
+)
 @patch.multiple(sim.BaseMethod, __abstractmethods__=set())
-def test_BaseMethod(var_input, vifail, vi5, epmax, epfail, epvalue,
-                          stmax, stfail, stvalue):
-     BaseM = sim.BaseMethod(v_i=var_input, episodes_max=epmax, steps_max=stmax,
-                            seed=None)
+def test_BaseMethod(
+    var_input, vifail, vi5, epmax, epfail, epvalue, stmax, stfail, stvalue
+):
+    BaseM = sim.BaseMethod(
+        v_i=var_input, episodes_max=epmax, steps_max=stmax, seed=None
+    )
 
-     assert isinstance(BaseM.s, list), "Should be a list"
-     assert isinstance(BaseM.a, list), "Should be a list"
-     assert isinstance(BaseM.v_i, list), "Should be a list"
-     assert isinstance(BaseM.alfa, float), "Should be a float"
-     assert isinstance(BaseM.gamma, float), "Should be a float"
-     assert isinstance(BaseM.epsilon, float), "Should be a float"
-     assert isinstance(BaseM.episodes_max, int), "Should be an integer"
-     assert isinstance(BaseM.steps_max, int), "Should be an integer"
-     assert isinstance(BaseM.r_episode, np.ndarray), "Should be an array"
-     assert_equal(len(BaseM.s), 0)
-     assert_equal(len(BaseM.a), 0)
-     assert_equal(BaseM.alfa, 0.10)
-     assert_equal(BaseM.gamma, 0.90)
-     assert_equal(BaseM.epsilon, 0.10)
-     assert_equal(BaseM.episodes_max, 1)
-     assert_equal(BaseM.steps_max, 10)
+    assert isinstance(BaseM.s, list), "Should be a list"
+    assert isinstance(BaseM.a, list), "Should be a list"
+    assert isinstance(BaseM.v_i, list), "Should be a list"
+    assert isinstance(BaseM.alfa, float), "Should be a float"
+    assert isinstance(BaseM.gamma, float), "Should be a float"
+    assert isinstance(BaseM.epsilon, float), "Should be a float"
+    assert isinstance(BaseM.episodes_max, int), "Should be an integer"
+    assert isinstance(BaseM.steps_max, int), "Should be an integer"
+    assert isinstance(BaseM.r_episode, np.ndarray), "Should be an array"
+    assert_equal(len(BaseM.s), 0)
+    assert_equal(len(BaseM.a), 0)
+    assert_equal(BaseM.alfa, 0.10)
+    assert_equal(BaseM.gamma, 0.90)
+    assert_equal(BaseM.epsilon, 0.10)
+    assert_equal(BaseM.episodes_max, 1)
+    assert_equal(BaseM.steps_max, 10)
 
-     with pytest.raises(TypeError):
-          sim.BaseMethod (vifail, epfail, stfail)
+    with pytest.raises(TypeError):
+        sim.BaseMethod(vifail, epfail, stfail)
 
-     with pytest.raises(Exception):
-          sim.BaseMethod (vi5, epfail, stfail)
+    with pytest.raises(Exception):
+        sim.BaseMethod(vi5, epfail, stfail)
 
-     with pytest.raises(ValueError):
-          sim.BaseMethod (var_input, epvalue, stvalue)
+    with pytest.raises(ValueError):
+        sim.BaseMethod(var_input, epvalue, stvalue)
 
 
-@pytest.mark.xfail  
+@pytest.mark.xfail
 @patch.multiple(sim.BaseMethod, __abstractmethods__=set())
 def test_ini_saq(var_input):
     baseM = sim.BaseMethod(v_i=var_input, episodes_max=1, steps_max=10)
@@ -246,10 +270,10 @@ def test_ini_saq(var_input):
     assert bool((initial.actions == 0).all()) is False
 
 
-@pytest.mark.parametrize('seed_input, expected', [(24, 0), (20, 0), (12, 0)])
+@pytest.mark.parametrize("seed_input, expected", [(24, 0), (20, 0), (12, 0)])
 def test_choose_action_Q(var_input, seed_input, expected):
-    method = sim.Qlearning(v_i=var_input, episodes_max=1,
-                                steps_max=10, seed=seed_input)
+    method = sim.Qlearning(v_i=var_input, episodes_max=1, steps_max=10,
+                           seed=seed_input)
     method.ini_saq()
     i = method.choose_action(np.random.randint(624))
 
@@ -271,10 +295,10 @@ def test_process_Q(my_method_Q):
     assert isinstance(process.r, int), "Should be a int"
 
 
-@pytest.mark.parametrize('seed_input, expected', [(24, 0), (20, 0), (12, 0)])
+@pytest.mark.parametrize("seed_input, expected", [(24, 0), (20, 0), (12, 0)])
 def test_choose_action_S(var_input, seed_input, expected):
-    method = sim.Sarsa(v_i=var_input, episodes_max=1,
-                                steps_max=10, seed=seed_input)
+    method = sim.Sarsa(v_i=var_input, episodes_max=1, steps_max=10,
+                       seed=seed_input)
     method.ini_saq()
     i = method.choose_action(np.random.randint(624))
 
