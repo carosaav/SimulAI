@@ -80,22 +80,10 @@ def var_out(transportes, buffers, salidas):
 
 
 @pytest.fixture
-def base(var_input, var_out):
-    plant = sim.BasePlant(
-        method=sim.Qlearning(v_i=var_input, episodes_max=1, steps_max=10),
-        v_i=var_input,
-        v_o=var_out,
-        filename="MaterialHandling.spp",
-        modelname="Model",
-    )
-
-    return plant
-
-
-@pytest.fixture
-def BaseM(var_input):
-    method = sim.Qlearning(v_i=var_input, episodes_max=1,
-                           steps_max=10, seed=None)
+def my_method_Q(var_input, request):
+    # seed = request
+    method = sim.Qlearning(v_i=var_input, episodes_max=1, 
+                    steps_max=10, seed=None)
 
     return method
 
@@ -106,6 +94,19 @@ def my_method_S(var_input, request):
     method = sim.Sarsa(v_i=var_input, episodes_max=1, steps_max=10, seed=None)
 
     return method
+
+
+@pytest.fixture
+def base(var_input, var_out, my_method_Q):
+    plant = sim.BasePlant(
+        method=my_method_Q,
+        v_i=var_input,
+        v_o=var_out,
+        filename="MaterialHandling.spp",
+        modelname="Model",
+    )
+
+    return plant
 
 
 @pytest.mark.parametrize('namef, lowf, upf, stf, pathf', [
@@ -122,11 +123,11 @@ def test_DiscreteVariable(namef, lowf, upf, stf, pathf):
     """
     parm = sim.DiscreteVariable("Espera", 60, 300, 10, "Models.Modelo.espera")
 
-    assert isinstance(parm.name, str)
-    assert isinstance(parm.lower_limit, int)
-    assert isinstance(parm.upper_limit, int)
-    assert isinstance(parm.step, int)
-    assert isinstance(parm.path, str)
+    assert isinstance(parm.name, str), "Should be a string"
+    assert isinstance(parm.lower_limit, int), "Should be an integer"
+    assert isinstance(parm.upper_limit, int), "Should be an integer"
+    assert isinstance(parm.step, int), "Should be an integer"
+    assert isinstance(parm.path, str), "Should be a string"
 
     with pytest.raises(TypeError):
         sim.DiscreteVariable(namef, lowf, upf, stf, pathf)
@@ -142,10 +143,10 @@ def test_OutcomeVariable(namef, pathf, colf, rowf):
     """Test that the output variable has the correct types of arguments."""
     parm = sim.OutcomeVariable("Time", "path", 5, 1)
 
-    assert isinstance(parm.name, str)
-    assert isinstance(parm.path, str)
-    assert isinstance(parm.column, int)
-    assert isinstance(parm.num_rows, int)
+    assert isinstance(parm.name, str), "Should be a string"
+    assert isinstance(parm.path, str), "Should be a string"
+    assert isinstance(parm.column, int), "Should be a integer"
+    assert isinstance(parm.num_rows, int), "Should be a integer"
 
     with pytest.raises(TypeError):
         sim.OutcomeVariable(namef, pathf, colf, rowf)
@@ -161,11 +162,11 @@ def test_OutcomeVariable(namef, pathf, colf, rowf):
     ("espera, stock, numviajes", 
     					[transportes, buffers, salidas], "MH.spp", "frame")])
 def test_BasePlant(base, vif, vof, filenamef, modelnamef):
-    """Test data type of argument"""
-    assert isinstance(base.v_i, list)
-    assert isinstance(base.v_o, list)
-    assert isinstance(base.filename, str)
-    assert isinstance(base.modelname, str)
+
+    assert isinstance(base.v_i, list), "Should be a list"
+    assert isinstance(base.v_o, list), "Should be a list"
+    assert isinstance(base.filename, str), "Should be a string"
+    assert isinstance(base.modelname, str), "Should be a string"
 
     with pytest.raises(TypeError):
         sim.BasePlant(vif, vof, filenamef, modelnamef)
@@ -176,17 +177,18 @@ def test_get_file_name_plant(base):
     filename = base.get_file_name_plant()
 
     assert filename == "MaterialHandling.spp"
-    assert isinstance(filename, str)
+    assert isinstance(filename, str), "Should be a string"
 
 
 @patch.object(sim.BasePlant, 'update', return_value=np.random.uniform(0, 5))
-def test_update(mock_method):
+def test_update(update):
     value = sim.BasePlant.update([60, 10, 1])
-    mock_method.assert_called_with([60, 10, 1])
+    update.assert_called_with([60, 10, 1])
 
-    assert isinstance(value, float)
+    assert isinstance(value, float), "Should be a float"
 
 
+@pytest.mark.parametrize('epvalue, stvalue', [(-1, 1), (1, -2)])
 @pytest.mark.parametrize('vi5', ["espera", "stock", "numviajes", 
                                    "tiempo", "velocidad"])
 @pytest.mark.parametrize('vifail, epfail, stfail', [
@@ -200,20 +202,21 @@ def test_update(mock_method):
 @pytest.mark.parametrize('var_input, epmax, stmax', [
                                 ([espera, stock, numviajes], 1, 10)])
 @patch.multiple(sim.BaseMethod, __abstractmethods__=set())
-def test_BaseMethod(var_input, vifail, vi5, epmax, epfail, stmax, stfail):
+def test_BaseMethod(var_input, vifail, vi5, epmax, epfail, epvalue,
+                          stmax, stfail, stvalue):
      BaseM = sim.BaseMethod(v_i=var_input, episodes_max=epmax, steps_max=stmax,
                           alfa=0.1, gamma=0.9, epsilon=0.1, 
                                    s=["a", "b"], a=["a", "b"], seed=None)
 
-     assert isinstance(BaseM.s, list)
-     assert isinstance(BaseM.a, list)
-     assert isinstance(BaseM.v_i, list)
-     assert isinstance(BaseM.alfa, float)
-     assert isinstance(BaseM.gamma, float)
-     assert isinstance(BaseM.epsilon, float)
-     assert isinstance(BaseM.episodes_max, int)
-     assert isinstance(BaseM.steps_max, int)
-     assert isinstance(BaseM.r_episode, np.ndarray)
+     assert isinstance(BaseM.s, list), "Should be a list"
+     assert isinstance(BaseM.a, list), "Should be a list"
+     assert isinstance(BaseM.v_i, list), "Should be a list"
+     assert isinstance(BaseM.alfa, float), "Should be a float"
+     assert isinstance(BaseM.gamma, float), "Should be a float"
+     assert isinstance(BaseM.epsilon, float), "Should be a float"
+     assert isinstance(BaseM.episodes_max, int), "Should be an integer"
+     assert isinstance(BaseM.steps_max, int), "Should be an integer"
+     assert isinstance(BaseM.r_episode, np.ndarray), "Should be an array"
      assert_equal(len(BaseM.s), 2)
      assert_equal(len(BaseM.a), 2)
      assert_equal(BaseM.alfa, 0.10)
@@ -228,6 +231,30 @@ def test_BaseMethod(var_input, vifail, vi5, epmax, epfail, stmax, stfail):
      with pytest.raises(Exception):
           sim.BaseMethod (vi5, epfail, stfail)
 
+     with pytest.raises(ValueError):
+          sim.BaseMethod (var_input, epvalue, stvalue)
+
+
+@pytest.mark.xfail  
+@patch.multiple(sim.BaseMethod, __abstractmethods__=set())
+def test_ini_saq(var_input):
+     BaseM = sim.BaseMethod(v_i=var_input, episodes_max=1, steps_max=10,
+                          alfa=0.1, gamma=0.9, epsilon=0.1, seed=None)
+     initial = BaseM.ini_saq()
+
+     assert isinstance(initial.n, list)
+     assert isinstance(initial.m, list)
+     assert isinstance(initial.Q, np.ndarray)
+     assert isinstance(S, np.ndarray)
+     assert isinstance(A, np.ndarray)
+     assert Q.shape == (625, 27)
+     assert S.shape == (625, 3)
+     assert A.shape == (27, 3)
+     assert (Q == 0).all()
+     assert bool((S == 0).all()) is False
+     assert bool((A == 0).all()) is False
+
+
 @pytest.mark.xfail  
 def test_Q():
     method = sim.Qlearning()
@@ -238,35 +265,6 @@ def test_Q():
 
     with pytest.raises(TypeError):
         sim.Qlearning(vifail, epfail, stfail)
-
-
-def test_arrays(BaseM):
-    """Test the data type of the arrays generated with the limit and
-
-    step information of the input variables.
-    """
-    BaseM.arrays()
-    assert_equal(len(BaseM.s), 3)
-    assert_equal(len(BaseM.a), 3)
-
-
-def test_ini_saq(BaseM):
-    """Test that the output Q matrix has the necessary characteristics.
-
-    Initially the data type is checked.
-    Then dimensions and composition are checked.
-    """
-    Q, S, A = BaseM.ini_saq()
-
-    assert isinstance(Q, np.ndarray)
-    assert isinstance(S, np.ndarray)
-    assert isinstance(A, np.ndarray)
-    assert Q.shape == (625, 27)
-    assert S.shape == (625, 3)
-    assert A.shape == (27, 3)
-    assert (Q == 0).all()
-    assert bool((S == 0).all()) is False
-    assert bool((A == 0).all()) is False
 
 
 @pytest.mark.xfail
