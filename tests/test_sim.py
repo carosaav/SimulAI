@@ -177,7 +177,7 @@ def test_BasePlant(base, var_input, var_out):
         sim.BasePlant(var_input, 2., "MH.spp", "frame")
         sim.BasePlant(var_input, var_out, 10, "frame")
         sim.BasePlant(var_input, var_out, "MH.spp", 10)
-        
+
 
 def test_get_file_name_plant(base):
     filename = base.get_file_name_plant()
@@ -194,28 +194,11 @@ def test_update(update):
     assert isinstance(value, float), "Should be a float"
 
 
-@pytest.mark.parametrize("epvalue, stvalue", [(-1, 1), (1, -2)])
-@pytest.mark.parametrize("vi5", ["espera", "stock", "numviajes", "tiempo",
-                         "velocidad"])
-@pytest.mark.parametrize(
-    "vifail, epfail, stfail",
-    [
-        ([espera, stock, numviajes], "ten", 1),
-        ([espera, stock, numviajes], 5, "two"),
-        ([espera, stock, numviajes], 5.0, 3.0),
-        ([espera, stock, numviajes], 5, {"a": "two"}),
-        (1, 5, 3),
-        ("list", 2, 6),
-        ({"a": espera, "b": stock}, 1, 1),
-    ],
-)
 @pytest.mark.parametrize(
     "var_input, epmax, stmax", [([espera, stock, numviajes], 1, 10)]
 )
 @patch.multiple(sim.BaseMethod, __abstractmethods__=set())
-def test_BaseMethod(
-    var_input, vifail, vi5, epmax, epfail, epvalue, stmax, stfail, stvalue
-):
+def test_BaseMethod(var_input, epmax, stmax):
     BaseM = sim.BaseMethod(
         v_i=var_input, episodes_max=epmax, steps_max=stmax, seed=None
     )
@@ -238,13 +221,26 @@ def test_BaseMethod(
     assert_equal(BaseM.steps_max, 10)
 
     with pytest.raises(TypeError):
-        sim.BaseMethod(vifail, epfail, stfail)
+        sim.BaseMethod("variable", epmax, stmax)
+        sim.BaseMethod(var_input, 3., stmax)
+        sim.BaseMethod(var_input, epmax, "nine")
+        sim.BaseMethod(var_input, epmax, stmax, alfa="zero")
+        sim.BaseMethod(var_input, epmax, stmax, gamma=2)
+        sim.BaseMethod(var_input, epmax, epsilon=1)
 
     with pytest.raises(Exception):
-        sim.BaseMethod(vi5, epfail, stfail)
+        sim.BaseMethod(epmax, stmax, v_i=["espera", "stock", "numviajes",
+                       "tiempo", "velocidad"])
 
     with pytest.raises(ValueError):
-        sim.BaseMethod(var_input, epvalue, stvalue)
+        sim.BaseMethod(var_input, -1, stmax)
+        sim.BaseMethod(var_input, epmax, -1)
+        sim.BaseMethod(var_input, epmax, stmax, alfa=-1)
+        sim.BaseMethod(var_input, epmax, stmax, alfa=3)
+        sim.BaseMethod(var_input, epmax, stmax, gamma=-1)
+        sim.BaseMethod(var_input, epmax, stmax, gamma=3)
+        sim.BaseMethod(var_input, epmax, stmax, epsilon=-1)
+        sim.BaseMethod(var_input, epmax, stmax, epsilon=3)
 
 
 @pytest.mark.xfail
