@@ -1,3 +1,4 @@
+
 # This file is part of the
 #   SimulAI Project (https://github.com/carosaav/SimulAI).
 # Copyright (c) 2020, Perez Colo Ivo, Pirozzo Bernardo Manuel,
@@ -39,14 +40,15 @@ def espera():
 @pytest.fixture
 def stock():
     stock = sim.DiscreteVariable("Stock", 10, 50, 10, "Models.Modelo.stock")
+
     return stock
 
 
 @pytest.fixture
 def numviajes():
     numviajes = sim.DiscreteVariable(
-        "Numero de viajes", 1, 5, 1, "Models.Modelo.numviajes"
-    )
+        "Numero de viajes", 1, 5, 1, "Models.Modelo.numviajes")
+
     return numviajes
 
 
@@ -82,15 +84,14 @@ def var_out(transportes, buffers, salidas):
 
 @pytest.fixture
 def my_method_Q(var_input):
-    method = sim.Qlearning(v_i=var_input, episodes_max=1,
-                           steps_max=10, seed=None)
+    method = sim.Qlearning(v_i=var_input, episodes_max=1, steps_max=10)
 
     return method
 
 
 @pytest.fixture
 def my_method_S(var_input):
-    method = sim.Sarsa(v_i=var_input, episodes_max=1, steps_max=10, seed=None)
+    method = sim.Sarsa(v_i=var_input, episodes_max=1, steps_max=10)
 
     return method
 
@@ -168,21 +169,23 @@ def test_OutcomeVariable(namef, pathf, colf, rowf):
         sim.OutcomeVariable("Time", "path", 5, -1)
 
 
-def test_BasePlant(base, var_input, var_out):
+def test_BasePlant(var_input, var_out, my_method_Q):
+    b = sim.BasePlant(method=my_method_Q, v_i=var_input, v_o=var_out,
+                      filename="MaterialHandling.spp", modelname="Model")
 
-    assert isinstance(base.v_i, list), "Should be a list"
-    assert isinstance(base.v_o, list), "Should be a list"
-    assert isinstance(base.filename, str), "Should be a string"
-    assert isinstance(base.modelname, str), "Should be a string"
+    assert isinstance(b.v_i, list), "Should be a list"
+    assert isinstance(b.v_o, list), "Should be a list"
+    assert isinstance(b.filename, str), "Should be a string"
+    assert isinstance(b.modelname, str), "Should be a string"
 
     with pytest.raises(TypeError):
-        sim.BasePlant(1, var_out, "MH.spp", "frame")
+        sim.BasePlant(my_method_Q, 1, var_out, "MH.spp", "frame")
     with pytest.raises(TypeError):
-        sim.BasePlant(var_input, 2., "MH.spp", "frame")
+        sim.BasePlant(my_method_Q, var_input, 2., "MH.spp", "frame")
     with pytest.raises(TypeError):
-        sim.BasePlant(var_input, var_out, 10, "frame")
+        sim.BasePlant(my_method_Q, var_input, var_out, 10, "frame")
     with pytest.raises(TypeError):
-        sim.BasePlant(var_input, var_out, "MH.spp", 10)
+        sim.BasePlant(my_method_Q, var_input, var_out, "MH.spp", 10)
 
 
 def test_get_file_name_plant(base):
@@ -200,88 +203,85 @@ def test_update(update):
     assert isinstance(value, float), "Should be a float"
 
 
-@pytest.mark.parametrize(
-    "var_input, epmax, stmax", [([espera, stock, numviajes], 1, 10)]
-)
-@patch.multiple(sim.BaseMethod, __abstractmethods__=set())
-def test_BaseMethod(var_input, epmax, stmax):
-    BaseM = sim.BaseMethod(
-        v_i=var_input, episodes_max=epmax, steps_max=stmax, seed=None,
-    )
+def test_Qlearning(var_input):
+    ql = sim.Qlearning(v_i=var_input, episodes_max=10, steps_max=10)
 
-    assert isinstance(BaseM.s, list), "Should be a list"
-    assert isinstance(BaseM.a, list), "Should be a list"
-    assert isinstance(BaseM.v_i, list), "Should be a list"
-    assert isinstance(BaseM.alfa, float), "Should be a float"
-    assert isinstance(BaseM.gamma, float), "Should be a float"
-    assert isinstance(BaseM.epsilon, float), "Should be a float"
-    assert isinstance(BaseM.episodes_max, int), "Should be an integer"
-    assert isinstance(BaseM.steps_max, int), "Should be an integer"
-    assert isinstance(BaseM.r_episode, np.ndarray), "Should be an array"
-    assert_equal(len(BaseM.s), 0)
-    assert_equal(len(BaseM.a), 0)
-    assert_equal(BaseM.alfa, 0.10)
-    assert_equal(BaseM.gamma, 0.90)
-    assert_equal(BaseM.epsilon, 0.10)
-    assert_equal(BaseM.episodes_max, 1)
-    assert_equal(BaseM.steps_max, 10)
+    assert isinstance(ql.s, list), "Should be a list"
+    assert isinstance(ql.a, list), "Should be a list"
+    assert isinstance(ql.v_i, list), "Should be a list"
+    assert isinstance(ql.alfa, float), "Should be a float"
+    assert isinstance(ql.gamma, float), "Should be a float"
+    assert isinstance(ql.epsilon, float), "Should be a float"
+    assert isinstance(ql.episodes_max, int), "Should be an integer"
+    assert isinstance(ql.steps_max, int), "Should be an integer"
+    assert isinstance(ql.r_episode, np.ndarray), "Should be an array"
+    assert_equal(len(ql.s), 0)
+    assert_equal(len(ql.a), 0)
+    assert_equal(ql.alfa, 0.10)
+    assert_equal(ql.gamma, 0.90)
+    assert_equal(ql.epsilon, 0.10)
+    assert_equal(ql.episodes_max, 10)
+    assert_equal(ql.steps_max, 10)
 
     with pytest.raises(TypeError):
-        sim.BaseMethod("variable", epmax, stmax)
+        sim.Qlearning("variable", 10, 10)
     with pytest.raises(TypeError):
-        sim.BaseMethod(var_input, 3., stmax)
+        sim.Qlearning(var_input, 3., 10)
     with pytest.raises(TypeError):
-        sim.BaseMethod(var_input, epmax, "nine")
+        sim.Qlearning(var_input, 10, "nine")
     with pytest.raises(TypeError):
-        sim.BaseMethod(var_input, epmax, stmax, alfa=2)
+        sim.Qlearning(var_input, 10, 10, alfa=2)
     with pytest.raises(TypeError):
-        sim.BaseMethod(var_input, epmax, stmax, gamma=2)
+        sim.Qlearning(var_input, 10, 10, gamma=2)
     with pytest.raises(TypeError):
-        sim.BaseMethod(var_input, epmax, epsilon=1)
+        sim.Qlearning(var_input, 10, epsilon="a")
 
     with pytest.raises(Exception):
-        sim.BaseMethod(epmax, stmax, v_i=["espera", "stock", "numviajes",
-                       "tiempo", "velocidad"])
+        sim.Qlearning(10, 10, v_i=["espera", "stock", "numviajes",
+                      "tiempo", "velocidad"])
 
     with pytest.raises(ValueError):
-        sim.BaseMethod(var_input, -1, stmax)
+        sim.Qlearning(var_input, -1, 10)
     with pytest.raises(ValueError):
-        sim.BaseMethod(var_input, epmax, -1)
+        sim.Qlearning(var_input, 10, -1)
     with pytest.raises(ValueError):
-        sim.BaseMethod(var_input, epmax, stmax, alfa=-1.)
+        sim.Qlearning(var_input, 10, 10, alfa=-1.)
     with pytest.raises(ValueError):
-        sim.BaseMethod(var_input, epmax, stmax, alfa=3.)
+        sim.Qlearning(var_input, 10, 10, alfa=3.)
     with pytest.raises(ValueError):
-        sim.BaseMethod(var_input, epmax, stmax, gamma=-1.)
+        sim.Qlearning(var_input, 10, 10, gamma=-1.)
     with pytest.raises(ValueError):
-        sim.BaseMethod(var_input, epmax, stmax, gamma=3.)
+        sim.Qlearning(var_input, 10, 10, gamma=3.)
     with pytest.raises(ValueError):
-        sim.BaseMethod(var_input, epmax, stmax, epsilon=-1.)
+        sim.Qlearning(var_input, 10, 10, epsilon=-1.)
     with pytest.raises(ValueError):
-        sim.BaseMethod(var_input, epmax, stmax, epsilon=3.)
+        sim.Qlearning(var_input, 10, 10, epsilon=3.)
 
 
-@pytest.mark.xfail
-@patch.multiple(sim.BaseMethod, __abstractmethods__=set())
+def test_arrays(var_input):
+    q = sim.Qlearning(v_i=var_input, episodes_max=1, steps_max=10)
+    q.arrays()
+    assert_equal(len(q.s), 3)
+    assert_equal(len(q.a), 3)
+
+
 def test_ini_saq(var_input):
-    baseM = sim.BaseMethod(v_i=var_input, episodes_max=1, steps_max=10)
-    initial = baseM.ini_saq()
+    baseM = sim.Qlearning(v_i=var_input, episodes_max=1, steps_max=10)
+    baseM.ini_saq()
 
-    assert isinstance(initial.n, list), "Should be a list"
-    assert isinstance(initial.m, list), "Should be a list"
-    assert isinstance(initial.Q, np.ndarray)
-    assert isinstance(initial.S, np.ndarray)
-    assert isinstance(initial.actions, np.ndarray)
-    assert initial.Q.shape == (625, 27)
-    assert initial.S.shape == (625, 3)
-    assert initial.actions.shape == (27, 3)
-    assert (initial.Q == 0).all()
-    assert bool((initial.S == 0).all()) is False
-    assert bool((initial.actions == 0).all()) is False
+    assert isinstance(baseM.Q, np.ndarray)
+    assert isinstance(baseM.S, np.ndarray)
+    assert isinstance(baseM.actions, np.ndarray)
+    assert baseM.Q.shape == (625, 27)
+    assert baseM.S.shape == (625, 3)
+    assert baseM.actions.shape == (27, 3)
+    assert (baseM.Q == 0).all()
+    assert bool((baseM.S == 0).all()) is False
+    assert bool((baseM.actions == 0).all()) is False
 
 
 @pytest.mark.parametrize("seed_input, expected", [(24, 0), (20, 0), (12, 0)])
-def test_choose_action_Q(var_input, seed_input, expected):
+def test_choose_action(var_input, seed_input, expected):
     method = sim.Qlearning(v_i=var_input, episodes_max=1, steps_max=10,
                            seed=seed_input)
     method.ini_saq()
@@ -290,46 +290,26 @@ def test_choose_action_Q(var_input, seed_input, expected):
     assert_equal(i, expected)
 
 
-@pytest.mark.xfail
-def test_process_Q(my_method_Q):
-    process = my_method_Q.process()
+@patch.object(sim.Qlearning, "process", return_value=np.random.uniform(0, 10))
+def test_process(process):
+    value = sim.Qlearning.process()
+    process.assert_called_with()
 
-    assert isinstance(process.r_episode, list), "Should be a list"
-    assert isinstance(process.S0, float), "Should be a float"
-    assert isinstance(process.t, int), "Should be a int"
-    assert isinstance(process.r_acum, float), "Should be a float"
-    assert isinstance(process.res0, float), "Should be a float"
-    assert isinstance(process.j, int), "Should be a int"
-    assert isinstance(process.Snew, float), "Should be a float"
-    assert isinstance(process.res1, float), "Should be a float"
-    assert isinstance(process.r, int), "Should be a int"
+    assert isinstance(value, float), "Should be a float"
 
 
-@pytest.mark.parametrize("seed_input, expected", [(24, 0), (20, 0), (12, 0)])
-def test_choose_action_S(var_input, seed_input, expected):
-    method = sim.Sarsa(v_i=var_input, episodes_max=1, steps_max=10,
-                       seed=seed_input)
-    method.ini_saq()
-    i = method.choose_action(np.random.randint(624))
+def test_Sarsa(var_input):
+    ss = sim.Sarsa(v_i=var_input, episodes_max=5, steps_max=20)
 
-    assert_equal(i, expected)
+    assert isinstance(ss, sim.Qlearning)
 
 
-@pytest.mark.xfail
-def test_process_S(my_method_S):
-    process = my_method_S.process()
+@patch.object(sim.Sarsa, "process", return_value=np.random.uniform(0, 10))
+def test_process_S(process):
+    value = sim.Sarsa.process()
+    process.assert_called_with()
 
-    assert isinstance(process.r_episode, list), "Should be a list"
-    assert isinstance(process.S0, float), "Should be a float"
-    assert isinstance(process.A0, int), "Should be a int"
-    assert isinstance(process.t, int), "Should be a float"
-    assert isinstance(process.r_acum, float), "Should be a float"
-    assert isinstance(process.res0, float), "Should be a float"
-    assert isinstance(process.j, int), "Should be a int"
-    assert isinstance(process.Snew, float), "Should be a float"
-    assert isinstance(process.Anew, int), "Should be a int"
-    assert isinstance(process.res1, float), "Should be a float"
-    assert isinstance(process.r, int), "Should be a int"
+    assert isinstance(value, float), "Should be a float"
 
 
 def test_Q_SARSA(my_method_Q, my_method_S):
@@ -341,7 +321,8 @@ def test_Q_SARSA(my_method_Q, my_method_S):
     assert_equal(method1.steps_max, method2.steps_max)
     assert_equal(method1.s, method2.s)
     assert_equal(method1.a, method2.a)
-    assert_equal(method1.s, method2.s)
+    assert_equal(method1.seed, method2.seed)
     assert_equal(method1.alfa, method2.alfa)
     assert_equal(method1.gamma, method2.gamma)
     assert_equal(method1.epsilon, method2.epsilon)
+    assert_equal(method1.r_episode, method2.r_episode)

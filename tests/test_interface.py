@@ -12,10 +12,9 @@
 
 import pytest
 from unittest.mock import patch
-import random
 from numpy.testing import assert_equal
 from simulai import interface
-
+# import random
 
 # ============================================================================
 # TESTS
@@ -37,6 +36,7 @@ def test_Com(base):
     assert_equal(base.is_connected, False)
     assert isinstance(base.plant_simulation, str)
     assert_equal(base.plant_simulation, "")
+
 
 def test_get_path_file_model(base):
 
