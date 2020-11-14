@@ -134,7 +134,9 @@ def test_DiscreteVariable(namef, lowf, upf, stf, pathf):
 
     with pytest.raises(ValueError):
         sim.DiscreteVariable("Espera", -60, 300, 10, "Models.Modelo.espera")
+    with pytest.raises(ValueError):
         sim.DiscreteVariable("Espera", 60, -300, 10, "Models.Modelo.espera")
+    with pytest.raises(ValueError):
         sim.DiscreteVariable("Espera", 60, 300, -10, "Models.Modelo.espera")
 
 
@@ -162,6 +164,7 @@ def test_OutcomeVariable(namef, pathf, colf, rowf):
 
     with pytest.raises(ValueError):
         sim.OutcomeVariable("Time", "path", -5, 1)
+    with pytest.raises(ValueError):
         sim.OutcomeVariable("Time", "path", 5, -1)
 
 
@@ -174,8 +177,11 @@ def test_BasePlant(base, var_input, var_out):
 
     with pytest.raises(TypeError):
         sim.BasePlant(1, var_out, "MH.spp", "frame")
+    with pytest.raises(TypeError):
         sim.BasePlant(var_input, 2., "MH.spp", "frame")
+    with pytest.raises(TypeError):
         sim.BasePlant(var_input, var_out, 10, "frame")
+    with pytest.raises(TypeError):
         sim.BasePlant(var_input, var_out, "MH.spp", 10)
 
 
@@ -222,10 +228,15 @@ def test_BaseMethod(var_input, epmax, stmax):
 
     with pytest.raises(TypeError):
         sim.BaseMethod("variable", epmax, stmax)
+    with pytest.raises(TypeError):
         sim.BaseMethod(var_input, 3., stmax)
+    with pytest.raises(TypeError):
         sim.BaseMethod(var_input, epmax, "nine")
+    with pytest.raises(TypeError):
         sim.BaseMethod(var_input, epmax, stmax, alfa="zero")
+    with pytest.raises(TypeError):
         sim.BaseMethod(var_input, epmax, stmax, gamma=2)
+    with pytest.raises(TypeError):
         sim.BaseMethod(var_input, epmax, epsilon=1)
 
     with pytest.raises(Exception):
@@ -234,12 +245,19 @@ def test_BaseMethod(var_input, epmax, stmax):
 
     with pytest.raises(ValueError):
         sim.BaseMethod(var_input, -1, stmax)
+    with pytest.raises(ValueError):
         sim.BaseMethod(var_input, epmax, -1)
+    with pytest.raises(ValueError):
         sim.BaseMethod(var_input, epmax, stmax, alfa=-1)
+    with pytest.raises(ValueError):
         sim.BaseMethod(var_input, epmax, stmax, alfa=3)
+    with pytest.raises(ValueError):
         sim.BaseMethod(var_input, epmax, stmax, gamma=-1)
+    with pytest.raises(ValueError):
         sim.BaseMethod(var_input, epmax, stmax, gamma=3)
+    with pytest.raises(ValueError):
         sim.BaseMethod(var_input, epmax, stmax, epsilon=-1)
+    with pytest.raises(ValueError):
         sim.BaseMethod(var_input, epmax, stmax, epsilon=3)
 
 
