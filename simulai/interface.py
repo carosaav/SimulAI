@@ -1,9 +1,10 @@
-# This file is part of the SimulAI Project
-# (https://github.com/carosaav/SimulAI).
+
+# This file is part of the
+#   SimulAI Project (https://github.com/carosaav/SimulAI).
 # Copyright (c) 2020, Perez Colo Ivo, Pirozzo Bernardo Manuel,
 # Carolina Saavedra Sueldo
 # License: MIT
-# Full Text: https://github.com/carosaav/SimulAI/blob/master/LICENSE
+#   Full Text: https://github.com/carosaav/SimulAI/blob/master/LICENSE
 
 # ============================================================================
 # IMPORTS
@@ -13,6 +14,7 @@ try:
     import win32com.client as win32
 except ModuleNotFoundError:
     print("Install pywin32")
+
 import os
 
 

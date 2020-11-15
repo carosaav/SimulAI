@@ -169,6 +169,11 @@ def test_OutcomeVariable(namef, pathf, colf, rowf):
         sim.OutcomeVariable("Time", "path", 5, -1)
 
 
+def test_Plant():
+    with pytest.raises(TypeError):
+        sim.Plant()
+
+
 def test_BasePlant(var_input, var_out, my_method_Q):
     b = sim.BasePlant(method=my_method_Q, v_i=var_input, v_o=var_out,
                       filename="MaterialHandling.spp", modelname="Model")
@@ -196,9 +201,9 @@ def test_get_file_name_plant(base):
 
 
 @patch.object(sim.BasePlant, "update", return_value=np.random.uniform(0, 5))
-def test_update(update):
+def test_update(mock_method):
     value = sim.BasePlant.update([60, 10, 1])
-    update.assert_called_with([60, 10, 1])
+    mock_method.assert_called_with([60, 10, 1])
 
     assert isinstance(value, float), "Should be a float"
 
@@ -291,9 +296,9 @@ def test_choose_action(var_input, seed_input, expected):
 
 
 @patch.object(sim.Qlearning, "process", return_value=np.random.uniform(0, 10))
-def test_process(process):
+def test_process(mock_method2):
     value = sim.Qlearning.process()
-    process.assert_called_with()
+    mock_method2.assert_called_with()
 
     assert isinstance(value, float), "Should be a float"
 
@@ -305,9 +310,9 @@ def test_Sarsa(var_input):
 
 
 @patch.object(sim.Sarsa, "process", return_value=np.random.uniform(0, 10))
-def test_process_S(process):
+def test_process_S(mock_method3):
     value = sim.Sarsa.process()
-    process.assert_called_with()
+    mock_method3.assert_called_with()
 
     assert isinstance(value, float), "Should be a float"
 

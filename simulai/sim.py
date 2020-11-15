@@ -329,7 +329,6 @@ class Qlearning(AutonomousDecisionSystem):
 
     def __attrs_post_init__(self):
         self.r_episode = np.arange(self.episodes_max, dtype=float)
-
         self._random = np.random.RandomState(seed=self.seed)
 
     @v_i.validator
@@ -497,7 +496,7 @@ class Qlearning(AutonomousDecisionSystem):
                 res0 = res1
                 r_acum = r_acum + r
                 self.r_episode[n] = r_acum
-        return self.r_episode
+        return self.r_episode, S0
 
     __process = process
 
@@ -588,4 +587,4 @@ class Sarsa(Qlearning):
                 res0 = res1
                 r_acum = r_acum + r
                 self.r_episode[n] = r_acum
-        return self.r_episode
+        return self.r_episode, S0, A0

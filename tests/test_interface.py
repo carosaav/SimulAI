@@ -1,3 +1,4 @@
+
 # This file is part of the
 #   SimulAI Project (https://github.com/carosaav/SimulAI).
 # Copyright (c) 2020, Perez Colo Ivo, Pirozzo Bernardo Manuel,
@@ -10,8 +11,10 @@
 # ============================================================================
 
 
+import random
 import pytest
 from unittest import mock
+from unittest.mock import patch
 from numpy.testing import assert_equal
 from simulai import interface
 
@@ -24,6 +27,13 @@ from simulai import interface
 @pytest.fixture
 def base():
     com = interface.Com("MaterialHandling.spp")
+
+    return com
+
+
+@pytest.fixture
+def base2():
+    com = interface.Com("aaa")
 
     return com
 
@@ -47,28 +57,48 @@ def test_connection(base):
     comm = base.connection()
 
     assert isinstance(comm, bool)
+    assert isinstance(base.plant_simulation, str)
 
 
-@pytest.mark.xfail
+@patch.object(interface.Com, "connection",
+              return_value=random.choice([True, False]))
+def test_connection2(mock_method):
+    value = interface.Com.connection()
+    mock_method.assert_called_once_with()
+
+    assert isinstance(value, bool)
+
+
 @mock.patch('simulai.interface.Com.connection',
             mock.MagicMock(return_value=True))
 def test_check_connection(base):
-    interface.Com("MaterialHandling.spp")
-    base.is_connected = base.connection()
+    value2 = base.connection()
+
+    assert isinstance(value2, bool)
+
+
+def test_invalidModel(base2):
+    with pytest.raises(Exception):
+        base.connection()
+
+
+@patch.object(interface.Com, "setVisible", spec_set=True)
+def test_setVisible(mock_method):
     interface.Com.setVisible(True)
+    mock_method.assert_called_with(True)
 
 
-@pytest.fixture
-def setVisible(value=True):
-    pass
+def test_setVisible2(base2):
+    with pytest.raises(interface.ConnectionError):
+        base2.setVisible()
 
 
-@pytest.mark.xfail
-def test_wrapper(base, setVisible):
-    interface.Com("MaterialHandling")
-    base.is_connected = True
-    setV = base.setVisible
-    check = interface.check_connection(setV)
-    r = check.wrapper()
+def test_setValue(base2):
+    with pytest.raises(interface.ConnectionError):
+        base2.setValue()
 
-    assert_equal(r, True)
+
+@patch.object(interface.Com, "startSimulation", spec_set=True)
+def test_startSimulation(mock_method):
+    interface.Com.startSimulation(".Models.Modelo")
+    mock_method.assert_called_with(".Models.Modelo")
