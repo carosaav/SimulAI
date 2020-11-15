@@ -11,10 +11,10 @@
 
 
 import pytest
-from unittest.mock import patch
+from unittest import mock
 from numpy.testing import assert_equal
 from simulai import interface
-# import random
+
 
 # ============================================================================
 # TESTS
@@ -50,10 +50,25 @@ def test_connection(base):
 
 
 @pytest.mark.xfail
-@patch.object(interface.Com, 'connection', return_value=True)
-def test_setVisible(base, mock_method):
-    valor = interface.Com.connection()
-    mock_method.assert_called_with()
+@mock.patch('simulai.interface.Com.connection',
+            mock.MagicMock(return_value=True))
+def test_check_connection(base):
+    interface.Com("MaterialHandling.spp")
+    base.is_connected = base.connection()
+    interface.Com.setVisible(True)
 
-    with pytest.raises(ConnectionError):
-        base.setVisible(True)
+
+@pytest.fixture
+def setVisible(value=True):
+    pass
+
+
+@pytest.mark.xfail
+def test_wrapper(base, setVisible):
+    interface.Com("MaterialHandling")
+    base.is_connected = True
+    setV = base.setVisible
+    check = interface.check_connection(setV)
+    r = check.wrapper()
+
+    assert_equal(r, True)
