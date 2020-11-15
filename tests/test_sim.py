@@ -1,4 +1,3 @@
-
 # This file is part of the
 #   SimulAI Project (https://github.com/carosaav/SimulAI).
 # Copyright (c) 2020, Perez Colo Ivo, Pirozzo Bernardo Manuel,
@@ -13,7 +12,6 @@
 
 import pytest
 from unittest.mock import patch
-from unittest import mock
 import numpy as np
 from numpy.testing import assert_equal
 from simulai import sim
@@ -48,7 +46,8 @@ def stock():
 @pytest.fixture
 def numviajes():
     numviajes = sim.DiscreteVariable(
-        "Numero de viajes", 1, 5, 1, "Models.Modelo.numviajes")
+        "Numero de viajes", 1, 5, 1, "Models.Modelo.numviajes"
+    )
 
     return numviajes
 
@@ -176,8 +175,13 @@ def test_Plant():
 
 
 def test_BasePlant(var_input, var_out, my_method_Q):
-    b = sim.BasePlant(method=my_method_Q, v_i=var_input, v_o=var_out,
-                      filename="MaterialHandling.spp", modelname="Model")
+    b = sim.BasePlant(
+        method=my_method_Q,
+        v_i=var_input,
+        v_o=var_out,
+        filename="MaterialHandling.spp",
+        modelname="Model",
+    )
 
     assert isinstance(b.v_i, list), "Should be a list"
     assert isinstance(b.v_o, list), "Should be a list"
@@ -187,7 +191,7 @@ def test_BasePlant(var_input, var_out, my_method_Q):
     with pytest.raises(TypeError):
         sim.BasePlant(my_method_Q, 1, var_out, "MH.spp", "frame")
     with pytest.raises(TypeError):
-        sim.BasePlant(my_method_Q, var_input, 2., "MH.spp", "frame")
+        sim.BasePlant(my_method_Q, var_input, 2.0, "MH.spp", "frame")
     with pytest.raises(TypeError):
         sim.BasePlant(my_method_Q, var_input, var_out, 10, "frame")
     with pytest.raises(TypeError):
@@ -232,7 +236,7 @@ def test_Qlearning(var_input):
     with pytest.raises(TypeError):
         sim.Qlearning("variable", 10, 10)
     with pytest.raises(TypeError):
-        sim.Qlearning(var_input, 3., 10)
+        sim.Qlearning(var_input, 3.0, 10)
     with pytest.raises(TypeError):
         sim.Qlearning(var_input, 10, "nine")
     with pytest.raises(TypeError):
@@ -243,25 +247,27 @@ def test_Qlearning(var_input):
         sim.Qlearning(var_input, 10, epsilon=2)
 
     with pytest.raises(Exception):
-        sim.Qlearning(10, 10, v_i=["espera", "stock", "numviajes",
-                      "tiempo", "velocidad"])
+        sim.Qlearning(
+            10, 10, v_i=["espera", "stock", "numviajes",
+                         "tiempo", "velocidad"]
+        )
 
     with pytest.raises(ValueError):
         sim.Qlearning(var_input, -1, 10)
     with pytest.raises(ValueError):
         sim.Qlearning(var_input, 10, -1)
     with pytest.raises(ValueError):
-        sim.Qlearning(var_input, 10, 10, alfa=-1.)
+        sim.Qlearning(var_input, 10, 10, alfa=-1.0)
     with pytest.raises(ValueError):
-        sim.Qlearning(var_input, 10, 10, alfa=3.)
+        sim.Qlearning(var_input, 10, 10, alfa=3.0)
     with pytest.raises(ValueError):
-        sim.Qlearning(var_input, 10, 10, gamma=-1.)
+        sim.Qlearning(var_input, 10, 10, gamma=-1.0)
     with pytest.raises(ValueError):
-        sim.Qlearning(var_input, 10, 10, gamma=3.)
+        sim.Qlearning(var_input, 10, 10, gamma=3.0)
     with pytest.raises(ValueError):
-        sim.Qlearning(var_input, 10, 10, epsilon=-1.)
+        sim.Qlearning(var_input, 10, 10, epsilon=-1.0)
     with pytest.raises(ValueError):
-        sim.Qlearning(var_input, 10, 10, epsilon=3.)
+        sim.Qlearning(var_input, 10, 10, epsilon=3.0)
 
 
 def test_arrays(var_input):
@@ -271,31 +277,59 @@ def test_arrays(var_input):
     assert_equal(len(q.a), 3)
 
 
-@pytest.mark.parametrize("var_input, expQ, expS, expA",
-						 [([sim.DiscreteVariable("Espera", 60, 300, 10,
-                         "Models.Modelo.espera")],
-                         (25, 3), (25,), (3,)),
-						 ([sim.DiscreteVariable("Espera", 60, 300, 10,
-                         "Models.Modelo.espera"),
-                         sim.DiscreteVariable("Stock", 10, 50, 10,
-                         "Models.Modelo.stock")],
-                         (125, 9), (125, 2), (9, 2)),
-						 ([sim.DiscreteVariable("Espera", 60, 300, 10,
-                         "Models.Modelo.espera"),
-                         sim.DiscreteVariable("Stock", 10, 50, 10,
-                         "Models.Modelo.stock"),
-                         sim.DiscreteVariable("Numero de viajes", 1, 5, 1,
-                         "Models.Modelo.numviajes")],
-                         (625, 27), (625, 3), (27, 3)),
-						 ([sim.DiscreteVariable("Espera", 60, 300, 10,
-                         "Models.Modelo.espera"),
-                         sim.DiscreteVariable("Stock", 10, 50, 10,
-                         "Models.Modelo.stock"),
-                         sim.DiscreteVariable("Numero de viajes", 1, 5, 1,
-                         "Models.Modelo.numviajes"),
-                         sim.DiscreteVariable("Espera", 60, 300, 10,
-                         "Models.Modelo.espera")],
-                         (15625, 81), (15625, 4), (81, 4)),])
+@pytest.mark.parametrize(
+    "var_input, expQ, expS, expA",
+    [
+        (
+            [sim.DiscreteVariable("Espera", 60, 300, 10,
+                                  "Models.Modelo.espera")],
+            (25, 3),
+            (25,),
+            (3,),
+        ),
+        (
+            [
+                sim.DiscreteVariable("Espera", 60, 300, 10,
+                                     "Models.Modelo.espera"),
+                sim.DiscreteVariable("Stock", 10, 50, 10,
+                                     "Models.Modelo.stock"),
+            ],
+            (125, 9),
+            (125, 2),
+            (9, 2),
+        ),
+        (
+            [
+                sim.DiscreteVariable("Espera", 60, 300, 10,
+                                     "Models.Modelo.espera"),
+                sim.DiscreteVariable("Stock", 10, 50, 10,
+                                     "Models.Modelo.stock"),
+                sim.DiscreteVariable(
+                    "Numero de viajes", 1, 5, 1, "Models.Modelo.numviajes"
+                ),
+            ],
+            (625, 27),
+            (625, 3),
+            (27, 3),
+        ),
+        (
+            [
+                sim.DiscreteVariable("Espera", 60, 300, 60,
+                                     "Models.Modelo.espera"),
+                sim.DiscreteVariable("Stock", 10, 50, 10,
+                                     "Models.Modelo.stock"),
+                sim.DiscreteVariable(
+                    "Numero de viajes", 1, 5, 1, "Models.Modelo.numviajes"
+                ),
+                sim.DiscreteVariable("Espera", 60, 300, 60,
+                                     "Models.Modelo.espera"),
+            ],
+            (625, 81),
+            (625, 4),
+            (81, 4),
+        ),
+    ],
+)
 def test_ini_saq(var_input, expQ, expS, expA):
     baseM = sim.Qlearning(v_i=var_input, episodes_max=1, steps_max=10)
     baseM.ini_saq()
@@ -309,6 +343,26 @@ def test_ini_saq(var_input, expQ, expS, expA):
     assert (baseM.Q == 0).all()
     assert bool((baseM.S == 0).all()) is False
     assert bool((baseM.actions == 0).all()) is False
+
+    with pytest.raises(Exception):
+        baseM.sim.Qlearning(
+            v_i=[
+                sim.DiscreteVariable("Espera", 60, 300, 10,
+                                     "Models.Modelo.espera"),
+                sim.DiscreteVariable("Stock", 10, 50, 10,
+                                     "Models.Modelo.stock"),
+                sim.DiscreteVariable(
+                    "Numero de viajes", 1, 5, 1, "Models.Modelo.numviajes"
+                ),
+                sim.DiscreteVariable("Espera", 60, 300, 10,
+                                     "Models.Modelo.espera"),
+                sim.DiscreteVariable("Stock", 10, 50, 10,
+                                     "Models.Modelo.stock"),
+            ],
+            episodes_max=1,
+            steps_max=10,
+        )
+        baseM.ini_saq()
 
 
 @pytest.mark.parametrize("seed_input, expected", [(24, 0), (20, 0), (12, 0)])
