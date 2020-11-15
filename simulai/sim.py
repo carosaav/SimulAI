@@ -272,11 +272,12 @@ class AutonomousDecisionSystem(metaclass=ABCMeta):
 
 
 @attr.s
-class BaseMethod(AutonomousDecisionSystem):
-    """Initialize states, actions and Q table.
+class Qlearning(AutonomousDecisionSystem):
+    """Implementation of the artificial intelligence method Q-Learning.
 
-    These elements are required to implement reinforcement learning
-    algorithms, like Q-learning and SARSA.
+    Whose purpose is to obtain the optimal parameters from the trial and error
+    method, in which it is penalized if the goal is not reached and is
+    rewarded if it is reached, requiring for this a number of episodes.
     The Q table has a maximum of 625 rows, that is, up to 625 states are
     supported. These states are made up of 1 to 4 variables of the Tecnomatix
     Plant Simulation.
@@ -386,12 +387,8 @@ class BaseMethod(AutonomousDecisionSystem):
             self.s.append(self.s_idx)
             self.a.append(self.a_idx)
 
-    # initialize states, actions and Q table
     def ini_saq(self):
-        """Initialize states, actions and Q table.
-
-        Return: Q,S and Action.
-        """
+        """Initialize states, actions and Q table."""
         self.arrays()
         n = []
         m = []
@@ -437,35 +434,6 @@ class BaseMethod(AutonomousDecisionSystem):
             raise Exception("The method supports up to 625 states")
 
         self.Q = np.zeros((self.S.shape[0], self.actions.shape[0]))
-
-        return self.Q, self.S, self.actions
-
-
-@attr.s
-class Qlearning(BaseMethod):
-    """Implementation of the artificial intelligence method Q-Learning.
-
-     Whose purpose is to obtain the optimal parameters from the trial and error
-    method, in which it is penalized if the goal is not reached and is
-    rewarded if it is reached, requiring for this a number of episodes.
-
-    Parameters
-    ----------
-    v_i: positive int
-        Matrix size.
-    alfa: positive float
-        Step value.
-    gamma: positive float
-        Learning value.
-    epsilon: positive float
-        Value of following a greedy policy.
-    episodes_max: positive int
-        Maximum value of episodes.
-    step_max: positive int
-        Maximum step value.
-    seed: int
-        Seed value for the seed() method.
-    """
 
     def choose_action(self, row):
         """Choose the action to follow.
@@ -531,46 +499,44 @@ class Qlearning(BaseMethod):
                 self.r_episode[n] = r_acum
         return self.r_episode
 
+    __process = process
+
 
 @attr.s
-class Sarsa(BaseMethod):
-
-    """Implementation of the artificial intelligence method Q-Learning.
+class Sarsa(Qlearning):
+    """Implementation of the artificial intelligence method Sarsa.
 
     Whose purpose is to obtain the optimal parameters from the trial and error
     method, in which it is penalized if the goal is not reached and is
     rewarded if it is reached, requiring for this a number of episodes.
+    The Q table has a maximum of 625 rows, that is, up to 625 states are
+    supported. These states are made up of 1 to 4 variables of the Tecnomatix
+    Plant Simulation.
+    Actions also depend on the chosen variables and their steps.
+    The reward function depends on the results defined in the respective plant
+    class.
 
     Parameters
     ----------
-    v_i: positive int
-        Matrix size.
-    alfa: positive float
-        Step value.
-    gamma: positive float
-        Learning value.
-    epsilon: positive float
-        Value of following a greedy policy.
+    v_i: list
+        List of chosen input variables.
     episodes_max: positive int
-        Maximum value of episodes.
-    step_max: positive int
-        Maximum step value.
+        Total number of episodes to run. Should be a positive integer.
+    steps_max: positive int
+        Total number of steps in each episode. Should be a positive integer.
+    alfa: float
+        Reinforcement learning hyperparameter,
+        learning rate, varies from 0 to 1. Default value= 0.10
+    gamma: float
+        Reinforcement learning hyperparameter,
+        discount factor, varies from 0 to 1. Default value= 0.90
+    epsilon: float
+        Reinforcement learning hyperparameter,
+        probability for the epsilon-greedy action selection,
+        varies from 0 to 1. Default value= 0.10
     seed: int
-        Seed value for the seed() method.
+        Seed value for the seed() method. Default value=None.
     """
-    def choose_action(self, row):
-        """Choose the action to follow.
-
-        Input param: rows
-        Return: i
-        """
-        p = self._random.random()
-        if p < (1 - self.epsilon):
-            i = np.argmax(self.Q[row, :])
-        else:
-            i = self._random.choice(self.actions.shape[0])
-        return i
-
     def process(self):
         """Learning algorithm.
 
