@@ -60,11 +60,25 @@ class DiscreteVariable:
 
     @name.validator
     def _validate_name(self, attribute, value):
+        """Name validator.
+
+        Parameters
+        ----------
+        value:int
+            User-selected value.
+        """
         if not isinstance(value, str):
             raise TypeError("Name: Argument must be a string.")
 
     @lower_limit.validator
     def _validate_lower_limit(self, attribute, value):
+        """Lower limit validator.
+
+        Parameters
+        ----------
+        value:int
+            User-selected value.
+        """
         if not isinstance(value, int):
             raise TypeError("Lower Limit: Argument must be an integer.")
         if value < 0:
@@ -72,6 +86,13 @@ class DiscreteVariable:
 
     @upper_limit.validator
     def _validate_upper_limit(self, attribute, value):
+        """Upper limit validator.
+
+        Parameters
+        ----------
+        value:int
+            User-selected value.
+        """
         if not isinstance(value, int):
             raise TypeError("Upper Limit: Argument must be an integer.")
         if value < 0:
@@ -79,6 +100,13 @@ class DiscreteVariable:
 
     @step.validator
     def _validate_step(self, attribute, value):
+        """Step validator.
+
+        Parameters
+        ----------
+        value:int
+            User-selected value.
+        """
         if not isinstance(value, int):
             raise TypeError("Step: Argument must be an integer.")
         if value < 0:
@@ -86,6 +114,13 @@ class DiscreteVariable:
 
     @path.validator
     def _validate_path(self, attribute, value):
+        """Path validator.
+
+        Parameters
+        ----------
+        value:int
+            User-selected value.
+        """
         if not isinstance(value, str):
             raise TypeError("Path: Argument must be a string.")
 
@@ -119,16 +154,37 @@ class OutcomeVariable:
 
     @name.validator
     def _validate_name(self, attribute, value):
+        """Name validator.
+
+        Parameters
+        ----------
+        value:int
+            User-selected value.
+        """
         if not isinstance(value, str):
             raise TypeError("Name: Argument must be a string.")
 
     @path.validator
     def _validate_path(self, attribute, value):
+        """Path validator.
+
+        Parameters
+        ----------
+        value:int
+            User-selected value.
+        """
         if not isinstance(value, str):
             raise TypeError("Path: Argument must be a string.")
 
     @column.validator
     def _validate_column(self, attribute, value):
+        """Columns validator.
+
+        Parameters
+        ----------
+        value:int
+            User-selected value.
+        """
         if not isinstance(value, int):
             raise TypeError("Column: Argument must be an integer.")
         if value < 0:
@@ -136,6 +192,13 @@ class OutcomeVariable:
 
     @num_rows.validator
     def _validate_num_rows(self, attribute, value):
+        """Namber of rows validator.
+
+        Parameters
+        ----------
+        value:int
+            User-selected value.
+        """
         if not isinstance(value, int):
             raise TypeError("Num Rows: Argument must be an integer.")
         if value < 0:
@@ -160,23 +223,34 @@ class Plant(metaclass=ABCMeta):
     method = attr.ib()
 
     def __attrs_post_init__(self):
+        """Attrs initialization."""
         self.method.register(self)
 
     def connection(self):
+        """Connect function."""
         file_name = self.get_file_name_plant()
         self.connect = Com(file_name)
         return self.connect.connection()
 
     @abstractmethod
     def get_file_name_plant(self):
+        """Name of the given plant file."""
         pass
 
     @abstractmethod
     def process_simulation(self):
+        """Simulate in Tecnomatix."""
         pass
 
     @abstractmethod
     def update(self, data):
+        """Update.
+
+        Parameters
+        ----------
+        data:float
+            Simulation data.
+        """
         pass
 
 
@@ -205,28 +279,75 @@ class BasePlant(Plant):
 
     @v_i.validator
     def _validate_v_i(self, attribute, value):
+        """Input value validator.
+
+        Parameters
+        ----------
+        value:int
+            User-selected value.
+        """
         if not isinstance(value, list):
             raise TypeError("v_i: Argument must be a list.")
 
     @v_o.validator
     def _validate_v_o(self, attribute, value):
+        """Output value validator.
+
+        Parameters
+        ----------
+        value:int
+            User-selected value.
+        """
         if not isinstance(value, list):
             raise TypeError("v_o: Argument must be a list.")
 
     @filename.validator
     def _validate_filename(self, attribute, value):
+        """File validator.
+
+        Parameters
+        ----------
+        value:int
+            User-selected value.
+        """
         if not isinstance(value, str):
             raise TypeError("File Name: Argument must be a string.")
 
     @modelname.validator
     def _validate_modelname(self, attribute, value):
+        """Model validator.
+
+        Parameters
+        ----------
+        value:int
+            User-selected value.
+        """
         if not isinstance(value, str):
             raise TypeError("Model Name: Argument must be a string.")
 
     def get_file_name_plant(self):
+        """Get the name of the plant file.
+
+        Return
+        ------
+        filename:str
+            Model name.
+        """
         return self.filename
 
     def update(self, data):
+        """Update.
+
+        Parameters
+        ----------
+        data:float
+            Simulation data.
+
+        Return
+        -------
+        r:float
+            Reward value.
+        """
         for idx, x in enumerate(self.v_i):
             self.connect.setValue(x.path, data[idx])
 
@@ -245,6 +366,7 @@ class BasePlant(Plant):
         return r
 
     def process_simulation(self):
+        """Process simulation."""
         if self.connection():
             self.connect.setVisible(True)
             self.method.process()
@@ -257,17 +379,27 @@ class BasePlant(Plant):
 
 @attr.s
 class AutonomousDecisionSystem(metaclass=ABCMeta):
+    """Autonomous decision system class."""
 
     method = attr.ib(init=False)
 
     def __attrs_post_init__(self):
+        """Attrs initialization."""
         self.method = ""
 
     def register(self, who):
+        """Subscribe registration.
+
+        Parameters
+        ----------
+        who:str
+            Node to subscribe.
+        """
         self.subscriber = who
 
     @abstractmethod
     def process(self):
+        """Process."""
         pass
 
 
@@ -328,17 +460,20 @@ class Qlearning(AutonomousDecisionSystem):
     seed = attr.ib(default=None)
 
     def __attrs_post_init__(self):
+        """Attrs initialization."""
         self.r_episode = np.arange(self.episodes_max, dtype=float)
 
         self._random = np.random.RandomState(seed=self.seed)
 
     @v_i.validator
     def _validate_v_i(self, attribute, value):
+        """Initialize value validator."""
         if not isinstance(value, list):
             raise TypeError("v_i: Argument must be a list.")
 
     @episodes_max.validator
     def _validate_episodes_max(self, attribute, value):
+        """Maximum epsilon validator."""
         if not isinstance(value, int):
             raise TypeError("Episodes Max: Argument must be an integer.")
         if value < 0:
@@ -346,6 +481,7 @@ class Qlearning(AutonomousDecisionSystem):
 
     @steps_max.validator
     def _validate_steps_max(self, attribute, value):
+        """Maximum steps validator."""
         if not isinstance(value, int):
             raise TypeError("Steps Max: Argument must be an integer.")
         if value < 0:
@@ -353,6 +489,7 @@ class Qlearning(AutonomousDecisionSystem):
 
     @alfa.validator
     def _validate_alfa(self, attribute, value):
+        """Alpha validator."""
         if not isinstance(value, float):
             raise TypeError("Alfa: Argument must be a float.")
         if value < 0:
@@ -362,6 +499,7 @@ class Qlearning(AutonomousDecisionSystem):
 
     @gamma.validator
     def _validate_gamma(self, attribute, value):
+        """Gamma validator."""
         if not isinstance(value, float):
             raise TypeError("Gamma: Argument must be a float.")
         if value < 0:
@@ -371,6 +509,7 @@ class Qlearning(AutonomousDecisionSystem):
 
     @epsilon.validator
     def _validate_epsilon(self, attribute, value):
+        """Epsilon validator."""
         if not isinstance(value, float):
             raise TypeError("Epsilon: Argument must be a float.")
         if value < 0:
@@ -438,8 +577,14 @@ class Qlearning(AutonomousDecisionSystem):
     def choose_action(self, row):
         """Choose the action to follow.
 
-        Input param: rows
-        Return: i
+        Parameters
+        ----------
+        row:int
+            Number of rows.
+        Return
+        ------
+        i:int
+            Selected row.
         """
         p = self._random.random()
         if p < (1 - self.epsilon):
@@ -451,7 +596,10 @@ class Qlearning(AutonomousDecisionSystem):
     def process(self):
         """Learning algorithms.
 
-        Return: r_episode
+        Return
+        ------
+        r_episode:float
+            Episode reward
         """
         self.ini_saq()
         for n in range(self.episodes_max):
@@ -537,10 +685,14 @@ class Sarsa(Qlearning):
     seed: int
         Seed value for the seed() method. Default value=None.
     """
+
     def process(self):
         """Learning algorithm.
 
-        Return: r_episode
+        Return
+        ------
+        r_episode:float
+            Episode reward
         """
         self.ini_saq()
         for n in range(self.episodes_max):

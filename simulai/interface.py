@@ -8,7 +8,15 @@
 # ============================================================================
 # IMPORTS
 # ============================================================================
+"""Class makes the connection with the Tecnomatix software.
 
+This is necessary to perform the simulation of the plant.
+
+Parameters
+----------
+model_name: str
+    Is the model_name of the file
+"""
 try:
     import win32com.client as win32
 except ModuleNotFoundError:
@@ -21,13 +29,15 @@ import os
 # ============================================================================
 
 class ConnectionError(Exception):
+    """Connection failed exception."""
+
     pass
 
 
 def check_connection(method):
     """Check the connection status, returning an error.
 
-    menssaje if it fails
+    A message indicating failure
     """
     def wrapper(self, *args, **kwargs):
         if not self.is_connected:
@@ -40,14 +50,10 @@ def check_connection(method):
 class Com(object):
     """Definition of the function of communication.
 
-    Parameters
-    ----------
-    model_name: str
-              Is the model_name of the file
     Attributes
     ----------
     is_connected: bool
-                Connection status
+        Connection status
     """
 
     def __init__(self, model_name):
@@ -58,8 +64,14 @@ class Com(object):
     def get_path_file_model(self):
         """Return the complete file path.
 
-        Input parameter: file name
-        Return: file path
+        Parameters
+        ----------
+        file name:str
+            Is the file name of the file.
+        Return
+        -------
+        file path:str
+            Path of the Variable in Tecnomatix Plant Simulation.
         """
         path = os.getcwd() + "\\" + self.model_name
         return path
@@ -67,8 +79,12 @@ class Com(object):
     def connection(self):
         """Return the connection object.
 
-        Input parameter: file name
-        Return: connection object
+        file name:str
+            Is the file name of the file
+        Return
+        ------
+        connection object: bool
+            Connection indicator
         """
         path_file = self.get_path_file_model()
         try:
@@ -86,7 +102,12 @@ class Com(object):
     def setVisible(self, value):
         """Execute the application Tecnomatix.
 
-        Input parameter: model_name and value
+        Parameters
+        ----------
+        model_name :str
+            Is the name of the model.
+        value:int
+            User-selected value.
         """
         self.plant_simulation.setVisible(value)
 
@@ -94,7 +115,12 @@ class Com(object):
     def setValue(self, ref, value):
         """Set the values in the simulator.
 
-        Input parameter: model_name, ref and value
+        Parameters
+        ----------
+        value:int
+            User-selected value.
+        ref:str
+            Path of the variable.
         """
         self.plant_simulation.setValue(ref, value)
 
@@ -102,7 +128,12 @@ class Com(object):
     def getValue(self, ref):
         """Get the values in the simulator.
 
-        Input parameter: model_name, ref and value
+        Parameters
+        ----------
+        value:int
+            User-selected value.
+        ref:str
+            Path of the variable.
         """
         return self.plant_simulation.getValue(ref)
 
@@ -110,7 +141,10 @@ class Com(object):
     def startSimulation(self, ref):
         """Make the simulation start.
 
-        Input parameter: model_name and ref
+        Parameters
+        ----------
+        ref:str
+            Path of the variable.
         """
         self.plant_simulation.startSimulation(ref)
 
@@ -119,7 +153,10 @@ class Com(object):
         """
         Make the simulation reset.
 
-        Input parameter: model_name and ref
+        Parameters
+        ----------
+        ref:str
+            Path of the variable.
         """
         self.plant_simulation.resetSimulation(ref)
 
@@ -127,71 +164,78 @@ class Com(object):
     def stopSimulation(self, ref):
         """Make the simulation stop.
 
-        Input parameter: model_name and ref
+        Parameters
+        ----------
+        ref:str
+            Path of the variable.
         """
         self.plant_simulation.stopSimulation(ref)
 
     @check_connection
     def closeModel(self):
-        """Close the simulation model.
-
-        Input parameter: model_name
-        """
+        """Close the simulation model."""
         self.plant_simulation.CloseModel()
 
     @check_connection
     def executeSimTalk(self, ref, value):
         """Execute the simulation call.
 
-        Input parameter: name_model, ref and value
+        Parameters
+        ----------
+        value:int
+            User-selected value.
+        ref:str
+            Path of the variable.
         """
         self.plant_simulation.ExecuteSimTalk(ref, value)
 
     @check_connection
     def isSimulationRunning(self):
-        """Check if the simulation is running.
-
-        Input parameter: model_name
-        """
+        """Check if the simulation is running."""
         return(self.plant_simulation.IsSimulationRunning())
 
     @check_connection
     def loadModel(self, ref, value):
         """Perform the load of the model.
 
-        Input parameter: model_name, ref and value
+        Parameters
+        ----------
+        value:int
+            User-selected value.
+        ref:str
+            Path of the variable.
         """
         self.plant_simulation.LoadModel(ref, value)
 
     @check_connection
     def newModel(self):
-        """Create a new model.
-
-        Input parameter: model_name
-        """
+        """Create a new model."""
         self.plant_simulation.NewModel()
 
     @check_connection
     def openConsoleLogFile(self, ref):
         """Open the simulation result in the console.
 
-        Input parameter: model_name and ref
+        Parameters
+        ----------
+        ref:str
+            Path of the variable.
         """
         self.plant_simulation.OpenConsoleLogFile(ref)
 
     @check_connection
     def quit(self):
-        """Clear all result.
-
-        Input parameter: model_name
-        """
+        """Clear all result."""
         self.plant_simulation.Quit()
 
     @check_connection
     def quitAfterTime(self, value):
         """Clear all result after a time.
 
-        Input parameter: model_name and value
+        Parameters
+        ----------
+        value:int
+            User-selected value.
         """
         self.plant_simulation.QuitAfterTime(value)
 
@@ -199,7 +243,10 @@ class Com(object):
     def saveModel(self, ref):
         """Save the model result.
 
-        Input parameter: model_name and ref
+        Parameters
+        ----------
+        ref:str
+            Path of the variable.
         """
         self.plant_simulation.SaveModel(ref)
 
@@ -207,7 +254,10 @@ class Com(object):
     def setLicenseType(self, ref):
         """Set the type of license.
 
-        Input parameter: model_name and ref
+        Parameters
+        ----------
+        ref:str
+            Path of the variable.
         """
         self.plant_simulation.SetLicenseType(ref)
 
@@ -215,7 +265,10 @@ class Com(object):
     def setNoMessageBox(self, value):
         """Delete the messages on the screen.
 
-        Input parameter: model_name and value
+        Parameters
+        ----------
+        value:int
+            User-selected value.
         """
         self.plant_simulation.SetNoMessageBox(value)
 
@@ -223,7 +276,10 @@ class Com(object):
     def setPathContext(self, ref):
         """Set the context.
 
-        Input parameter: model_name and ref
+        Parameters
+        ----------
+        ref:str
+            Path of the variable.
         """
         self.plant_simulation.SetPathContext(ref)
 
@@ -231,7 +287,10 @@ class Com(object):
     def setSuppressStartOf3D(self, value):
         """Eliminate the start of 3D model.
 
-        Input parameter: model_name and value
+        Parameters
+        ----------
+        value:int
+            User-selected value.
         """
         self.plant_simulation.SetSuppressStartOf3D(value)
 
@@ -239,7 +298,10 @@ class Com(object):
     def setTrustModels(self, value):
         """Set the real model.
 
-        Input parameter: model_name and value
+        Parameters
+        ----------
+        value:int
+            User-selected value.
         """
         self.plant_simulation.SetTrustModels(value)
 
@@ -247,6 +309,9 @@ class Com(object):
     def transferModel(self, value):
         """Transfer the model.
 
-        Input parameter: model_name and value
+        Parameters
+        ----------
+        value:int
+            User-selected value.
         """
         self.plant_simulation.TransferModel(value)
