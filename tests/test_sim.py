@@ -13,6 +13,7 @@
 
 import pytest
 from unittest.mock import patch
+from unittest import mock
 import numpy as np
 from numpy.testing import assert_equal
 from simulai import sim
@@ -239,7 +240,7 @@ def test_Qlearning(var_input):
     with pytest.raises(TypeError):
         sim.Qlearning(var_input, 10, 10, gamma=2)
     with pytest.raises(TypeError):
-        sim.Qlearning(var_input, 10, epsilon="a")
+        sim.Qlearning(var_input, 10, epsilon=2)
 
     with pytest.raises(Exception):
         sim.Qlearning(10, 10, v_i=["espera", "stock", "numviajes",
@@ -270,16 +271,41 @@ def test_arrays(var_input):
     assert_equal(len(q.a), 3)
 
 
-def test_ini_saq(var_input):
+@pytest.mark.parametrize("var_input, expQ, expS, expA",
+						 [([sim.DiscreteVariable("Espera", 60, 300, 10,
+                         "Models.Modelo.espera")],
+                         (25, 3), (25,), (3,)),
+						 ([sim.DiscreteVariable("Espera", 60, 300, 10,
+                         "Models.Modelo.espera"),
+                         sim.DiscreteVariable("Stock", 10, 50, 10,
+                         "Models.Modelo.stock")],
+                         (125, 9), (125, 2), (9, 2)),
+						 ([sim.DiscreteVariable("Espera", 60, 300, 10,
+                         "Models.Modelo.espera"),
+                         sim.DiscreteVariable("Stock", 10, 50, 10,
+                         "Models.Modelo.stock"),
+                         sim.DiscreteVariable("Numero de viajes", 1, 5, 1,
+                         "Models.Modelo.numviajes")],
+                         (625, 27), (625, 3), (27, 3)),
+						 ([sim.DiscreteVariable("Espera", 60, 300, 10,
+                         "Models.Modelo.espera"),
+                         sim.DiscreteVariable("Stock", 10, 50, 10,
+                         "Models.Modelo.stock"),
+                         sim.DiscreteVariable("Numero de viajes", 1, 5, 1,
+                         "Models.Modelo.numviajes"),
+                         sim.DiscreteVariable("Espera", 60, 300, 10,
+                         "Models.Modelo.espera")],
+                         (15625, 81), (15625, 4), (81, 4)),])
+def test_ini_saq(var_input, expQ, expS, expA):
     baseM = sim.Qlearning(v_i=var_input, episodes_max=1, steps_max=10)
     baseM.ini_saq()
 
     assert isinstance(baseM.Q, np.ndarray)
     assert isinstance(baseM.S, np.ndarray)
     assert isinstance(baseM.actions, np.ndarray)
-    assert baseM.Q.shape == (625, 27)
-    assert baseM.S.shape == (625, 3)
-    assert baseM.actions.shape == (27, 3)
+    assert baseM.Q.shape == expQ
+    assert baseM.S.shape == expS
+    assert baseM.actions.shape == expA
     assert (baseM.Q == 0).all()
     assert bool((baseM.S == 0).all()) is False
     assert bool((baseM.actions == 0).all()) is False
