@@ -8,7 +8,7 @@ _Initially the work will focus on the integration of Tecnomatix Plant Simulation
 
 _In the future, it is expected to achieve a library of greater accessibility, allowing the application in various simulation software, as required by the user._
 
-_OS Windows, Tecnomatix Plant Simulation version 15.0 and pywin32 library are currently required for its operation.
+OS Windows, Tecnomatix Plant Simulation version 15.0 and pywin32 library are currently required for its operation.
 ## Authors 
 
 * **Perez Colo Ivo** - [@ivoperezcolo](https://github.com/IvoPerezColo)

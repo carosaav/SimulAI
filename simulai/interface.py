@@ -6,18 +6,17 @@
 # License: MIT
 #   Full Text: https://github.com/carosaav/SimulAI/blob/master/LICENSE
 
+
+# ============================================================================
+# DOCS
+# ============================================================================
+
+"""Class makes the connection with Tecnomatix Plant Simulation."""
+
 # ============================================================================
 # IMPORTS
 # ============================================================================
-"""Class makes the connection with the Tecnomatix software.
 
-This is necessary to perform the simulation of the plant.
-
-Parameters
-----------
-model_name: str
-    Is the model_name of the file
-"""
 try:
     import win32com.client as win32
 except ModuleNotFoundError:
@@ -39,7 +38,13 @@ class ConnectionError(Exception):
 def check_connection(method):
     """Check the connection status, returning an error.
 
-    A message indicating failure
+    Parameters
+    ----------
+    method: str
+        Name of the method.
+    Return
+    -------
+    A message indicating failure.
     """
     def wrapper(self, *args, **kwargs):
         if not self.is_connected:
@@ -52,10 +57,17 @@ def check_connection(method):
 class Com(object):
     """Definition of the function of communication.
 
+    Parameters
+    ----------
+    model_name: str
+        Name of the Tecnomatix Plant Simulation file.
+
     Attributes
     ----------
     is_connected: bool
         Connection status
+    plant_simulation: str
+        Attribute for the return of the connection object.
     """
 
     def __init__(self, model_name):
@@ -66,14 +78,10 @@ class Com(object):
     def get_path_file_model(self):
         """Return the complete file path.
 
-        Parameters
-        ----------
-        file name:str
-            Is the file name of the file.
         Return
-        -------
+        ------
         file path:str
-            Path of the Variable in Tecnomatix Plant Simulation.
+            Path of Tecnomatix Plant Simulation file.
         """
         path = os.getcwd() + "\\" + self.model_name
         return path
@@ -81,12 +89,10 @@ class Com(object):
     def connection(self):
         """Return the connection object.
 
-        file name:str
-            Is the file name of the file
         Return
         ------
-        connection object: bool
-            Connection indicator
+        connection status: bool
+            Connection indicator.
         """
         path_file = self.get_path_file_model()
         try:
@@ -106,9 +112,7 @@ class Com(object):
 
         Parameters
         ----------
-        model_name :str
-            Is the name of the model.
-        value:int
+        value: bool
             User-selected value.
         """
         self.plant_simulation.setVisible(value)
@@ -119,21 +123,19 @@ class Com(object):
 
         Parameters
         ----------
-        value:int
-            User-selected value.
         ref:str
             Path of the variable.
+        value:int
+            User-selected value.
         """
         self.plant_simulation.setValue(ref, value)
 
     @check_connection
     def getValue(self, ref):
-        """Get the values in the simulator.
+        """Get the values of the simulator.
 
         Parameters
         ----------
-        value:int
-            User-selected value.
         ref:str
             Path of the variable.
         """
@@ -146,19 +148,18 @@ class Com(object):
         Parameters
         ----------
         ref:str
-            Path of the variable.
+            Path of the model.
         """
         self.plant_simulation.startSimulation(ref)
 
     @check_connection
     def resetSimulation(self, ref):
-        """
-        Make the simulation reset.
+        """Make the simulation reset.
 
         Parameters
         ----------
         ref:str
-            Path of the variable.
+            Path of the model.
         """
         self.plant_simulation.resetSimulation(ref)
 
@@ -169,7 +170,7 @@ class Com(object):
         Parameters
         ----------
         ref:str
-            Path of the variable.
+            Path of the model.
         """
         self.plant_simulation.stopSimulation(ref)
 
@@ -180,14 +181,14 @@ class Com(object):
 
     @check_connection
     def executeSimTalk(self, ref, value):
-        """Execute the simulation call.
+        """Execute the simulation programming language.
 
         Parameters
         ----------
-        value:int
-            User-selected value.
         ref:str
             Path of the variable.
+        value:int
+            User-selected value.
         """
         self.plant_simulation.ExecuteSimTalk(ref, value)
 
@@ -202,10 +203,10 @@ class Com(object):
 
         Parameters
         ----------
+        ref:str
+            Path of the file.
         value:int
             User-selected value.
-        ref:str
-            Path of the variable.
         """
         self.plant_simulation.LoadModel(ref, value)
 
@@ -221,7 +222,7 @@ class Com(object):
         Parameters
         ----------
         ref:str
-            Path of the variable.
+            Path of the file.
         """
         self.plant_simulation.OpenConsoleLogFile(ref)
 
@@ -248,18 +249,18 @@ class Com(object):
         Parameters
         ----------
         ref:str
-            Path of the variable.
+            Path of the file.
         """
         self.plant_simulation.SaveModel(ref)
 
     @check_connection
     def setLicenseType(self, ref):
-        """Set the type of license.
+        """Set the type of the license.
 
         Parameters
         ----------
         ref:str
-            Path of the variable.
+            Path of the file.
         """
         self.plant_simulation.SetLicenseType(ref)
 
@@ -281,7 +282,7 @@ class Com(object):
         Parameters
         ----------
         ref:str
-            Path of the variable.
+            Path of the file.
         """
         self.plant_simulation.SetPathContext(ref)
 

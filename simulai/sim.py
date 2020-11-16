@@ -64,7 +64,7 @@ class DiscreteVariable:
 
         Parameters
         ----------
-        value:int
+        value: str
             User-selected value.
         """
         if not isinstance(value, str):
@@ -76,7 +76,7 @@ class DiscreteVariable:
 
         Parameters
         ----------
-        value:int
+        value: int
             User-selected value.
         """
         if not isinstance(value, int):
@@ -90,7 +90,7 @@ class DiscreteVariable:
 
         Parameters
         ----------
-        value:int
+        value: int
             User-selected value.
         """
         if not isinstance(value, int):
@@ -104,7 +104,7 @@ class DiscreteVariable:
 
         Parameters
         ----------
-        value:int
+        value: int
             User-selected value.
         """
         if not isinstance(value, int):
@@ -118,7 +118,7 @@ class DiscreteVariable:
 
         Parameters
         ----------
-        value:int
+        value: str
             User-selected value.
         """
         if not isinstance(value, str):
@@ -158,7 +158,7 @@ class OutcomeVariable:
 
         Parameters
         ----------
-        value:int
+        value: str
             User-selected value.
         """
         if not isinstance(value, str):
@@ -170,7 +170,7 @@ class OutcomeVariable:
 
         Parameters
         ----------
-        value:int
+        value: str
             User-selected value.
         """
         if not isinstance(value, str):
@@ -182,7 +182,7 @@ class OutcomeVariable:
 
         Parameters
         ----------
-        value:int
+        value: int
             User-selected value.
         """
         if not isinstance(value, int):
@@ -196,7 +196,7 @@ class OutcomeVariable:
 
         Parameters
         ----------
-        value:int
+        value: int
             User-selected value.
         """
         if not isinstance(value, int):
@@ -248,7 +248,7 @@ class Plant(metaclass=ABCMeta):
 
         Parameters
         ----------
-        data:float
+        data: int
             Simulation data.
         """
         pass
@@ -283,7 +283,7 @@ class BasePlant(Plant):
 
         Parameters
         ----------
-        value:int
+        value: list
             User-selected value.
         """
         if not isinstance(value, list):
@@ -295,7 +295,7 @@ class BasePlant(Plant):
 
         Parameters
         ----------
-        value:int
+        value: list
             User-selected value.
         """
         if not isinstance(value, list):
@@ -307,7 +307,7 @@ class BasePlant(Plant):
 
         Parameters
         ----------
-        value:int
+        value: str
             User-selected value.
         """
         if not isinstance(value, str):
@@ -319,7 +319,7 @@ class BasePlant(Plant):
 
         Parameters
         ----------
-        value:int
+        value: str
             User-selected value.
         """
         if not isinstance(value, str):
@@ -330,8 +330,8 @@ class BasePlant(Plant):
 
         Return
         ------
-        filename:str
-            Model name.
+        filename: str
+            Name of the file.
         """
         return self.filename
 
@@ -340,7 +340,7 @@ class BasePlant(Plant):
 
         Parameters
         ----------
-        data:float
+        data: int
             Simulation data.
 
         Return
@@ -466,13 +466,13 @@ class Qlearning(AutonomousDecisionSystem):
 
     @v_i.validator
     def _validate_v_i(self, attribute, value):
-        """Initialize value validator."""
+        """Input variables validator."""
         if not isinstance(value, list):
             raise TypeError("v_i: Argument must be a list.")
 
     @episodes_max.validator
     def _validate_episodes_max(self, attribute, value):
-        """Maximum epsilon validator."""
+        """Maximum episodes validator."""
         if not isinstance(value, int):
             raise TypeError("Episodes Max: Argument must be an integer.")
         if value < 0:
@@ -578,11 +578,11 @@ class Qlearning(AutonomousDecisionSystem):
 
         Parameters
         ----------
-        row:int
+        row: int
             Number of rows.
         Return
         ------
-        i:int
+        i: int
             Selected row.
         """
         p = self._random.random()
@@ -597,7 +597,7 @@ class Qlearning(AutonomousDecisionSystem):
 
         Return
         ------
-        r_episode:float
+        r_episode: float
             Episode reward
         """
         self.ini_saq()
@@ -690,7 +690,7 @@ class Sarsa(Qlearning):
 
         Return
         ------
-        r_episode:float
+        r_episode: float
             Episode reward
         """
         self.ini_saq()
