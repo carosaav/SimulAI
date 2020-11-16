@@ -383,6 +383,14 @@ def test_process(mock_method2):
     assert isinstance(value, float), "Should be a float"
 
 
+@pytest.mark.xfail
+def test_process2(var_input):
+    pcss = sim.Qlearning(v_i=var_input, episodes_max=1, steps_max=10)
+    r = pcss.process()
+
+    assert isinstance(r, float)
+
+
 def test_Sarsa(var_input):
     ss = sim.Sarsa(v_i=var_input, episodes_max=5, steps_max=20)
 
