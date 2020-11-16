@@ -1,3 +1,6 @@
+[![Documentation Status](https://readthedocs.org/projects/simulai/badge/?version=latest)](https://simulai.readthedocs.io/en/latest/?badge=latest)
+[![Build Status](https://travis-ci.com/carosaav/SimulAI.svg?branch=master)](https://travis-ci.com/carosaav/SimulAI)
+
 # SimulAI
 
 _It is a library that facilitates the use of Artificial Intelligence (AI) techniques for the optimization of variables derived from the Simulation of Flexible Manufacturing Systems (FMS). The objective is to improve the decision-making process in organizations, making it more efficient and safe._
