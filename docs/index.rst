@@ -10,7 +10,7 @@ Welcome to SimulAI's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-
+   source/api/modules.rst
 
 
 Indices and tables

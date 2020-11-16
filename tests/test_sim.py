@@ -171,7 +171,7 @@ def test_OutcomeVariable(namef, pathf, colf, rowf):
 
 def test_Plant():
     with pytest.raises(TypeError):
-        sim.Plant()
+        sim.Plant(method=my_method_Q)
 
 
 def test_BasePlant(var_input, var_out, my_method_Q):
@@ -244,7 +244,7 @@ def test_Qlearning(var_input):
     with pytest.raises(TypeError):
         sim.Qlearning(var_input, 10, 10, gamma=2)
     with pytest.raises(TypeError):
-        sim.Qlearning(var_input, 10, epsilon=2)
+        sim.Qlearning(var_input, 10, 10, epsilon=2)
 
     with pytest.raises(Exception):
         sim.Qlearning(
@@ -345,7 +345,7 @@ def test_ini_saq(var_input, expQ, expS, expA):
     assert bool((baseM.actions == 0).all()) is False
 
     with pytest.raises(Exception):
-        baseM.sim.Qlearning(
+        baseN = sim.Qlearning(
             v_i=[
                 sim.DiscreteVariable("Espera", 60, 300, 10,
                                      "Models.Modelo.espera"),
@@ -362,7 +362,16 @@ def test_ini_saq(var_input, expQ, expS, expA):
             episodes_max=1,
             steps_max=10,
         )
-        baseM.ini_saq()
+        baseN.ini_saq()
+    with pytest.raises(Exception):
+        baseL = sim.Qlearning(
+            v_i=[
+                sim.DiscreteVariable("Espera", 10, 10000, 1,
+                                     "Models.Modelo.espera")],
+            episodes_max=1,
+            steps_max=10,
+        )
+        baseL.ini_saq()
 
 
 @pytest.mark.parametrize("seed_input, expected", [(24, 0), (20, 0), (12, 0)])
