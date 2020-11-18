@@ -1,6 +1,3 @@
-simulai package
-===============
-
 
 Submodules
 ----------
@@ -21,10 +18,3 @@ simulai.sim module
    :undoc-members:
    :show-inheritance:
 
-Module contents
----------------
-
-.. automodule:: simulai
-   :members:
-   :undoc-members:
-   :show-inheritance:
