@@ -23,6 +23,7 @@ except ModuleNotFoundError:
     print("Install pywin32")
 
 import os
+from functools import wraps
 
 
 # ============================================================================
@@ -46,6 +47,7 @@ def check_connection(method):
     -------
     A message indicating failure.
     """
+    @wraps(method)
     def wrapper(self, *args, **kwargs):
         if not self.is_connected:
             raise ConnectionError("Not connected", self.model_name)
