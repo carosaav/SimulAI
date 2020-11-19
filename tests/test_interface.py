@@ -84,230 +84,229 @@ class Test_Com:
     # Now the actual testing
     # =================================================
 
-    @pytest.mark.xfail
     @patch('win32com.client.Dispatch')
     def test_valid_loadModel(self, dispatch, com):
         # Test as if a valid Model Name was given
         # Dispatch will not raise any exceptions
         com.connection()
-        com.plant_simulation.loadModel.assert_called_once_with('path')
+        dispatch.loadModel.assert_called_once_with('path')
 
-    @pytest.mark.xfail
+
     @patch('win32com.client.Dispatch')
     def test_setVisible(self, dispatch, com):
 
         com.connection()
-        com.plant_simulation.loadModel.assert_called_once()
+        dispatch.loadModel.assert_called_once()
 
         com.setVisible(True)
-        com.plant_simulation.setVisible.assert_called_once_with(True)
+        dispatch.setVisible.assert_called_once_with(True)
 
-    @pytest.mark.xfail
+
     @patch('win32com.client.Dispatch')
     def test_setValue(self, dispatch, com):
 
         com.connection()
-        com.plant_simulation.loadModel.assert_called_once()
+        dispatch.loadModel.assert_called_once()
 
         com.setValue('foo', 24)
-        com.plant_simulation.setValue.assert_called_once_with('foo', 24)
+        dispatch.setValue.assert_called_once_with('foo', 24)
 
-    @pytest.mark.xfail
+
     @patch('win32com.client.Dispatch')
     def test_getValue(self, dispatch, com):
 
         com.connection()
-        com.plant_simulation.loadModel.assert_called_once()
+        dispatch.loadModel.assert_called_once()
 
         com.getValue('foo')
-        com.plant_simulation.getValue.assert_called_once_with('foo')
+        dispatch.getValue.assert_called_once_with('foo')
 
-    @pytest.mark.xfail
+
     @patch('win32com.client.Dispatch')
     def test_startSimulation(self, dispatch, com):
 
         com.connection()
-        com.plant_simulation.loadModel.assert_called_once()
+        dispatch.loadModel.assert_called_once()
 
         com.startSimulation('foo')
-        com.plant_simulation.startSimulation.assert_called_once_with('foo')
+        dispatch.startSimulation.assert_called_once_with('foo')
 
-    @pytest.mark.xfail
+
     @patch('win32com.client.Dispatch')
     def test_resetSimulation(self, dispatch, com):
 
         com.connection()
-        com.plant_simulation.loadModel.assert_called_once()
+        dispatch.loadModel.assert_called_once()
 
         com.resetSimulation('foo')
-        com.plant_simulation.resetSimulation.assert_called_once_with('foo')
+        dispatch.resetSimulation.assert_called_once_with('foo')
 
-    @pytest.mark.xfail
+
     @patch('win32com.client.Dispatch')
     def test_stopSimulation(self, dispatch, com):
 
         com.connection()
-        com.plant_simulation.loadModel.assert_called_once()
+        dispatch.loadModel.assert_called_once()
 
         com.stopSimulation('foo')
-        com.plant_simulation.stopSimulation.assert_called_once_with('foo')
+        dispatch.stopSimulation.assert_called_once_with('foo')
 
-    @pytest.mark.xfail
+
     @patch('win32com.client.Dispatch')
     def test_closeModel(self, dispatch, com):
 
         com.connection()
-        com.plant_simulation.loadModel.assert_called_once()
+        dispatch.loadModel.assert_called_once()
 
         com.closeModel()
-        com.plant_simulation.CloseModel.assert_called_once_with()
+        dispatch.CloseModel.assert_called_once_with()
 
-    @pytest.mark.xfail
+
     @patch('win32com.client.Dispatch')
     def test_executeSimTalk(self, dispatch, com):
 
         com.connection()
-        com.plant_simulation.loadModel.assert_called_once()
+        dispatch.loadModel.assert_called_once()
 
         com.executeSimTalk('foo', 24)
-        com.plant_simulation.ExecuteSimTalk.assert_called_once_with('foo', 24)
+        dispatch.ExecuteSimTalk.assert_called_once_with('foo', 24)
 
-    @pytest.mark.xfail
+
     @patch('win32com.client.Dispatch')
     def test_isSimulationRunning(self, dispatch, com):
 
         com.connection()
-        com.plant_simulation.loadModel.assert_called_once()
+        dispatch.loadModel.assert_called_once()
 
         return_value = com.isSimulationRunning()
-        com.plant_simulation.IsSimulationRunning.assert_called_once_with()
+        dispatch.IsSimulationRunning.assert_called_once_with()
 
-    @pytest.mark.xfail
+
     @patch('win32com.client.Dispatch')
     def test_loadModel(self, dispatch, com):
 
         com.connection()
-        com.plant_simulation.loadModel.assert_called_once()
+        dispatch.loadModel.assert_called_once()
 
         com.loadModel('foo', 24)
-        com.plant_simulation.LoadModel.assert_called_once_with('foo', 24)
+        dispatch.LoadModel.assert_called_once_with('foo', 24)
 
-    @pytest.mark.xfail
+
     @patch('win32com.client.Dispatch')
     def test_newModel(self, dispatch, com):
 
         com.connection()
-        com.plant_simulation.loadModel.assert_called_once()
+        dispatch.loadModel.assert_called_once()
 
         com.newModel()
-        com.plant_simulation.NewModel.assert_called_once_with()
+        dispatch.NewModel.assert_called_once_with()
 
-    @pytest.mark.xfail
+
     @patch('win32com.client.Dispatch')
     def test_openConsoleLogFile(self, dispatch, com):
 
         com.connection()
-        com.plant_simulation.loadModel.assert_called_once()
+        dispatch.loadModel.assert_called_once()
 
         com.openConsoleLogFile('foo')
-        com.plant_simulation.OpenConsoleLogFile.assert_called_once_with('foo')
+        dispatch.OpenConsoleLogFile.assert_called_once_with('foo')
 
-    @pytest.mark.xfail
+
     @patch('win32com.client.Dispatch')
     def test_quit(self, dispatch, com):
 
         com.connection()
-        com.plant_simulation.loadModel.assert_called_once()
+        dispatch.loadModel.assert_called_once()
 
         com.quit()
-        com.plant_simulation.Quit.assert_called_once_with()
+        dispatch.Quit.assert_called_once_with()
 
-    @pytest.mark.xfail
+
     @patch('win32com.client.Dispatch')
     def test_quitAfterTime(self, dispatch, com):
 
         com.connection()
-        com.plant_simulation.loadModel.assert_called_once()
+        dispatch.loadModel.assert_called_once()
 
         com.quitAfterTime('foo')
-        com.plant_simulation.QuitAfterTime.assert_called_once_with('foo')
+        dispatch.QuitAfterTime.assert_called_once_with('foo')
 
-    @pytest.mark.xfail
+
     @patch('win32com.client.Dispatch')
     def test_quitAfterTime(self, dispatch, com):
 
         com.connection()
-        com.plant_simulation.loadModel.assert_called_once()
+        dispatch.loadModel.assert_called_once()
 
         com.quitAfterTime(24)
-        com.plant_simulation.QuitAfterTime.assert_called_once_with(24)
+        dispatch.QuitAfterTime.assert_called_once_with(24)
 
-    @pytest.mark.xfail
+
     @patch('win32com.client.Dispatch')
     def test_saveModel(self, dispatch, com):
 
         com.connection()
-        com.plant_simulation.loadModel.assert_called_once()
+        dispatch.loadModel.assert_called_once()
 
         com.saveModel('foo')
-        com.plant_simulation.SaveModel.assert_called_once_with('foo')
+        dispatch.SaveModel.assert_called_once_with('foo')
 
-    @pytest.mark.xfail
+
     @patch('win32com.client.Dispatch')
     def test_setLicenseType(self, dispatch, com):
 
         com.connection()
-        com.plant_simulation.loadModel.assert_called_once()
+        dispatch.loadModel.assert_called_once()
 
         com.setLicenseType('foo')
-        com.plant_simulation.SetLicenseType.assert_called_once_with('foo')
+        dispatch.SetLicenseType.assert_called_once_with('foo')
 
-    @pytest.mark.xfail
+
     @patch('win32com.client.Dispatch')
     def test_setNoMessageBox(self, dispatch, com):
 
         com.connection()
-        com.plant_simulation.loadModel.assert_called_once()
+        dispatch.loadModel.assert_called_once()
 
         com.setNoMessageBox(24)
-        com.plant_simulation.SetNoMessageBox.assert_called_once_with(24)
+        dispatch.SetNoMessageBox.assert_called_once_with(24)
 
-    @pytest.mark.xfail
+
     @patch('win32com.client.Dispatch')
     def test_setPathContext(self, dispatch, com):
 
         com.connection()
-        com.plant_simulation.loadModel.assert_called_once()
+        dispatch.loadModel.assert_called_once()
 
         com.setPathContext('foo')
-        com.plant_simulation.SetPathContext.assert_called_once_with('foo')
+        dispatch.SetPathContext.assert_called_once_with('foo')
 
-    @pytest.mark.xfail
+
     @patch('win32com.client.Dispatch')
     def test_setSuppressStartOf3D(self, dispatch, com):
 
         com.connection()
-        com.plant_simulation.loadModel.assert_called_once()
+        dispatch.loadModel.assert_called_once()
 
         com.setSuppressStartOf3D(24)
-        com.plant_simulation.SetSuppressStartOf3D.assert_called_once_with(24)
+        dispatch.SetSuppressStartOf3D.assert_called_once_with(24)
 
-    @pytest.mark.xfail
+
     @patch('win32com.client.Dispatch')
     def test_setTrustModels(self, dispatch, com):
 
         com.connection()
-        com.plant_simulation.loadModel.assert_called_once()
+        dispatch.loadModel.assert_called_once()
 
         com.setTrustModels(24)
-        com.plant_simulation.SetTrustModels.assert_called_once_with(24)
+        dispatch.SetTrustModels.assert_called_once_with(24)
 
-    @pytest.mark.xfail
+
     @patch('win32com.client.Dispatch')
     def test_transferModel(self, dispatch, com):
 
         com.connection()
-        com.plant_simulation.loadModel.assert_called_once()
+        dispatch.loadModel.assert_called_once()
 
         com.transferModel(24)
-        com.plant_simulation.TransferModel.assert_called_once_with(24)
+        dispatch.TransferModel.assert_called_once_with(24)
