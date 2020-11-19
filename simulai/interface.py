@@ -93,16 +93,13 @@ class Com(object):
             Connection indicator.
         """
         path_file = self.get_path_file_model()
-        try:
-            self.plant_simulation = win32.Dispatch(
+        self.plant_simulation = win32.Dispatch(
                 "Tecnomatix.PlantSimulation.RemoteControl.15.0")
-            self.plant_simulation.loadModel(path_file)
-            print("The connection was successful")
-            self.is_connected = True
-            return True
-        except Exception:
-            print("Connection error. path file: " + path_file)
-            return False
+        self.plant_simulation.loadModel(path_file)
+        print("The connection was successful")
+        self.is_connected = True
+        return True
+
 
     @check_connection
     def setVisible(self, value):
