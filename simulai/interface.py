@@ -100,7 +100,6 @@ class Com(object):
         self.is_connected = True
         return True
 
-
     @check_connection
     def setVisible(self, value):
         """Execute the application Tecnomatix.
