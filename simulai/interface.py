@@ -17,11 +17,7 @@
 # IMPORTS
 # ============================================================================
 
-try:
-    import win32com.client as win32
-except ModuleNotFoundError:
-    print("Install pywin32")
-
+import win32com.client as win32
 import os
 from functools import wraps
 
