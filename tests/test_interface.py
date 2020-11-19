@@ -14,15 +14,15 @@
 import random
 import pytest
 from unittest import mock
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 from numpy.testing import assert_equal
 from simulai import interface
+import sys
 
 
 # ============================================================================
 # TESTS
 # ============================================================================
-
 
 @pytest.fixture
 def base():
@@ -53,52 +53,261 @@ def test_get_path_file_model(base):
     assert isinstance(base.get_path_file_model(), str)
 
 
-def test_connection(base):
-    comm = base.connection()
+class Test_Com:
+    # =================================================
+    # General setup to mock an external api
+    # This setup/teardown will be executed for each test
+    # =================================================
+    def setup_method(self):
+        self.win32com = MagicMock()
+        self.win32com.client = MagicMock()
+        self.win32com.client.Dispatch = MagicMock()
+        mock_modules = {
+            "win32com": self.win32com,
+            "win32com.client": self.win32com.client,
+            "win32com.client.Dispatch": self.win32com.client.Dispatch
+            }
 
-    assert isinstance(comm, bool)
-    assert isinstance(base.plant_simulation, str)
+        self.module_patcher = patch.dict("sys.modules", mock_modules)
+        self.module_patcher.start()
 
+    def teardown_method(self):
+        self.module_patcher.stop()
 
-@patch.object(interface.Com, "connection",
-              return_value=random.choice([True, False]))
-def test_connection2(mock_method):
-    value = interface.Com.connection()
-    mock_method.assert_called_once_with()
+    @pytest.fixture
+    def com(self):
+        # Here we import interface with win32 patched
+        from simulai import interface
+        return interface.Com('ModelName.spp')
 
-    assert isinstance(value, bool)
+    # =================================================
+    # Now the actual testing
+    # =================================================
 
-
-@mock.patch('simulai.interface.Com.connection',
-            mock.MagicMock(return_value=True))
-def test_check_connection(base):
-    value2 = base.connection()
-
-    assert isinstance(value2, bool)
-
-
-def test_invalidModel(base2):
-    with pytest.raises(Exception):
-        base.connection()
-
-
-@patch.object(interface.Com, "setVisible", spec_set=True)
-def test_setVisible(mock_method):
-    interface.Com.setVisible(True)
-    mock_method.assert_called_with(True)
-
-
-def test_setVisible2(base2):
-    with pytest.raises(interface.ConnectionError):
-        base2.setVisible()
-
-
-def test_setValue(base2):
-    with pytest.raises(interface.ConnectionError):
-        base2.setValue()
+    @pytest.mark.xfail
+    @patch('win32com.client.Dispatch')
+    def test_valid_loadModel(self, dispatch, com):
+        # Test as if a valid Model Name was given
+        # Dispatch will not raise any exceptions
+        com.connection()
+        com.plant_simulation.loadModel.assert_called_once_with('C:\\Users\\ivope\\Desktop\\2020\\Doctorado\\Curso Diseno de Software\\SimulAI\\SimulAI\\tests\\ModelName.spp')
 
 
-@patch.object(interface.Com, "startSimulation", spec_set=True)
-def test_startSimulation(mock_method):
-    interface.Com.startSimulation(".Models.Modelo")
-    mock_method.assert_called_with(".Models.Modelo")
+    @patch('win32com.client.Dispatch')
+    def test_setVisible(self, dispatch, com):
+
+        com.connection()
+        com.plant_simulation.loadModel.assert_called_once()
+
+        com.setVisible(True)
+        com.plant_simulation.setVisible.assert_called_once_with(True)
+
+
+    @patch('win32com.client.Dispatch')
+    def test_setValue(self, dispatch, com):
+
+        com.connection()
+        com.plant_simulation.loadModel.assert_called_once()
+
+        com.setValue('foo', 24)
+        com.plant_simulation.setValue.assert_called_once_with('foo', 24)
+
+
+    @patch('win32com.client.Dispatch')
+    def test_getValue(self, dispatch, com):
+
+        com.connection()
+        com.plant_simulation.loadModel.assert_called_once()
+
+        com.getValue('foo')
+        com.plant_simulation.getValue.assert_called_once_with('foo')
+
+
+    @patch('win32com.client.Dispatch')
+    def test_startSimulation(self, dispatch, com):
+
+        com.connection()
+        com.plant_simulation.loadModel.assert_called_once()
+
+        com.startSimulation('foo')
+        com.plant_simulation.startSimulation.assert_called_once_with('foo')
+
+
+    @patch('win32com.client.Dispatch')
+    def test_resetSimulation(self, dispatch, com):
+
+        com.connection()
+        com.plant_simulation.loadModel.assert_called_once()
+
+        com.resetSimulation('foo')
+        com.plant_simulation.resetSimulation.assert_called_once_with('foo')
+
+
+    @patch('win32com.client.Dispatch')
+    def test_stopSimulation(self, dispatch, com):
+
+        com.connection()
+        com.plant_simulation.loadModel.assert_called_once()
+
+        com.stopSimulation('foo')
+        com.plant_simulation.stopSimulation.assert_called_once_with('foo')
+
+
+    @patch('win32com.client.Dispatch')
+    def test_closeModel(self, dispatch, com):
+
+        com.connection()
+        com.plant_simulation.loadModel.assert_called_once()
+
+        com.closeModel()
+        com.plant_simulation.CloseModel.assert_called_once_with()
+
+
+    @patch('win32com.client.Dispatch')
+    def test_executeSimTalk(self, dispatch, com):
+
+        com.connection()
+        com.plant_simulation.loadModel.assert_called_once()
+
+        com.executeSimTalk('foo', 24)
+        com.plant_simulation.ExecuteSimTalk.assert_called_once_with('foo', 24)
+
+
+    @patch('win32com.client.Dispatch')
+    def test_isSimulationRunning(self, dispatch, com):
+
+        com.connection()
+        com.plant_simulation.loadModel.assert_called_once()
+
+        return_value = com.isSimulationRunning()
+        com.plant_simulation.IsSimulationRunning.assert_called_once_with()
+
+
+    @patch('win32com.client.Dispatch')
+    def test_loadModel(self, dispatch, com):
+
+        com.connection()
+        com.plant_simulation.loadModel.assert_called_once()
+
+        com.loadModel('foo', 24)
+        com.plant_simulation.LoadModel.assert_called_once_with('foo', 24)
+
+
+    @patch('win32com.client.Dispatch')
+    def test_newModel(self, dispatch, com):
+
+        com.connection()
+        com.plant_simulation.loadModel.assert_called_once()
+
+        com.newModel()
+        com.plant_simulation.NewModel.assert_called_once_with()
+
+
+    @patch('win32com.client.Dispatch')
+    def test_openConsoleLogFile(self, dispatch, com):
+
+        com.connection()
+        com.plant_simulation.loadModel.assert_called_once()
+
+        com.openConsoleLogFile('foo')
+        com.plant_simulation.OpenConsoleLogFile.assert_called_once_with('foo')
+
+
+    @patch('win32com.client.Dispatch')
+    def test_quit(self, dispatch, com):
+
+        com.connection()
+        com.plant_simulation.loadModel.assert_called_once()
+
+        com.quit()
+        com.plant_simulation.Quit.assert_called_once_with()
+
+
+    @patch('win32com.client.Dispatch')
+    def test_quitAfterTime(self, dispatch, com):
+
+        com.connection()
+        com.plant_simulation.loadModel.assert_called_once()
+
+        com.quitAfterTime('foo')
+        com.plant_simulation.QuitAfterTime.assert_called_once_with('foo')
+
+
+    @patch('win32com.client.Dispatch')
+    def test_quitAfterTime(self, dispatch, com):
+
+        com.connection()
+        com.plant_simulation.loadModel.assert_called_once()
+
+        com.quitAfterTime(24)
+        com.plant_simulation.QuitAfterTime.assert_called_once_with(24)
+
+
+    @patch('win32com.client.Dispatch')
+    def test_saveModel(self, dispatch, com):
+
+        com.connection()
+        com.plant_simulation.loadModel.assert_called_once()
+
+        com.saveModel('foo')
+        com.plant_simulation.SaveModel.assert_called_once_with('foo')
+
+
+    @patch('win32com.client.Dispatch')
+    def test_setLicenseType(self, dispatch, com):
+
+        com.connection()
+        com.plant_simulation.loadModel.assert_called_once()
+
+        com.setLicenseType('foo')
+        com.plant_simulation.SetLicenseType.assert_called_once_with('foo')
+
+
+    @patch('win32com.client.Dispatch')
+    def test_setNoMessageBox(self, dispatch, com):
+
+        com.connection()
+        com.plant_simulation.loadModel.assert_called_once()
+
+        com.setNoMessageBox(24)
+        com.plant_simulation.SetNoMessageBox.assert_called_once_with(24)
+
+
+    @patch('win32com.client.Dispatch')
+    def test_setPathContext(self, dispatch, com):
+
+        com.connection()
+        com.plant_simulation.loadModel.assert_called_once()
+
+        com.setPathContext('foo')
+        com.plant_simulation.SetPathContext.assert_called_once_with('foo')
+
+
+    @patch('win32com.client.Dispatch')
+    def test_setSuppressStartOf3D(self, dispatch, com):
+
+        com.connection()
+        com.plant_simulation.loadModel.assert_called_once()
+
+        com.setSuppressStartOf3D(24)
+        com.plant_simulation.SetSuppressStartOf3D.assert_called_once_with(24)
+
+
+    @patch('win32com.client.Dispatch')
+    def test_setTrustModels(self, dispatch, com):
+
+        com.connection()
+        com.plant_simulation.loadModel.assert_called_once()
+
+        com.setTrustModels(24)
+        com.plant_simulation.SetTrustModels.assert_called_once_with(24)
+
+
+    @patch('win32com.client.Dispatch')
+    def test_transferModel(self, dispatch, com):
+
+        com.connection()
+        com.plant_simulation.loadModel.assert_called_once()
+
+        com.transferModel(24)
+        com.plant_simulation.TransferModel.assert_called_once_with(24)
