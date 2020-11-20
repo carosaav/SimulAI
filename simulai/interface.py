@@ -118,7 +118,7 @@ class CommunicationInterface(object):
         return True
 
     @check_connection
-    def setVisible(self, value):
+    def setvisible(self, value):
         """Execute the application Tecnomatix.
 
         Parameters
@@ -129,7 +129,7 @@ class CommunicationInterface(object):
         self.plant_simulation.setVisible(value)
 
     @check_connection
-    def setValue(self, ref, value):
+    def setvalue(self, ref, value):
         """Set the values in the simulator.
 
         Parameters
@@ -142,7 +142,7 @@ class CommunicationInterface(object):
         self.plant_simulation.setValue(ref, value)
 
     @check_connection
-    def getValue(self, ref):
+    def getvalue(self, ref):
         """Get the values of the simulator.
 
         Parameters
@@ -153,7 +153,7 @@ class CommunicationInterface(object):
         return self.plant_simulation.getValue(ref)
 
     @check_connection
-    def startSimulation(self, ref):
+    def startsimulation(self, ref):
         """Make the simulation start.
 
         Parameters
@@ -164,7 +164,7 @@ class CommunicationInterface(object):
         self.plant_simulation.startSimulation(ref)
 
     @check_connection
-    def resetSimulation(self, ref):
+    def resetsimulation(self, ref):
         """Make the simulation reset.
 
         Parameters
@@ -175,7 +175,7 @@ class CommunicationInterface(object):
         self.plant_simulation.resetSimulation(ref)
 
     @check_connection
-    def stopSimulation(self, ref):
+    def stopsimulation(self, ref):
         """Make the simulation stop.
 
         Parameters
@@ -186,12 +186,12 @@ class CommunicationInterface(object):
         self.plant_simulation.stopSimulation(ref)
 
     @check_connection
-    def closeModel(self):
+    def closemodel(self):
         """Close the simulation model."""
         self.plant_simulation.CloseModel()
 
     @check_connection
-    def executeSimTalk(self, ref, value):
+    def execute_simtalk(self, ref, value):
         """Execute the simulation programming language.
 
         Parameters
@@ -204,12 +204,12 @@ class CommunicationInterface(object):
         self.plant_simulation.ExecuteSimTalk(ref, value)
 
     @check_connection
-    def isSimulationRunning(self):
+    def is_simulation_running(self):
         """Check if the simulation is running."""
         return(self.plant_simulation.IsSimulationRunning())
 
     @check_connection
-    def loadModel(self, ref, value):
+    def loadmodel(self, ref, value):
         """Perform the load of the model.
 
         Parameters
@@ -222,12 +222,12 @@ class CommunicationInterface(object):
         self.plant_simulation.LoadModel(ref, value)
 
     @check_connection
-    def newModel(self):
+    def newmodel(self):
         """Create a new model."""
         self.plant_simulation.NewModel()
 
     @check_connection
-    def openConsoleLogFile(self, ref):
+    def openconsole_logfile(self, ref):
         """Open the simulation result in the console.
 
         Parameters
@@ -243,7 +243,7 @@ class CommunicationInterface(object):
         self.plant_simulation.Quit()
 
     @check_connection
-    def quitAfterTime(self, value):
+    def quit_aftertime(self, value):
         """Clear all result after a time.
 
         Parameters
@@ -254,7 +254,7 @@ class CommunicationInterface(object):
         self.plant_simulation.QuitAfterTime(value)
 
     @check_connection
-    def saveModel(self, ref):
+    def savemodel(self, ref):
         """Save the model result.
 
         Parameters
@@ -265,7 +265,7 @@ class CommunicationInterface(object):
         self.plant_simulation.SaveModel(ref)
 
     @check_connection
-    def setLicenseType(self, ref):
+    def set_licensetype(self, ref):
         """Set the type of the license.
 
         Parameters
@@ -276,7 +276,7 @@ class CommunicationInterface(object):
         self.plant_simulation.SetLicenseType(ref)
 
     @check_connection
-    def setNoMessageBox(self, value):
+    def set_no_messagebox(self, value):
         """Delete the messages on the screen.
 
         Parameters
@@ -287,7 +287,7 @@ class CommunicationInterface(object):
         self.plant_simulation.SetNoMessageBox(value)
 
     @check_connection
-    def setPathContext(self, ref):
+    def set_pathcontext(self, ref):
         """Set the context.
 
         Parameters
@@ -298,7 +298,7 @@ class CommunicationInterface(object):
         self.plant_simulation.SetPathContext(ref)
 
     @check_connection
-    def setSuppressStartOf3D(self, value):
+    def set_suppress_start_of_3d(self, value):
         """Eliminate the start of 3D model.
 
         Parameters
@@ -309,7 +309,7 @@ class CommunicationInterface(object):
         self.plant_simulation.SetSuppressStartOf3D(value)
 
     @check_connection
-    def setTrustModels(self, value):
+    def set_trustmodels(self, value):
         """Set the real model.
 
         Parameters
@@ -320,7 +320,7 @@ class CommunicationInterface(object):
         self.plant_simulation.SetTrustModels(value)
 
     @check_connection
-    def transferModel(self, value):
+    def transfermodel(self, value):
         """Transfer the model.
 
         Parameters

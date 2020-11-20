@@ -96,99 +96,99 @@ class Test_Com:
     #     dispatch.loadModel.assert_called_once_with('path')
 
     # @patch('win32com.client.Dispatch')
-    # def test_setVisible(self, dispatch, com):
+    # def test_setvisible(self, dispatch, com):
     #     com.connection()
     #     dispatch.loadModel.assert_called_once()
 
-    #     com.setVisible(True)
+    #     com.setvisible(True)
     #     dispatch.setVisible.assert_called_once_with(True)
 
     # @patch('win32com.client.Dispatch')
-    # def test_setValue(self, dispatch, com):
+    # def test_setvalue(self, dispatch, com):
     #     com.connection()
     #     dispatch.loadModel.assert_called_once()
 
-    #     com.setValue('foo', 24)
+    #     com.setvalue('foo', 24)
     #     dispatch.setValue.assert_called_once_with('foo', 24)
 
     # @patch('win32com.client.Dispatch')
-    # def test_getValue(self, dispatch, com):
+    # def test_getvalue(self, dispatch, com):
     #     com.connection()
     #     dispatch.loadModel.assert_called_once()
 
-    #     com.getValue('foo')
+    #     com.getvalue('foo')
     #     dispatch.getValue.assert_called_once_with('foo')
 
     # @patch('win32com.client.Dispatch')
-    # def test_startSimulation(self, dispatch, com):
+    # def test_startsimulation(self, dispatch, com):
     #     com.connection()
     #     dispatch.loadModel.assert_called_once()
 
-    #     com.startSimulation('foo')
+    #     com.startsimulation('foo')
     #     dispatch.startSimulation.assert_called_once_with('foo')
 
     # @patch('win32com.client.Dispatch')
-    # def test_resetSimulation(self, dispatch, com):
+    # def test_resetsimulation(self, dispatch, com):
     #     com.connection()
     #     dispatch.loadModel.assert_called_once()
 
-    #     com.resetSimulation('foo')
+    #     com.resetsimulation('foo')
     #     dispatch.resetSimulation.assert_called_once_with('foo')
 
     # @patch('win32com.client.Dispatch')
-    # def test_stopSimulation(self, dispatch, com):
+    # def test_stopsimulation(self, dispatch, com):
     #     com.connection()
     #     dispatch.loadModel.assert_called_once()
 
-    #     com.stopSimulation('foo')
+    #     com.stopsimulation('foo')
     #     dispatch.stopSimulation.assert_called_once_with('foo')
 
     # @patch('win32com.client.Dispatch')
-    # def test_closeModel(self, dispatch, com):
+    # def test_closemodel(self, dispatch, com):
     #     com.connection()
     #     dispatch.loadModel.assert_called_once()
 
-    #     com.closeModel()
+    #     com.closemodel()
     #     dispatch.CloseModel.assert_called_once_with()
 
     # @patch('win32com.client.Dispatch')
-    # def test_executeSimTalk(self, dispatch, com):
+    # def test_execute_simtalk(self, dispatch, com):
     #     com.connection()
     #     dispatch.loadModel.assert_called_once()
 
-    #     com.executeSimTalk('foo', 24)
+    #     com.execute_simtalk('foo', 24)
     #     dispatch.ExecuteSimTalk.assert_called_once_with('foo', 24)
 
     # @patch('win32com.client.Dispatch')
-    # def test_isSimulationRunning(self, dispatch, com):
+    # def test_is_simulation_running(self, dispatch, com):
     #     com.connection()
     #     dispatch.loadModel.assert_called_once()
 
-    #     com.isSimulationRunning()
+    #     com.is_simulation_running()
     #     dispatch.IsSimulationRunning.assert_called_once_with()
 
     # @patch('win32com.client.Dispatch')
-    # def test_loadModel(self, dispatch, com):
+    # def test_loadmodel(self, dispatch, com):
     #     com.connection()
     #     dispatch.loadModel.assert_called_once()
 
-    #     com.loadModel('foo', 24)
+    #     com.loadmodel('foo', 24)
     #     dispatch.LoadModel.assert_called_once_with('foo', 24)
 
     # @patch('win32com.client.Dispatch')
-    # def test_newModel(self, dispatch, com):
+    # def test_newmodel(self, dispatch, com):
     #     com.connection()
     #     dispatch.loadModel.assert_called_once()
 
-    #     com.newModel()
+    #     com.newmodel()
     #     dispatch.NewModel.assert_called_once_with()
 
     # @patch('win32com.client.Dispatch')
-    # def test_openConsoleLogFile(self, dispatch, com):
+    # def test_openconsole_logfile(self, dispatch, com):
     #     com.connection()
     #     dispatch.loadModel.assert_called_once()
 
-    #     com.openConsoleLogFile('foo')
+    #     com.openconsole_logfile('foo')
     #     dispatch.OpenConsoleLogFile.assert_called_once_with('foo')
 
     # @patch('win32com.client.Dispatch')
@@ -200,65 +200,65 @@ class Test_Com:
     #     dispatch.Quit.assert_called_once_with()
 
     # @patch('win32com.client.Dispatch')
-    # def test_quitAfterTime(self, dispatch, com):
+    # def test_quit_aftertime(self, dispatch, com):
     #     com.connection()
     #     dispatch.loadModel.assert_called_once()
 
-    #     com.quitAfterTime(24)
+    #     com.quit_aftertime(24)
     #     dispatch.QuitAfterTime.assert_called_once_with(24)
 
     # @patch('win32com.client.Dispatch')
-    # def test_saveModel(self, dispatch, com):
+    # def test_savemodel(self, dispatch, com):
     #     com.connection()
     #     dispatch.loadModel.assert_called_once()
 
-    #     com.saveModel('foo')
+    #     com.savemodel('foo')
     #     dispatch.SaveModel.assert_called_once_with('foo')
 
     # @patch('win32com.client.Dispatch')
-    # def test_setLicenseType(self, dispatch, com):
+    # def test_set_licensetype(self, dispatch, com):
     #     com.connection()
     #     dispatch.loadModel.assert_called_once()
 
-    #     com.setLicenseType('foo')
+    #     com.set_licensetype('foo')
     #     dispatch.SetLicenseType.assert_called_once_with('foo')
 
     # @patch('win32com.client.Dispatch')
-    # def test_setNoMessageBox(self, dispatch, com):
+    # def test_set_no_messagebox(self, dispatch, com):
     #     com.connection()
     #     dispatch.loadModel.assert_called_once()
 
-    #     com.setNoMessageBox(24)
+    #     com.set_no_messagebox(24)
     #     dispatch.SetNoMessageBox.assert_called_once_with(24)
 
     # @patch('win32com.client.Dispatch')
-    # def test_setPathContext(self, dispatch, com):
+    # def test_set_pathcontext(self, dispatch, com):
     #     com.connection()
     #     dispatch.loadModel.assert_called_once()
 
-    #     com.setPathContext('foo')
+    #     com.set_pathcontext('foo')
     #     dispatch.SetPathContext.assert_called_once_with('foo')
 
     # @patch('win32com.client.Dispatch')
-    # def test_setSuppressStartOf3D(self, dispatch, com):
+    # def test_set_suppress_start_of_3d(self, dispatch, com):
     #     com.connection()
     #     dispatch.loadModel.assert_called_once()
 
-    #     com.setSuppressStartOf3D(24)
+    #     com.set_suppress_start_of_3d(24)
     #     dispatch.SetSuppressStartOf3D.assert_called_once_with(24)
 
     # @patch('win32com.client.Dispatch')
-    # def test_setTrustModels(self, dispatch, com):
+    # def test_set_trustmodels(self, dispatch, com):
     #     com.connection()
     #     dispatch.loadModel.assert_called_once()
 
-    #     com.setTrustModels(24)
+    #     com.set_trustmodels(24)
     #     dispatch.SetTrustModels.assert_called_once_with(24)
 
     # @patch('win32com.client.Dispatch')
-    # def test_transferModel(self, dispatch, com):
+    # def test_transfermodel(self, dispatch, com):
     #     com.connection()
     #     dispatch.loadModel.assert_called_once()
 
-    #     com.transferModel(24)
+    #     com.transfermodel(24)
     #     dispatch.TransferModel.assert_called_once_with(24)
