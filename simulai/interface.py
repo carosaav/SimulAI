@@ -1,4 +1,3 @@
-
 # This file is part of the
 #   SimulAI Project (https://github.com/carosaav/SimulAI).
 # Copyright (c) 2020, Perez Colo Ivo, Pirozzo Bernardo Manuel,
@@ -22,8 +21,8 @@ try:
 except ModuleNotFoundError:
     print("Install pywin32")
 import os
-from functools import wraps
 import pathlib
+from functools import wraps
 import attr
 
 
@@ -57,12 +56,14 @@ def check_connection(method):
     -------
     A message indicating failure.
     """
+
     @wraps(method)
     def wrapper(self, *args, **kwargs):
         if not self.is_connected:
             raise ConnectionError("Not connected", self.model_name)
         output = method(self, *args, **kwargs)
         return output
+
     return wrapper
 
 
@@ -98,7 +99,8 @@ class CommunicationInterface(object):
         path = str(PATH / self.model_name)
         if not os.path.exists(path):
             raise ModelNotFoundError(
-                f"Model {self.model_name} does not exists")
+                f"Model {self.model_name} does not exists"
+            )
         return path
 
     def connection(self):
@@ -111,7 +113,8 @@ class CommunicationInterface(object):
         """
         path_file = self.get_path_file_model()
         self.plant_simulation = win32.Dispatch(
-            "Tecnomatix.PlantSimulation.RemoteControl.15.0")
+            "Tecnomatix.PlantSimulation.RemoteControl.15.0"
+        )
         self.plant_simulation.loadModel(path_file)
         print("The connection was successful")
         self.is_connected = True
@@ -206,7 +209,7 @@ class CommunicationInterface(object):
     @check_connection
     def is_simulation_running(self):
         """Check if the simulation is running."""
-        return(self.plant_simulation.IsSimulationRunning())
+        return self.plant_simulation.IsSimulationRunning()
 
     @check_connection
     def loadmodel(self, ref, value):

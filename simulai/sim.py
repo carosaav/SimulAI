@@ -1,4 +1,3 @@
-
 # This file is part of the
 #   SimulAI Project (https://github.com/carosaav/SimulAI).
 # Copyright (c) 2020, Perez Colo Ivo, Pirozzo Bernardo Manuel,
@@ -19,12 +18,11 @@
 
 from abc import ABCMeta, abstractmethod
 
-from .interface import CommunicationInterface
-
 import attr
 
-import numpy as np
+from .interface import CommunicationInterface
 
+import numpy as np
 
 
 # ============================================================================
@@ -362,7 +360,8 @@ class BasePlant(Plant):
             a_idx = np.zeros(x.num_rows)
             for h in range(1, x.num_rows + 1):
                 a_idx[h - 1] = self.connect.getValue(
-                    x.path + str([x.column, h]))
+                    x.path + str([x.column, h])
+                )
             b_idx = np.sum(a_idx)
             r += b_idx / len(self.v_o)
 
@@ -524,7 +523,8 @@ class Qlearning(AutonomousDecisionSystem):
         """Arrays for states and actions."""
         for idx, x in enumerate(self.v_i):
             self.s_idx = np.arange(
-                x.lower_limit, x.upper_limit + x.step, x.step)
+                x.lower_limit, x.upper_limit + x.step, x.step
+            )
             self.a_idx = np.array([-x.step, 0, x.step])
             self.s.append(self.s_idx)
             self.a.append(self.a_idx)
@@ -543,32 +543,44 @@ class Qlearning(AutonomousDecisionSystem):
             self.S = self.s[0]
             self.actions = self.a[0]
         elif len(self.v_i) == 2:
-            self.S = np.column_stack((
-                np.repeat(self.s[0], n[1]),
-                np.tile(self.s[1], n[0])))
-            self.actions = np.column_stack((
-                np.repeat(self.a[0], m[1]),
-                np.tile(self.a[1], m[0])))
+            self.S = np.column_stack(
+                (np.repeat(self.s[0], n[1]), np.tile(self.s[1], n[0]))
+            )
+            self.actions = np.column_stack(
+                (np.repeat(self.a[0], m[1]), np.tile(self.a[1], m[0]))
+            )
         elif len(self.v_i) == 3:
-            self.S = np.column_stack((
-                np.repeat(self.s[0], n[1] * n[2]),
-                np.tile(np.repeat(self.s[1], n[2]), n[0]),
-                np.tile(self.s[2], n[0] * n[1])))
-            self.actions = np.column_stack((
-                np.repeat(self.a[0], m[1] * m[2]),
-                np.tile(np.repeat(self.a[1], m[2]), m[0]),
-                np.tile(self.a[2], m[0] * m[1])))
+            self.S = np.column_stack(
+                (
+                    np.repeat(self.s[0], n[1] * n[2]),
+                    np.tile(np.repeat(self.s[1], n[2]), n[0]),
+                    np.tile(self.s[2], n[0] * n[1]),
+                )
+            )
+            self.actions = np.column_stack(
+                (
+                    np.repeat(self.a[0], m[1] * m[2]),
+                    np.tile(np.repeat(self.a[1], m[2]), m[0]),
+                    np.tile(self.a[2], m[0] * m[1]),
+                )
+            )
         elif len(self.v_i) == 4:
-            self.S = np.column_stack((
-                np.repeat(self.s[0], n[1] * n[2] * n[3]),
-                np.tile(np.repeat(self.s[1], n[2] * n[3]), n[0]),
-                np.tile(np.repeat(self.s[2], n[3]), n[1] * n[0]),
-                np.tile(self.s[3], n[0] * n[1] * n[2])))
-            self.actions = np.column_stack((
-                np.repeat(self.a[0], m[1] * m[2] * m[3]),
-                np.tile(np.repeat(self.a[1], m[2] * m[3]), m[0]),
-                np.tile(np.repeat(self.a[2], m[3]), m[1] * m[0]),
-                np.tile(self.a[3], m[0] * m[1] * m[2])))
+            self.S = np.column_stack(
+                (
+                    np.repeat(self.s[0], n[1] * n[2] * n[3]),
+                    np.tile(np.repeat(self.s[1], n[2] * n[3]), n[0]),
+                    np.tile(np.repeat(self.s[2], n[3]), n[1] * n[0]),
+                    np.tile(self.s[3], n[0] * n[1] * n[2]),
+                )
+            )
+            self.actions = np.column_stack(
+                (
+                    np.repeat(self.a[0], m[1] * m[2] * m[3]),
+                    np.tile(np.repeat(self.a[1], m[2] * m[3]), m[0]),
+                    np.tile(np.repeat(self.a[2], m[3]), m[1] * m[0]),
+                    np.tile(self.a[3], m[0] * m[1] * m[2]),
+                )
+            )
         else:
             raise Exception("The method admits 4 variables or less")
 
@@ -640,8 +652,9 @@ class Qlearning(AutonomousDecisionSystem):
                             break
                 # update Q table
                 self.Q[k, j] = self.Q[k, j]
-                + self.alfa * (r + self.gamma * np.max(
-                               self.Q[z, :]) - self.Q[k, j])
+                +self.alfa * (
+                    r + self.gamma * np.max(self.Q[z, :]) - self.Q[k, j]
+                )
                 # update parameters
                 t += 1
                 s0 = snew
@@ -711,7 +724,7 @@ class Sarsa(Qlearning):
                         if self.S[k][i] == s0[i]:
                             break
                 # update state
-                snew = s0 + self.actions[A0]
+                snew = s0 + self.actions[a0]
                 # limites
                 for idx, x in enumerate(self.v_i):
                     if snew[idx] > x.upper_limit:
@@ -734,8 +747,7 @@ class Sarsa(Qlearning):
                 anew = self.choose_action(z)
                 # update Q table
                 self.Q[k, a0] = self.Q[k, a0]
-                + self.alfa * (r +
-                               self.gamma * self.Q[z, anew] - self.Q[k, a0])
+                +self.alfa * (r + self.gamma * self.Q[z, anew] - self.Q[k, a0])
                 # update parameters
                 t += 1
                 s0 = snew
