@@ -17,10 +17,14 @@
 # IMPORTS
 # ============================================================================
 
-from .interface import CommunicationInterface
 from abc import ABCMeta, abstractmethod
-import numpy as np
+
+from .interface import CommunicationInterface
+
 import attr
+
+import numpy as np
+
 
 
 # ============================================================================
@@ -602,28 +606,28 @@ class Qlearning(AutonomousDecisionSystem):
         """
         self.ini_saq()
         for n in range(self.episodes_max):
-            S0 = self.S[0]
+            s0 = self.S[0]
             t = 0
             r_acum = 0
-            res0 = self.subscriber.update(S0)
+            res0 = self.subscriber.update(s0)
             while t < self.steps_max:
                 # find k index of current state
                 for k in range(self.S.shape[0]):
                     for i in range(len(self.v_i)):
-                        if self.S[k][i] == S0[i]:
+                        if self.S[k][i] == s0[i]:
                             break
                 # choose action from row k
                 j = self.choose_action(k)
                 # update state
-                Snew = S0 + self.actions[j]
+                snew = s0 + self.actions[j]
                 # limites
                 for idx, x in enumerate(self.v_i):
-                    if Snew[idx] > x.upper_limit:
-                        Snew[idx] -= x.step
-                    elif Snew[idx] < x.lower_limit:
-                        Snew[idx] += x.step
+                    if snew[idx] > x.upper_limit:
+                        snew[idx] -= x.step
+                    elif snew[idx] < x.lower_limit:
+                        snew[idx] += x.step
                 # update simulation result
-                res1 = self.subscriber.update(Snew)
+                res1 = self.subscriber.update(snew)
                 # reward
                 if res1 < res0:
                     r = 1
@@ -632,7 +636,7 @@ class Qlearning(AutonomousDecisionSystem):
                 # find index of new state
                 for z in range(self.S.shape[0]):
                     for i in range(len(self.v_i)):
-                        if self.S[z][i] == Snew[i]:
+                        if self.S[z][i] == snew[i]:
                             break
                 # update Q table
                 self.Q[k, j] = self.Q[k, j]
@@ -640,11 +644,11 @@ class Qlearning(AutonomousDecisionSystem):
                                self.Q[z, :]) - self.Q[k, j])
                 # update parameters
                 t += 1
-                S0 = Snew
+                s0 = snew
                 res0 = res1
                 r_acum = r_acum + r
                 self.r_episode[n] = r_acum
-        return self.r_episode, S0
+        return self.r_episode, s0
 
     __process = process
 
@@ -695,27 +699,27 @@ class Sarsa(Qlearning):
         """
         self.ini_saq()
         for n in range(self.episodes_max):
-            S0 = self.S[0]
-            A0 = self.choose_action(0)
+            s0 = self.S[0]
+            a0 = self.choose_action(0)
             t = 0
             r_acum = 0
-            res0 = self.subscriber.update(S0)
+            res0 = self.subscriber.update(s0)
             while t < self.steps_max:
                 # find k index of current state
                 for k in range(self.S.shape[0]):
                     for i in range(len(self.v_i)):
-                        if self.S[k][i] == S0[i]:
+                        if self.S[k][i] == s0[i]:
                             break
                 # update state
-                Snew = S0 + self.actions[A0]
+                snew = s0 + self.actions[A0]
                 # limites
                 for idx, x in enumerate(self.v_i):
-                    if Snew[idx] > x.upper_limit:
-                        Snew[idx] -= x.step
-                    elif Snew[idx] < x.lower_limit:
-                        Snew[idx] += x.step
+                    if snew[idx] > x.upper_limit:
+                        snew[idx] -= x.step
+                    elif snew[idx] < x.lower_limit:
+                        snew[idx] += x.step
                 # update simulation result
-                res1 = self.subscriber.update(Snew)
+                res1 = self.subscriber.update(snew)
                 # reward
                 if res1 < res0:
                     r = 1
@@ -724,19 +728,19 @@ class Sarsa(Qlearning):
                 # find index of new state
                 for z in range(self.S.shape[0]):
                     for i in range(len(self.v_i)):
-                        if self.S[z][i] == Snew[i]:
+                        if self.S[z][i] == snew[i]:
                             break
                 # choose new action
-                Anew = self.choose_action(z)
+                anew = self.choose_action(z)
                 # update Q table
-                self.Q[k, A0] = self.Q[k, A0]
+                self.Q[k, a0] = self.Q[k, a0]
                 + self.alfa * (r +
-                               self.gamma * self.Q[z, Anew] - self.Q[k, A0])
+                               self.gamma * self.Q[z, anew] - self.Q[k, a0])
                 # update parameters
                 t += 1
-                S0 = Snew
-                A0 = Anew
+                s0 = snew
+                a0 = anew
                 res0 = res1
                 r_acum = r_acum + r
                 self.r_episode[n] = r_acum
-        return self.r_episode, S0, A0
+        return self.r_episode, s0, a0
