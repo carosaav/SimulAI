@@ -17,7 +17,7 @@
 # IMPORTS
 # ============================================================================
 
-from .interface import Com
+from .interface import CommunicationInterface
 from abc import ABCMeta, abstractmethod
 import numpy as np
 import attr
@@ -229,7 +229,7 @@ class Plant(metaclass=ABCMeta):
     def connection(self):
         """Connect function."""
         file_name = self.get_file_name_plant()
-        self.connect = Com(file_name)
+        self.connect = CommunicationInterface(file_name)
         return self.connect.connection()
 
     @abstractmethod
@@ -358,7 +358,7 @@ class BasePlant(Plant):
             a_idx = np.zeros(x.num_rows)
             for h in range(1, x.num_rows + 1):
                 a_idx[h - 1] = self.connect.getValue(
-                        x.path + str([x.column, h]))
+                    x.path + str([x.column, h]))
             b_idx = np.sum(a_idx)
             r += b_idx / len(self.v_o)
 
@@ -637,7 +637,7 @@ class Qlearning(AutonomousDecisionSystem):
                 # update Q table
                 self.Q[k, j] = self.Q[k, j]
                 + self.alfa * (r + self.gamma * np.max(
-                            self.Q[z, :]) - self.Q[k, j])
+                               self.Q[z, :]) - self.Q[k, j])
                 # update parameters
                 t += 1
                 S0 = Snew

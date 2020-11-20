@@ -1,3 +1,4 @@
+
 # This file is part of the
 #   SimulAI Project (https://github.com/carosaav/SimulAI).
 # Copyright (c) 2020, Perez Colo Ivo, Pirozzo Bernardo Manuel,
@@ -12,9 +13,9 @@
 
 import pytest
 from unittest.mock import patch
-import numpy as np
 from numpy.testing import assert_equal
-from simulai import sim
+import numpy as np
+import simulai
 
 
 # ============================================================================
@@ -31,21 +32,22 @@ def var_input(espera, stock, numviajes):
 
 @pytest.fixture
 def espera():
-    espera = sim.DiscreteVariable("Espera", 60, 300, 10,
-                                  "Models.Modelo.espera")
+    espera = simulai.DiscreteVariable("Espera", 60, 300, 10,
+                                      "Models.Modelo.espera")
     return espera
 
 
 @pytest.fixture
 def stock():
-    stock = sim.DiscreteVariable("Stock", 10, 50, 10, "Models.Modelo.stock")
+    stock = simulai.DiscreteVariable(
+        "Stock", 10, 50, 10, "Models.Modelo.stock")
 
     return stock
 
 
 @pytest.fixture
 def numviajes():
-    numviajes = sim.DiscreteVariable(
+    numviajes = simulai.DiscreteVariable(
         "Numero de viajes", 1, 5, 1, "Models.Modelo.numviajes"
     )
 
@@ -54,7 +56,7 @@ def numviajes():
 
 @pytest.fixture
 def transportes():
-    transportes = sim.OutcomeVariable(
+    transportes = simulai.OutcomeVariable(
         "Distancia Transportes", "Models.Modelo.transportes", 2, 9
     )
     return transportes
@@ -62,14 +64,14 @@ def transportes():
 
 @pytest.fixture
 def buffers():
-    buffers = sim.OutcomeVariable("Llenado buffers",
-                                  "Models.Modelo.buffers", 3, 20)
+    buffers = simulai.OutcomeVariable("Llenado buffers",
+                                      "Models.Modelo.buffers", 3, 20)
     return buffers
 
 
 @pytest.fixture
 def salidas():
-    salidas = sim.OutcomeVariable(
+    salidas = simulai.OutcomeVariable(
         "Espera en las Salidas", "Models.Modelo.salidas", 2, 20
     )
     return salidas
@@ -84,21 +86,21 @@ def var_out(transportes, buffers, salidas):
 
 @pytest.fixture
 def my_method_Q(var_input):
-    method = sim.Qlearning(v_i=var_input, episodes_max=1, steps_max=10)
+    method = simulai.Qlearning(v_i=var_input, episodes_max=1, steps_max=10)
 
     return method
 
 
 @pytest.fixture
 def my_method_S(var_input):
-    method = sim.Sarsa(v_i=var_input, episodes_max=1, steps_max=10)
+    method = simulai.Sarsa(v_i=var_input, episodes_max=1, steps_max=10)
 
     return method
 
 
 @pytest.fixture
 def base(var_input, var_out, my_method_Q):
-    plant = sim.BasePlant(
+    plant = simulai.BasePlant(
         method=my_method_Q,
         v_i=var_input,
         v_o=var_out,
@@ -122,7 +124,8 @@ def base(var_input, var_out, my_method_Q):
     ],
 )
 def test_DiscreteVariable(namef, lowf, upf, stf, pathf):
-    parm = sim.DiscreteVariable("Espera", 60, 300, 10, "Models.Modelo.espera")
+    parm = simulai.DiscreteVariable(
+        "Espera", 60, 300, 10, "Models.Modelo.espera")
 
     assert isinstance(parm.name, str), "Should be a string"
     assert isinstance(parm.lower_limit, int), "Should be an integer"
@@ -131,14 +134,17 @@ def test_DiscreteVariable(namef, lowf, upf, stf, pathf):
     assert isinstance(parm.path, str), "Should be a string"
 
     with pytest.raises(TypeError):
-        sim.DiscreteVariable(namef, lowf, upf, stf, pathf)
+        simulai.DiscreteVariable(namef, lowf, upf, stf, pathf)
 
     with pytest.raises(ValueError):
-        sim.DiscreteVariable("Espera", -60, 300, 10, "Models.Modelo.espera")
+        simulai.DiscreteVariable(
+            "Espera", -60, 300, 10, "Models.Modelo.espera")
     with pytest.raises(ValueError):
-        sim.DiscreteVariable("Espera", 60, -300, 10, "Models.Modelo.espera")
+        simulai.DiscreteVariable(
+            "Espera", 60, -300, 10, "Models.Modelo.espera")
     with pytest.raises(ValueError):
-        sim.DiscreteVariable("Espera", 60, 300, -10, "Models.Modelo.espera")
+        simulai.DiscreteVariable(
+            "Espera", 60, 300, -10, "Models.Modelo.espera")
 
 
 @pytest.mark.parametrize(
@@ -153,7 +159,7 @@ def test_DiscreteVariable(namef, lowf, upf, stf, pathf):
     ],
 )
 def test_OutcomeVariable(namef, pathf, colf, rowf):
-    parm = sim.OutcomeVariable("Time", "path", 5, 1)
+    parm = simulai.OutcomeVariable("Time", "path", 5, 1)
 
     assert isinstance(parm.name, str), "Should be a string"
     assert isinstance(parm.path, str), "Should be a string"
@@ -161,21 +167,21 @@ def test_OutcomeVariable(namef, pathf, colf, rowf):
     assert isinstance(parm.num_rows, int), "Should be a integer"
 
     with pytest.raises(TypeError):
-        sim.OutcomeVariable(namef, pathf, colf, rowf)
+        simulai.OutcomeVariable(namef, pathf, colf, rowf)
 
     with pytest.raises(ValueError):
-        sim.OutcomeVariable("Time", "path", -5, 1)
+        simulai.OutcomeVariable("Time", "path", -5, 1)
     with pytest.raises(ValueError):
-        sim.OutcomeVariable("Time", "path", 5, -1)
+        simulai.OutcomeVariable("Time", "path", 5, -1)
 
 
 def test_Plant():
     with pytest.raises(TypeError):
-        sim.Plant(method=my_method_Q)
+        simulai.Plant(method=my_method_Q)
 
 
 def test_BasePlant(var_input, var_out, my_method_Q):
-    b = sim.BasePlant(
+    b = simulai.BasePlant(
         method=my_method_Q,
         v_i=var_input,
         v_o=var_out,
@@ -189,13 +195,13 @@ def test_BasePlant(var_input, var_out, my_method_Q):
     assert isinstance(b.modelname, str), "Should be a string"
 
     with pytest.raises(TypeError):
-        sim.BasePlant(my_method_Q, 1, var_out, "MH.spp", "frame")
+        simulai.BasePlant(my_method_Q, 1, var_out, "MH.spp", "frame")
     with pytest.raises(TypeError):
-        sim.BasePlant(my_method_Q, var_input, 2.0, "MH.spp", "frame")
+        simulai.BasePlant(my_method_Q, var_input, 2.0, "MH.spp", "frame")
     with pytest.raises(TypeError):
-        sim.BasePlant(my_method_Q, var_input, var_out, 10, "frame")
+        simulai.BasePlant(my_method_Q, var_input, var_out, 10, "frame")
     with pytest.raises(TypeError):
-        sim.BasePlant(my_method_Q, var_input, var_out, "MH.spp", 10)
+        simulai.BasePlant(my_method_Q, var_input, var_out, "MH.spp", 10)
 
 
 def test_get_file_name_plant(base):
@@ -205,16 +211,17 @@ def test_get_file_name_plant(base):
     assert isinstance(filename, str), "Should be a string"
 
 
-@patch.object(sim.BasePlant, "update", return_value=np.random.uniform(0, 5))
+@patch.object(simulai.BasePlant, "update",
+              return_value=np.random.uniform(0, 5))
 def test_update(mock_method):
-    value = sim.BasePlant.update([60, 10, 1])
+    value = simulai.BasePlant.update([60, 10, 1])
     mock_method.assert_called_with([60, 10, 1])
 
     assert isinstance(value, float), "Should be a float"
 
 
 def test_Qlearning(var_input):
-    ql = sim.Qlearning(v_i=var_input, episodes_max=10, steps_max=10)
+    ql = simulai.Qlearning(v_i=var_input, episodes_max=10, steps_max=10)
 
     assert isinstance(ql.s, list), "Should be a list"
     assert isinstance(ql.a, list), "Should be a list"
@@ -234,44 +241,44 @@ def test_Qlearning(var_input):
     assert_equal(ql.steps_max, 10)
 
     with pytest.raises(TypeError):
-        sim.Qlearning("variable", 10, 10)
+        simulai.Qlearning("variable", 10, 10)
     with pytest.raises(TypeError):
-        sim.Qlearning(var_input, 3.0, 10)
+        simulai.Qlearning(var_input, 3.0, 10)
     with pytest.raises(TypeError):
-        sim.Qlearning(var_input, 10, "nine")
+        simulai.Qlearning(var_input, 10, "nine")
     with pytest.raises(TypeError):
-        sim.Qlearning(var_input, 10, 10, alfa=2)
+        simulai.Qlearning(var_input, 10, 10, alfa=2)
     with pytest.raises(TypeError):
-        sim.Qlearning(var_input, 10, 10, gamma=2)
+        simulai.Qlearning(var_input, 10, 10, gamma=2)
     with pytest.raises(TypeError):
-        sim.Qlearning(var_input, 10, 10, epsilon=2)
+        simulai.Qlearning(var_input, 10, 10, epsilon=2)
 
     with pytest.raises(Exception):
-        sim.Qlearning(
+        simulai.Qlearning(
             10, 10, v_i=["espera", "stock", "numviajes",
                          "tiempo", "velocidad"]
         )
 
     with pytest.raises(ValueError):
-        sim.Qlearning(var_input, -1, 10)
+        simulai.Qlearning(var_input, -1, 10)
     with pytest.raises(ValueError):
-        sim.Qlearning(var_input, 10, -1)
+        simulai.Qlearning(var_input, 10, -1)
     with pytest.raises(ValueError):
-        sim.Qlearning(var_input, 10, 10, alfa=-1.0)
+        simulai.Qlearning(var_input, 10, 10, alfa=-1.0)
     with pytest.raises(ValueError):
-        sim.Qlearning(var_input, 10, 10, alfa=3.0)
+        simulai.Qlearning(var_input, 10, 10, alfa=3.0)
     with pytest.raises(ValueError):
-        sim.Qlearning(var_input, 10, 10, gamma=-1.0)
+        simulai.Qlearning(var_input, 10, 10, gamma=-1.0)
     with pytest.raises(ValueError):
-        sim.Qlearning(var_input, 10, 10, gamma=3.0)
+        simulai.Qlearning(var_input, 10, 10, gamma=3.0)
     with pytest.raises(ValueError):
-        sim.Qlearning(var_input, 10, 10, epsilon=-1.0)
+        simulai.Qlearning(var_input, 10, 10, epsilon=-1.0)
     with pytest.raises(ValueError):
-        sim.Qlearning(var_input, 10, 10, epsilon=3.0)
+        simulai.Qlearning(var_input, 10, 10, epsilon=3.0)
 
 
 def test_arrays(var_input):
-    q = sim.Qlearning(v_i=var_input, episodes_max=1, steps_max=10)
+    q = simulai.Qlearning(v_i=var_input, episodes_max=1, steps_max=10)
     q.arrays()
     assert_equal(len(q.s), 3)
     assert_equal(len(q.a), 3)
@@ -281,18 +288,18 @@ def test_arrays(var_input):
     "var_input, expQ, expS, expA",
     [
         (
-            [sim.DiscreteVariable("Espera", 60, 300, 10,
-                                  "Models.Modelo.espera")],
+            [simulai.DiscreteVariable("Espera", 60, 300, 10,
+                                      "Models.Modelo.espera")],
             (25, 3),
             (25,),
             (3,),
         ),
         (
             [
-                sim.DiscreteVariable("Espera", 60, 300, 10,
-                                     "Models.Modelo.espera"),
-                sim.DiscreteVariable("Stock", 10, 50, 10,
-                                     "Models.Modelo.stock"),
+                simulai.DiscreteVariable("Espera", 60, 300, 10,
+                                         "Models.Modelo.espera"),
+                simulai.DiscreteVariable("Stock", 10, 50, 10,
+                                         "Models.Modelo.stock"),
             ],
             (125, 9),
             (125, 2),
@@ -300,11 +307,11 @@ def test_arrays(var_input):
         ),
         (
             [
-                sim.DiscreteVariable("Espera", 60, 300, 10,
-                                     "Models.Modelo.espera"),
-                sim.DiscreteVariable("Stock", 10, 50, 10,
-                                     "Models.Modelo.stock"),
-                sim.DiscreteVariable(
+                simulai.DiscreteVariable("Espera", 60, 300, 10,
+                                         "Models.Modelo.espera"),
+                simulai.DiscreteVariable("Stock", 10, 50, 10,
+                                         "Models.Modelo.stock"),
+                simulai.DiscreteVariable(
                     "Numero de viajes", 1, 5, 1, "Models.Modelo.numviajes"
                 ),
             ],
@@ -314,15 +321,15 @@ def test_arrays(var_input):
         ),
         (
             [
-                sim.DiscreteVariable("Espera", 60, 300, 60,
-                                     "Models.Modelo.espera"),
-                sim.DiscreteVariable("Stock", 10, 50, 10,
-                                     "Models.Modelo.stock"),
-                sim.DiscreteVariable(
+                simulai.DiscreteVariable("Espera", 60, 300, 60,
+                                         "Models.Modelo.espera"),
+                simulai.DiscreteVariable("Stock", 10, 50, 10,
+                                         "Models.Modelo.stock"),
+                simulai.DiscreteVariable(
                     "Numero de viajes", 1, 5, 1, "Models.Modelo.numviajes"
                 ),
-                sim.DiscreteVariable("Espera", 60, 300, 60,
-                                     "Models.Modelo.espera"),
+                simulai.DiscreteVariable("Espera", 60, 300, 60,
+                                         "Models.Modelo.espera"),
             ],
             (625, 81),
             (625, 4),
@@ -331,7 +338,7 @@ def test_arrays(var_input):
     ],
 )
 def test_ini_saq(var_input, expQ, expS, expA):
-    baseM = sim.Qlearning(v_i=var_input, episodes_max=1, steps_max=10)
+    baseM = simulai.Qlearning(v_i=var_input, episodes_max=1, steps_max=10)
     baseM.ini_saq()
 
     assert isinstance(baseM.Q, np.ndarray)
@@ -345,29 +352,29 @@ def test_ini_saq(var_input, expQ, expS, expA):
     assert bool((baseM.actions == 0).all()) is False
 
     with pytest.raises(Exception):
-        baseN = sim.Qlearning(
+        baseN = simulai.Qlearning(
             v_i=[
-                sim.DiscreteVariable("Espera", 60, 300, 10,
-                                     "Models.Modelo.espera"),
-                sim.DiscreteVariable("Stock", 10, 50, 10,
-                                     "Models.Modelo.stock"),
-                sim.DiscreteVariable(
+                simulai.DiscreteVariable("Espera", 60, 300, 10,
+                                         "Models.Modelo.espera"),
+                simulai.DiscreteVariable("Stock", 10, 50, 10,
+                                         "Models.Modelo.stock"),
+                simulai.DiscreteVariable(
                     "Numero de viajes", 1, 5, 1, "Models.Modelo.numviajes"
                 ),
-                sim.DiscreteVariable("Espera", 60, 300, 10,
-                                     "Models.Modelo.espera"),
-                sim.DiscreteVariable("Stock", 10, 50, 10,
-                                     "Models.Modelo.stock"),
+                simulai.DiscreteVariable("Espera", 60, 300, 10,
+                                         "Models.Modelo.espera"),
+                simulai.DiscreteVariable("Stock", 10, 50, 10,
+                                         "Models.Modelo.stock"),
             ],
             episodes_max=1,
             steps_max=10,
         )
         baseN.ini_saq()
     with pytest.raises(Exception):
-        baseL = sim.Qlearning(
+        baseL = simulai.Qlearning(
             v_i=[
-                sim.DiscreteVariable("Espera", 10, 10000, 1,
-                                     "Models.Modelo.espera")],
+                simulai.DiscreteVariable("Espera", 10, 10000, 1,
+                                         "Models.Modelo.espera")],
             episodes_max=1,
             steps_max=10,
         )
@@ -376,17 +383,18 @@ def test_ini_saq(var_input, expQ, expS, expA):
 
 @pytest.mark.parametrize("seed_input, expected", [(24, 0), (20, 0), (12, 0)])
 def test_choose_action(var_input, seed_input, expected):
-    method = sim.Qlearning(v_i=var_input, episodes_max=1, steps_max=10,
-                           seed=seed_input)
+    method = simulai.Qlearning(v_i=var_input, episodes_max=1, steps_max=10,
+                               seed=seed_input)
     method.ini_saq()
     i = method.choose_action(np.random.randint(624))
 
     assert_equal(i, expected)
 
 
-@patch.object(sim.Qlearning, "process", return_value=np.random.uniform(0, 10))
+@patch.object(simulai.Qlearning, "process",
+              return_value=np.random.uniform(0, 10))
 def test_process(mock_method2):
-    value = sim.Qlearning.process()
+    value = simulai.Qlearning.process()
     mock_method2.assert_called_with()
 
     assert isinstance(value, float), "Should be a float"
@@ -394,21 +402,21 @@ def test_process(mock_method2):
 
 @pytest.mark.xfail
 def test_process2(var_input):
-    pcss = sim.Qlearning(v_i=var_input, episodes_max=1, steps_max=10)
+    pcss = simulai.Qlearning(v_i=var_input, episodes_max=1, steps_max=10)
     r = pcss.process()
 
     assert isinstance(r, float)
 
 
 def test_Sarsa(var_input):
-    ss = sim.Sarsa(v_i=var_input, episodes_max=5, steps_max=20)
+    ss = simulai.Sarsa(v_i=var_input, episodes_max=5, steps_max=20)
 
-    assert isinstance(ss, sim.Qlearning)
+    assert isinstance(ss, simulai.Qlearning)
 
 
-@patch.object(sim.Sarsa, "process", return_value=np.random.uniform(0, 10))
+@patch.object(simulai.Sarsa, "process", return_value=np.random.uniform(0, 10))
 def test_process_S(mock_method3):
-    value = sim.Sarsa.process()
+    value = simulai.Sarsa.process()
     mock_method3.assert_called_with()
 
     assert isinstance(value, float), "Should be a float"

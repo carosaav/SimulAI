@@ -24,9 +24,6 @@
 import os
 import pathlib
 
-# from ez_setup import use_setuptools
-# use_setuptools()
-
 from setuptools import setup
 
 
@@ -34,7 +31,7 @@ from setuptools import setup
 # CONSTANTS
 # =============================================================================
 
-REQUIREMENTS = ["numpy", "attrs", "pywin32"]
+REQUIREMENTS = ["numpy", "attrs"]
 
 PATH = pathlib.Path(os.path.abspath(os.path.dirname(__file__)))
 

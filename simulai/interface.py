@@ -17,17 +17,31 @@
 # IMPORTS
 # ============================================================================
 
-import win32com.client as win32
+try:
+    import win32com.client as win32
+except ModuleNotFoundError:
+    print("Install pywin32")
 import os
 from functools import wraps
+import pathlib
+import attr
 
 
 # ============================================================================
 # COMMUNICATION
 # ============================================================================
 
+PATH = pathlib.Path(os.path.abspath(os.path.dirname(__file__)))
+
+
 class ConnectionError(Exception):
     """Connection failed exception."""
+
+    pass
+
+
+class ModelNotFoundError(FileNotFoundError):
+    """Custom error for Not found Model."""
 
     pass
 
@@ -52,7 +66,8 @@ def check_connection(method):
     return wrapper
 
 
-class Com(object):
+@attr.s
+class CommunicationInterface(object):
     """Definition of the function of communication.
 
     Parameters
@@ -68,10 +83,9 @@ class Com(object):
         Attribute for the return of the connection object.
     """
 
-    def __init__(self, model_name):
-        self.model_name = model_name
-        self.is_connected = False
-        self.plant_simulation = ""
+    model_name = attr.ib()
+    is_connected = attr.ib(default=False)
+    plant_simulation = attr.ib(default="")
 
     def get_path_file_model(self):
         """Return the complete file path.
@@ -81,7 +95,10 @@ class Com(object):
         file path:str
             Path of Tecnomatix Plant Simulation file.
         """
-        path = os.getcwd() + "\\" + self.model_name
+        path = str(PATH / self.model_name)
+        if not os.path.exists(path):
+            raise ModelNotFoundError(
+                f"Model {self.model_name} does not exists")
         return path
 
     def connection(self):
@@ -94,7 +111,7 @@ class Com(object):
         """
         path_file = self.get_path_file_model()
         self.plant_simulation = win32.Dispatch(
-                "Tecnomatix.PlantSimulation.RemoteControl.15.0")
+            "Tecnomatix.PlantSimulation.RemoteControl.15.0")
         self.plant_simulation.loadModel(path_file)
         print("The connection was successful")
         self.is_connected = True
