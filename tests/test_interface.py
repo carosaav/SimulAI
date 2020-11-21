@@ -13,6 +13,7 @@
 
 import pytest
 from unittest.mock import patch, MagicMock
+from numpy.testing import assert_equal
 
 
 # ============================================================================
@@ -55,8 +56,14 @@ class Test_Com:
     def test_connection_valid_name(self, dispatch, com):
         # Test as if a valid Model Name was given
         # Dispatch will not raise any exceptions
-        com.connection()
-        dispatch.assert_called_once()
+        v_return = com.connection()
+        dispatch.assert_called_once_with(
+            "Tecnomatix.PlantSimulation.RemoteControl.15.0")
+
+        com.plant_simulation.loadModel.assert_called_once()
+
+        assert isinstance(v_return, bool)
+        assert_equal(v_return, True)
 
     @patch('win32com.client.Dispatch', side_effect=Exception('EXCEPTION'))
     def test_connection_invalid_name(self, dispatch, com):
