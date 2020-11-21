@@ -13,7 +13,6 @@
 
 import pytest
 from unittest.mock import patch, MagicMock
-from numpy.testing import assert_equal
 
 
 # ============================================================================
@@ -46,7 +45,7 @@ class Test_Com:
     def com(self):
         # Here we import interface with win32 patched
         import simulai
-        return simulai.CommunicationInterface('ModelName.spp')
+        return simulai.CommunicationInterface('MaterialHandling.spp')
 
     # =================================================
     # Now the actual testing
@@ -63,7 +62,7 @@ class Test_Com:
     def test_connection_invalid_name(self, dispatch, com):
         # Test as if an invalid Model Name was given
         # Dispatch will raise an Exception
-        with pytest.raises(Exception) as err:
+        with pytest.raises(Exception):
             com.connection()
 
         # The initial plant_simulation value was an empty string
@@ -123,7 +122,7 @@ class Test_Com:
         dispatch.assert_called_once()
 
         com.closemodel()
-        com.plant_simulation.CloseMmodel.assert_called_with()
+        com.plant_simulation.CloseModel.assert_called_with()
 
     @patch('win32com.client.Dispatch')
     def test_execute_simtalk(self, dispatch, com):
@@ -200,7 +199,7 @@ class Test_Com:
     @patch('win32com.client.Dispatch')
     def test_set_no_messagebox(self, dispatch, com):
         com.connection()
-        com.plant_simulation.assert_called_once()
+        dispatch.assert_called_once()
 
         com.set_no_messagebox(24)
         com.plant_simulation.SetNoMessageBox.assert_called_with(24)
