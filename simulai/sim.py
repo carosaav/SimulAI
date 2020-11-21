@@ -20,9 +20,9 @@ from abc import ABCMeta, abstractmethod
 
 import attr
 
-from .interface import CommunicationInterface
-
 import numpy as np
+
+from .interface import CommunicationInterface
 
 
 # ============================================================================
@@ -351,27 +351,27 @@ class BasePlant(Plant):
             Reward value.
         """
         for idx, x in enumerate(self.v_i):
-            self.connect.setValue(x.path, data[idx])
+            self.connect.setvalue(x.path, data[idx])
 
-        self.connect.startSimulation(".Models.{}".format(self.modelname))
+        self.connect.startsimulation(".Models.{}".format(self.modelname))
 
         r = 0
         for idx, x in enumerate(self.v_o):
             a_idx = np.zeros(x.num_rows)
             for h in range(1, x.num_rows + 1):
-                a_idx[h - 1] = self.connect.getValue(
+                a_idx[h - 1] = self.connect.getvalue(
                     x.path + str([x.column, h])
                 )
             b_idx = np.sum(a_idx)
             r += b_idx / len(self.v_o)
 
-        self.connect.resetSimulation(".Models.{}".format(self.modelname))
+        self.connect.resetsimulation(".Models.{}".format(self.modelname))
         return r
 
     def process_simulation(self):
         """Process simulation."""
         if self.connection():
-            self.connect.setVisible(True)
+            self.connect.setvisible(True)
             self.method.process()
 
 

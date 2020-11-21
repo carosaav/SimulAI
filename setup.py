@@ -23,6 +23,7 @@
 
 import os
 import pathlib
+import sys
 
 from setuptools import setup
 
@@ -32,6 +33,10 @@ from setuptools import setup
 # =============================================================================
 
 REQUIREMENTS = ["numpy", "attrs"]
+
+# Install pywin32 if OS is Windows.
+if sys.platform.startswith("win"):
+    REQUIREMENTS.append("pywin32")
 
 PATH = pathlib.Path(os.path.abspath(os.path.dirname(__file__)))
 

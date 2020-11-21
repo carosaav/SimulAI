@@ -16,8 +16,6 @@ __version__ = "0.0.1"
 
 
 from .interface import CommunicationInterface
-
-from .sim import DiscreteVariable, OutcomeVariable
-
 from .sim import AutonomousDecisionSystem, Qlearning, Sarsa
 from .sim import BasePlant, Plant
+from .sim import DiscreteVariable, OutcomeVariable

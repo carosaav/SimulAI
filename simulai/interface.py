@@ -16,18 +16,13 @@
 # IMPORTS
 # ============================================================================
 
-try:
-    import win32com.client as win32
-except ModuleNotFoundError:
-    print("Install pywin32")
-    
 import os
-
 import pathlib
-
 from functools import wraps
 
 import attr
+
+import win32com.client as win32
 
 
 # ============================================================================

@@ -15,6 +15,22 @@ import sys
 sys.path.insert(0, os.path.abspath('..'))
 
 
+# -- Mock win32 --------------------------------------------------------------
+
+from unittest.mock import patch, MagicMock
+
+win32com = MagicMock()
+win32com.client = MagicMock()
+win32com.client.Dispatch = MagicMock()
+mock_modules = {
+    "win32com": win32com,
+    "win32com.client": win32com.client,
+    "win32com.client.Dispatch": win32com.client.Dispatch
+    }
+
+module_patcher = patch.dict("sys.modules", mock_modules)
+module_patcher.start()
+
 # -- Project information -----------------------------------------------------
 
 project = 'SimulAI'
