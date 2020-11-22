@@ -34,8 +34,8 @@ module_patcher.start()
 # -- Project information -----------------------------------------------------
 
 project = 'SimulAI'
-copyright = '2020, Perez Colo Ivo, Pirozzo Bernardo, Saavedra Sueldo Carolina'
-author = 'Perez Colo Ivo, Pirozzo Bernardo, Saavedra Sueldo Carolina'
+copyright = '2020, Perez Colo Ivo, Pirozzo Bernardo Manuel, Saavedra Sueldo Carolina'
+author = 'Perez Colo Ivo, Pirozzo Bernardo Manuel, Saavedra Sueldo Carolina'
 
 # The full version, including alpha/beta/rc tags
 release = "0.0.1"
@@ -66,6 +66,7 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 # a list of builtin themes.
 #
 html_theme = 'sphinx_rtd_theme'
+
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,

@@ -3,10 +3,12 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-SimulAI documentation
-=====================
+Welcome to SimulAI Documentation
+================================
 
-*SimulAi is a library that facilitates the use of Artificial Intelligence (AI) techniques for the optimization of variables derived from the Simulation of Flexible Manufacturing Systems (FMS). The objective is to improve the decision-making process in organizations, making it more efficient and safe.*
+*SimulAi is a library that, through the use of Artificial Intelligence (AI) techniques, allows optimization of variables derived from the Simulation of Flexible Manufacturing Systems (FMS).*
+
+*Given that decision-making in organizations is a complex task, due to the unpredictable dynamic nature and the large number of variables that intervene in the normal functioning of an organization, Simulai is presented with the objective, through the use of digital twins , improve the decision-making process in organizations, making it more efficient and secure.*
 
 Development
 -----------
@@ -21,7 +23,7 @@ Authors
 -------
 
 * **Perez Colo Ivo** https://github.com/IvoPerezColo
-* **Pirozzo Bernardo** - https://github.com/BerMPirozzo
+* **Pirozzo Bernardo Manuel** - https://github.com/BerMPirozzo
 * **Saavedra Sueldo Carolina** https://github.com/carosaav
 
 
