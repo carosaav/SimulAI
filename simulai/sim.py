@@ -22,7 +22,7 @@ import attr
 
 import numpy as np
 
-from .interface import CommunicationInterface
+from simulai import CommunicationInterface
 
 
 # ============================================================================
