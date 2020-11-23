@@ -82,6 +82,11 @@ class Test_Com:
         com.setvisible(True)
         com.plant_simulation.setVisible.assert_called_with(True)
 
+    @patch('win32com.client.Dispatch', side_effect=Exception('EXCEPTION'))
+    def test_setvisible_fail(self, dispatch, com):
+        with pytest.raises(Exception):
+            com.setvisible(True)
+
     @patch('win32com.client.Dispatch')
     def test_setvalue(self, dispatch, com):
         com.connection()
