@@ -267,7 +267,15 @@ class Test_Com:
 
         with pytest.raises(ValueError):
             simulai.DiscreteVariable(
-                "Espera", -60, -300, -10, "Models.Modelo.espera"
+                "Espera", -60, 300, 10, "Models.Modelo.espera"
+            )
+        with pytest.raises(ValueError):
+            simulai.DiscreteVariable(
+                "Espera", 60, -300, 10, "Models.Modelo.espera"
+            )
+        with pytest.raises(ValueError):
+            simulai.DiscreteVariable(
+                "Espera", 60, 300, -10, "Models.Modelo.espera"
             )
 
     @patch("win32com.client.Dispatch")
@@ -291,7 +299,9 @@ class Test_Com:
             simulai.OutcomeVariable(1, "Model", 2, 9)
 
         with pytest.raises(ValueError):
-            simulai.OutcomeVariable("Distance", "Model", -2, -9)
+            simulai.OutcomeVariable("Distance", "Model", -2, 9)
+        with pytest.raises(ValueError):
+            simulai.OutcomeVariable("Distance", "Model", 2, -9)
 
     @patch("win32com.client.Dispatch")
     def test_baseplant(
@@ -349,6 +359,11 @@ class Test_Com:
 
         assert filename == "MaterialHandling.spp"
         assert isinstance(filename, str), "Should be a string"
+
+    @patch("win32com.client.Dispatch")
+    def test_process_simulation(self, dispatch, com, base):
+        base.process_simulation()
+        dispatch.assert_called_once()
 
     @patch("win32com.client.Dispatch")
     def test_ini_saq1(self, dispatch, com, espera, stock, numviajes):
