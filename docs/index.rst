@@ -6,6 +6,12 @@
 Welcome to SimulAI Documentation
 ================================
 
+.. image:: _static/logo.png
+         :align: center
+         :scale: 50 %
+
+
+
 *SimulAi is a library that, through the use of Artificial Intelligence (AI) techniques, allows optimization of variables derived from the Simulation of Flexible Manufacturing Systems (FMS).*
 
 *Given that decision-making in organizations is a complex task, due to the unpredictable dynamic nature and the large number of variables that intervene in the normal functioning of an organization, Simulai is presented with the objective, through the use of digital twins , improve the decision-making process in organizations, making it more efficient and secure.*
