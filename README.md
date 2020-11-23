@@ -3,6 +3,8 @@
 
 # SimulAI 
 
+![logo](https://github.com/carosaav/SimulAI/blob/master/docs/_static/logo.png)
+
 _It is a library that facilitates the use of Artificial Intelligence (AI) techniques for the optimization of variables derived from the Simulation of Flexible Manufacturing Systems (FMS). The objective is to improve the decision-making process in organizations, making it more efficient and safe._
 
 ## Development 🔨
