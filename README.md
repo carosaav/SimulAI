@@ -1,18 +1,19 @@
 [![Documentation Status](https://readthedocs.org/projects/simulai/badge/?version=latest)](https://simulai.readthedocs.io/en/latest/?badge=latest)
 [![Build Status](https://travis-ci.com/carosaav/SimulAI.svg?branch=master)](https://travis-ci.com/carosaav/SimulAI)
 
-# SimulAI
+# SimulAI 
 
 _It is a library that facilitates the use of Artificial Intelligence (AI) techniques for the optimization of variables derived from the Simulation of Flexible Manufacturing Systems (FMS). The objective is to improve the decision-making process in organizations, making it more efficient and safe._
 
-## Development 
+## Development 🔨
 
 _Initially the work will focus on the integration of Tecnomatix Plant Simulation software with diverse methods of optimization, which will be submitted to a process of improvement throughout the Doctorate stage in development._
 
 _In the future, it is expected to achieve a library of greater accessibility, allowing the application in various simulation software, as required by the user._
 
 OS Windows, Tecnomatix Plant Simulation version 15.0 and pywin32 library are currently required for its operation.
-## Authors 
+
+## Authors 👥
 
 * **Perez Colo Ivo** - [@ivoperezcolo](https://github.com/IvoPerezColo)
 * **Pirozzo Bernardo** - [@bermpirozzo](https://github.com/BerMPirozzo)
