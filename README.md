@@ -1,6 +1,10 @@
 [![Documentation Status](https://readthedocs.org/projects/simulai/badge/?version=latest)](https://simulai.readthedocs.io/en/latest/?badge=latest)
 [![Build Status](https://travis-ci.com/carosaav/SimulAI.svg?branch=master)](https://travis-ci.com/carosaav/SimulAI)
-[![Coverage Status](https://coveralls.io/repos/github/carosaav/SimulAI/badge.svg?branch=master)](https://coveralls.io/github/carosaav/SimulAI?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/carosaav/SimulAI/badge.svg?branch=master)](
+https://coveralls.io/github/carosaav/SimulAI?branch=master)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![Python 3.7+](https://img.shields.io/badge/python-3.7+-blue.svg)](https://www.python.org/downloads/release/python-370/)
+[![https://github.com/leliel12/diseno_sci_sfw](https://img.shields.io/badge/DiSoftCompCi-FAMAF-ffda00)](https://github.com/leliel12/diseno_sci_sfw)
 
 ![logo](https://github.com/carosaav/SimulAI/blob/master/docs/_static/logo_long.png)
 
