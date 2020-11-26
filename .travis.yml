@@ -3,6 +3,7 @@ sudo: true
 
 install:
     - pip install tox
+    - pip install coveralls
 
 script:
     - tox -r
