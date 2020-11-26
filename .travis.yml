@@ -38,3 +38,6 @@ matrix:
           env: TOXENV=py38
           dist: xenial 
           sudo: true
+          
+after_success:
+  - coveralls
