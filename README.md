@@ -1,9 +1,13 @@
 [![Documentation Status](https://readthedocs.org/projects/simulai/badge/?version=latest)](https://simulai.readthedocs.io/en/latest/?badge=latest)
 [![Build Status](https://travis-ci.com/carosaav/SimulAI.svg?branch=master)](https://travis-ci.com/carosaav/SimulAI)
+[![Coverage Status](https://coveralls.io/repos/github/carosaav/SimulAI/badge.svg?branch=master)](
+https://coveralls.io/github/carosaav/SimulAI?branch=master)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![Python 3.7+](https://img.shields.io/badge/Python-3.7+-blue.svg)](https://www.python.org/downloads/release/python-370/)
+[![Windows](https://img.shields.io/badge/OS-Windows-blue.svg)](https://www.microsoft.com/windows)
+[![https://github.com/leliel12/diseno_sci_sfw](https://img.shields.io/badge/DiSoftCompCi-FAMAF-ffda00)](https://github.com/leliel12/diseno_sci_sfw)
 
-# SimulAI 
-
-![logo](https://github.com/carosaav/SimulAI/blob/master/docs/_static/logo.png)
+![logo](https://github.com/carosaav/SimulAI/blob/master/docs/_static/logo_long.png)
 
 _It is a library that facilitates the use of Artificial Intelligence (AI) techniques for the optimization of variables derived from the Simulation of Flexible Manufacturing Systems (FMS). The objective is to improve the decision-making process in organizations, making it more efficient and safe._
 

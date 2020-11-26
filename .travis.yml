@@ -3,6 +3,7 @@ sudo: true
 
 install:
     - pip install tox
+    - pip install coveralls
 
 script:
     - tox -r
@@ -38,3 +39,6 @@ matrix:
           env: TOXENV=py38
           dist: xenial 
           sudo: true
+          
+after_success:
+  - coveralls
