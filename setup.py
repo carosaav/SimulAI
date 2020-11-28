@@ -70,11 +70,7 @@ def do_setup():
             "Pirozzo Manuel Bernardo",
             "Saavedra Sueldo Carolina",
         ],
-        author_email=[
-            "ivoperezcolo@gmail.com",
-            "ber_pirozzo@hotmail.com.ar",
-            "carosaavedrasueldo@gmail.com",
-        ],
+        author_email="ivoperezcolo@gmail.com",
         url="https://github.com/carosaav/SimulAI",
         license="MIT",
         keywords=[
@@ -89,7 +85,7 @@ def do_setup():
             "Intended Audience :: Education",
             "Intended Audience :: Science/Research",
             "License :: OSI Approved :: MIT License",
-            "Operating System :: OS Windows",
+            "Operating System :: Microsoft :: Windows",
             "Programming Language :: Python",
             "Programming Language :: Python :: 3.8",
             "Topic :: Scientific/Engineering",

@@ -1,3 +1,4 @@
+[![PyPI version](https://badge.fury.io/py/simulai.svg)](https://badge.fury.io/py/simulai)
 [![Documentation Status](https://readthedocs.org/projects/simulai/badge/?version=latest)](https://simulai.readthedocs.io/en/latest/?badge=latest)
 [![Build Status](https://travis-ci.com/carosaav/SimulAI.svg?branch=master)](https://travis-ci.com/carosaav/SimulAI)
 [![Coverage Status](https://coveralls.io/repos/github/carosaav/SimulAI/badge.svg?branch=master)](
