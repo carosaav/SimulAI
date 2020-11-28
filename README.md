@@ -8,7 +8,7 @@ https://coveralls.io/github/carosaav/SimulAI?branch=master)
 [![Windows](https://img.shields.io/badge/OS-Windows-blue.svg)](https://www.microsoft.com/windows)
 [![https://github.com/leliel12/diseno_sci_sfw](https://img.shields.io/badge/DiSoftCompCi-FAMAF-ffda00)](https://github.com/leliel12/diseno_sci_sfw)
 
-![logo](https://github.com/carosaav/SimulAI/blob/master/docs/_static/logo_long.png)
+![logo](https://raw.githubusercontent.com/carosaav/SimulAI/master/docs/_static/logo_long.png)
 
 _It is a library that facilitates the use of Artificial Intelligence (AI) techniques for the optimization of variables derived from the Simulation of Flexible Manufacturing Systems (FMS). The objective is to improve the decision-making process in organizations, making it more efficient and safe._
 
