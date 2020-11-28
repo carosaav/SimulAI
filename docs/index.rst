@@ -10,7 +10,8 @@ Welcome to SimulAI Documentation
          :align: center
          :scale: 60 %
 
-
+.. image:: https://badge.fury.io/py/simulai.svg
+    :target: https://badge.fury.io/py/simulai
 .. image:: https://readthedocs.org/projects/simulai/badge/?version=latest
     :target: https://simulai.readthedocs.io/en/latest/?badge=latest
     :alt: Documentation Status
