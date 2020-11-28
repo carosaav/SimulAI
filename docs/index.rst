@@ -10,6 +10,24 @@ Welcome to SimulAI Documentation
          :align: center
          :scale: 60 %
 
+
+.. image:: https://readthedocs.org/projects/simulai/badge/?version=latest
+    :target: https://simulai.readthedocs.io/en/latest/?badge=latest
+    :alt: Documentation Status
+.. image:: https://travis-ci.com/carosaav/SimulAI.svg?branch=master
+    :target: https://travis-ci.com/carosaav/SimulAI
+.. image:: https://coveralls.io/repos/github/carosaav/SimulAI/badge.svg?branch=master
+    :target: https://coveralls.io/github/carosaav/SimulAI?branch=master
+.. image:: https://img.shields.io/badge/License-MIT-blue.svg
+    :target: https://opensource.org/licenses/MIT
+.. image:: https://img.shields.io/badge/Python-3.7+-blue.svg
+    :target: https://www.python.org/downloads/release/python-370/
+.. image:: https://img.shields.io/badge/OS-Windows-blue.svg
+    :target: https://www.microsoft.com/windows
+.. image:: https://img.shields.io/badge/DiSoftCompCi-FAMAF-ffda00
+   :target: https://github.com/leliel12/diseno_sci_sfw
+   :alt: Curso doctoral FAMAF: Diseño de software para cómputo científico
+
 *SimulAi is a library that, through the use of Artificial Intelligence (AI) techniques, allows optimization of variables derived from the Simulation of Flexible Manufacturing Systems (FMS).*
 
 *Given that decision-making in organizations is a complex task, due to the unpredictable dynamic nature and the large number of variables that intervene in the normal functioning of an organization, Simulai is presented with the objective, through the use of digital twins , improve the decision-making process in organizations, making it more efficient and secure.*
