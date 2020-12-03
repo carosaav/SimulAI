@@ -10,3 +10,6 @@ recursive-include example *.py
 recursive-include example *.spp
 recursive-include simulai *.spp
 recursive-include tests *.py
+exclude tox.ini
+exclude *.toml
+
