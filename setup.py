@@ -50,7 +50,7 @@ with open(PATH / "simulai" / "__init__.py", encoding="utf-8") as fp:
             break
 
 
-DESCRIPTION = "SimulAI - Simulation + Artificial Intelligence"
+DESCRIPTION = "Automatic Learning in Simulated Manufacturing Processes"
 
 
 # =============================================================================
