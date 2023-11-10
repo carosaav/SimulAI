@@ -359,7 +359,19 @@ class MethodB(MethodA):
                 r4 = random.random()
                 if r4 > prob:
                     Pos[i] = random.sample(r, len(r))
-                    # print("Random solution", Pos[i])
+                    print("Random solution", Pos[i])
+                    # Evaluate the fitness
+                    self.route = Pos[i]
+                    c, e = self.form_state()
+                    print("Test route", c, e)
+                    self.subscriber.update(c, e)
+                    res = self.subscriber.get_result()
+                    print("Result", res)
+                    fitness = res
+                    # Update agent best solution
+                    if fitness < X_fitness[i]:
+                        X_fitness[i] = fitness
+                        X_pos[i] = Pos[i].copy()
                 else:
                     # State computation and Action execution
                     r1_1 = m / Max_iter
@@ -408,11 +420,6 @@ class MethodB(MethodA):
                     else:
                         reward = -1
                     # print("Reward", reward)
-                    # Update Dest_Score (Best solution)
-                    if fitness < D_score:
-                        D_score = fitness
-                        D_pos = Pos[i].copy()
-                        print("Best solution", D_score)
 
                     # Update state
                     F2 = self.n_features(Pos[i], D_pos)
@@ -421,6 +428,12 @@ class MethodB(MethodA):
 
                     # Update Q-Table
                     Q[i][s, a] = Q[i][s, a] + alfa * (reward + gamma * np.max(Q[i][s2, :]) - Q[i][s, a])
+
+                # Update Dest_Score (Best solution)
+                if fitness < D_score:
+                    D_score = fitness
+                    D_pos = Pos[i].copy()
+                    print("Best solution", D_score)
 
             Convergence_curve[m] = D_score
 
